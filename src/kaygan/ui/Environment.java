@@ -2,13 +2,16 @@ package kaygan.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JFrame;
@@ -18,25 +21,40 @@ public class Environment extends JFrame
 {
 	private static final long serialVersionUID = 1L;
 	
+	// FIXME: coordinates and sizes should be handled by a cell layout engine
+	//        individual cells/cell groups should have hooks into how they are displayed
 	class Cell
 	{
-		volatile boolean visible = false;
+		volatile boolean visible = true;
 		
 		volatile Color fill = Color.LIGHT_GRAY;
 		
-		final RoundRectangle2D roundedRectangle = new RoundRectangle2D.Float(100, 100, 240, 160, 20, 20);
+		int padding = 4;
+		
+		int x = 100;
+		
+		int y = 100;
+		
+		int borderRadius = 10;
+		
+		Shape cellBounds;
+		
+		final StringBuffer value = new StringBuffer("Hello World");
 		
 		public void onMouseMove(MouseEvent e)
 		{
 			Color currentFill = fill;
 			
-			if( roundedRectangle.contains(e.getPoint()) )
+			if( cellBounds != null )
 			{
-				fill = Color.BLUE;
-			}
-			else
-			{
-				fill = Color.LIGHT_GRAY;
+				if( cellBounds.contains(e.getPoint()) )
+				{
+					fill = Color.BLUE;
+				}
+				else
+				{
+					fill = Color.LIGHT_GRAY;
+				}
 			}
 			
 			// repaint if we changed the fill
@@ -53,8 +71,26 @@ public class Environment extends JFrame
 				g.setBackground(fill);
 		        g.setPaint(fill);
 		        
-		        g.draw(roundedRectangle);
-		        g.fill(roundedRectangle);
+		        String val = value.toString();
+		        
+		        FontMetrics fontMetrics = g.getFontMetrics();
+		        Rectangle2D textBounds = fontMetrics.getStringBounds(val, g);
+		        
+		        cellBounds = new RoundRectangle2D.Float(
+									x, y, 
+									(int)(textBounds.getWidth())+padding*2,
+									(int)(textBounds.getHeight())+padding*2,
+									borderRadius,
+									borderRadius);
+		        
+		        g.draw(cellBounds);
+		        g.fill(cellBounds);
+		        
+		        // draw the text within the cell we just created...
+		        // the x/y need to be based on the baseline, so the y coordinate
+		        // has to be adjusted based on how many pixels can be above the baseline
+		        g.setColor(Color.WHITE);
+		        g.drawString(val, x+padding, y+padding+fontMetrics.getMaxAscent());
 			}
 		}
 	}
@@ -115,19 +151,14 @@ public class Environment extends JFrame
 	public void paint(Graphics g)
 	{
         Graphics2D graphics2 = (Graphics2D) g;
-
-        graphics2.setColor(Color.BLACK);
-        graphics2.setBackground(Color.BLACK);
-        graphics2.setPaint(Color.BLACK);
-        
-        graphics2.drawString("Hello", 20, 20);
         
         // clear drawing surface of the window
-        graphics2.clearRect(0, 0, getWidth(), getHeight());
+        graphics2.setColor(Color.BLACK);
+        graphics2.fillRect(0, 0, getWidth(), getHeight());
+       
         
         // render cells
         cell.render(graphics2);
-        
     }
 
 
