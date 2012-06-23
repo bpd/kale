@@ -1,11 +1,13 @@
 package kaygan;
 
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class Cell
 {
-	private final Map<Object, Object> entries = new HashMap<Object, Object>();
+	private final Map<Object, Object> entries = new LinkedHashMap<Object, Object>();
 	
 	//private final List<?> members = new ArrayList<Object>();
 	
@@ -17,7 +19,35 @@ public class Cell
 	@Override
 	public String toString()
 	{
-		return entries.toString();
+		Iterator<Entry<Object, Object>> i = entries.entrySet().iterator();
+		if (! i.hasNext())
+		{
+		    return "[]";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		for (;;)
+		{
+		    Entry<Object, Object> e = i.next();
+		    
+		    Object key = e.getKey();
+		    Object value = e.getValue();
+		    
+		    // 
+		    if( !(key instanceof Integer) )
+		    {
+			    sb.append(key   == this ? "(this Cell)" : key);
+			    sb.append(':');
+		    }
+		    sb.append(value == this ? "(this Cell)" : value);
+		    
+		    if (! i.hasNext())
+		    {
+		    	return sb.append(']').toString();
+		    }
+		    sb.append(' ');
+		}
 	}
 	
 	public Object get(Object key)
