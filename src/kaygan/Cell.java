@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Cell
 {
-	private final Map<?, ?> entries = new HashMap<Object, Object>();
+	private final Map<Object, Object> entries = new HashMap<Object, Object>();
 	
 	//private final List<?> members = new ArrayList<Object>();
 	
@@ -14,7 +14,26 @@ public class Cell
 	//   Value [ Ordered ]
 	//   Size
 	
+	@Override
+	public String toString()
+	{
+		return entries.toString();
+	}
 	
+	public Object get(Object key)
+	{
+		return entries.get(key);
+	}
+	
+	public void put(Object key, Object value)
+	{
+		Object previousValue = entries.put(key, value);
+		if( previousValue == null )
+		{
+			// we overwrote an existing key
+			
+		}
+	}
 	
 	int size()
 	{
@@ -39,9 +58,18 @@ public class Cell
 	 * 
 	 *   a [ name [ substring [ from: b to: 2 ] ] ]
 	 * 
-	 * 
 	 * When the data structure is loaded, as part of a 'linking' step, the 'bind' message
 	 *   is sent to 'a', passing the cell `[ name [ substring [ from: b to: 2 ] ] ]` as an argument
+	 *   
+	 *   a name substring [ from: b to: 2 ]
+	 * 
+	 * TODO is there enough above to implicitly assume cell boundaries?
+	 *      is it safe to assume that subsequent symbols in a sequence are evaluated
+	 *        within the scope of the preceding symbol, unless cell boundaries are explicitly defined?
+	 * 
+	 * If the 'to' key defaulted to the length of the string, it could be omitted:
+	 * 
+	 *   a name substring from: b
 	 * 
 	 * 
 	 * Defining a cell that binds arguments
@@ -55,6 +83,8 @@ public class Cell
 	 *   TODO the above expression uses 'a' as where the result is going and 'a' in the argument cell.
 	 *        are the scope semantics there left up to the containing cell being bound into?
 	 * 
+	 * - default implementation of Cell, keys are stored in their declaration/set order
+	 * - when a key is overwritten in a sub-cell, the original position of the key is maintained
 	 * 
 	 * 
 	 * 
