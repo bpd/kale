@@ -83,47 +83,47 @@ public class CellReader implements Closeable
 	
 	public Cell readCell() throws IOException
 	{
+		String symbol = readSymbol();
+		if( symbol == TOK_BEGIN_CELL )
+		{
+			return readCell();
+		}
+		
 		Cell cell = new Cell();
 		
-		String symbol = readSymbol();
 		while( symbol != TOK_END_CELL && symbol != TOK_EOF )
 		{
 			if( symbol == TOK_BEGIN_CELL )
 			{
-				return readCell();
+				cell.put( cell.size(), readCell() );
 			}
-			
-			if( !( symbol == TOK_END_CELL || symbol == TOK_EOF) )
+			else
 			{
-				if( symbol == TOK_BEGIN_CELL )
+				if( symbol.endsWith(COLON) && symbol.length() > 1 )
 				{
-					cell.put( cell.size(), readCell() );
-				}
-				else
-				{
-					if( symbol.endsWith(COLON) )
+					// chop the ':' from the end of the symbol
+					symbol = symbol.substring(0, symbol.length() - 1 );
+					
+					String nextSymbol = readSymbol();
+					if( nextSymbol == TOK_BEGIN_CELL )
 					{
-						String nextSymbol = readSymbol();
-						if( nextSymbol == TOK_BEGIN_CELL )
-						{
-							cell.put( symbol, readCell() );
-						}
-						else if( nextSymbol == TOK_END_CELL || symbol == TOK_EOF )
-						{
-							throw new RuntimeException("Expected value after " + nextSymbol);
-						}
-						else
-						{
-							cell.put( symbol, nextSymbol );
-						}
+						cell.put( symbol, readCell() );
+					}
+					else if( nextSymbol == TOK_END_CELL || symbol == TOK_EOF )
+					{
+						throw new RuntimeException("Expected value after " + nextSymbol);
 					}
 					else
 					{
-						cell.put( cell.size(), symbol );
+						cell.put( symbol, nextSymbol );
 					}
 				}
-				
+				else
+				{
+					cell.put( cell.size(), symbol );
+				}
 			}
+
 			symbol = readSymbol();
 		}
 		return cell;
