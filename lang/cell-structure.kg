@@ -1,0 +1,51 @@
+
+#
+# 
+#
+
+#implicit
+is_false: 2 < 4
+
+# explicit
+is_false: [ 2 [ < 4 ] ]
+
+
+a: 4
+b: 2
+
+c: [ [d e] d + e ]
+
+c [ a b ]
+
+# evaluates to 6
+#=========================================#
+
+a: [ name: "Brian" age: 28 17 ]
+
+# the above can be thought of two ways:
+#
+# 1. a hash of values
+#
+#    name => "Brian"
+#    age  => 28
+#    0    => 17
+#
+#    One big question here is whether the atom 17 would
+#    be key 0 or key 2.  It is the first non-keyed value,
+#    which would make key 0 make sense.  However, it is also
+#    the third entry in the cell (ordinal 2), which makes the
+#    key 2 make sense.
+#
+# 2. A sequence of Tuples
+#
+#    [ (name "Brian"), (age, 28), (0, 17) ]
+#
+#    Again, we have the issue of the key of the third entry
+#    (and whether the third entry should or should not be considered
+#     a tuple, versus just an atom in the sequence)
+#
+# 3. A sequence with elements of type [Tuple|Atom]
+# 
+#    [ (name "Brian"), (age, 28), 17 ]
+#
+#    

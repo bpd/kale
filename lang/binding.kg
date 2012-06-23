@@ -1,0 +1,11 @@
+
+d: "World"
+
+a: [ "Hello %{d}" format d  ]
+
+b: [ [f]
+     f   # default function just invokes 'f'
+     @: [ [caller arg-cell]
+     		caller is-external [ [error "external references not allowed"] else: b ]  ]
+]
+
