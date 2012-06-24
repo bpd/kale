@@ -134,6 +134,75 @@ public class Cell
 		return null;
 	}
 	
+	// TODO should bind() be an internal call on the data structure itself...
+	//      the cell should have access to its parent/environment, and the
+	//      
+	
+	
+	/**
+	 * ambiguity:
+	 * 
+	 * a: [ b [c d] ]
+	 * 
+	 * is the above cell defining a sequence of length two (b and [c d])
+	 *   or a cell of length one (the result of [c d] being applied to b)
+	 * 
+	 * ... or do we leave that up to the environment to decide?
+	 * 
+	 * #============================
+	 * another example:
+	 * 
+	 * b: [ [e f] e + f ]  c: 2  d: 4
+	 * a: [ b [c d] ]
+	 * 
+	 * # should output [ 6 ]
+	 * 
+	 * - b is a function that takes two arguments... so should it consume the cell that follows it?
+	 * - similarly, if it was a non-function, should it then not consume the next?
+	 * - this seems to be far too ambiguous
+	 * 
+	 * 
+	 * 
+	 * #============================
+	 * b: [ [e f] e + f ]  c: 2  d: 4
+	 * a: [ b `[c d] ]
+	 * 
+	 * # should output [ <#function> [c d] ]
+	 * # with the quoted [c d] we know it's not to be evaluated
+	 * 
+	 * FIXME is that consistent?  need to finalize an evaluation model
+	 * 
+	 * #============================
+	 * 
+	 * a: 4 + 2
+	 * a: 4[ + [ 2 ] ]
+	 *       ^ evaluate '+' within the context of a 4 (it has access to 'this')
+	 *        ^ bind '+' to the cell [2]
+	 *   ^       the result of '+ [2]' evaluated in the context of 4 is stored in a
+	 *   
+	 * #============================
+	 * 
+	 * a: [ 2 4 8 7 ]
+	 * a: [ 2 [4 [8 [7 ] ] ] ]
+	 * 
+	 *   ^ no context, so 2 is evaluated within the context of ( Nil?  The assignment (':')? empty list ([])? )
+	 *      ^ this results in a list with 2 in it
+	 *        ^ 4 is evaluated within the context of a list with a 2 in it, and by the default list
+	 *          implementation that results in a list with a 2 and a 4 in it... etc
+	 *      
+	 * 
+	 * 
+	 * 
+	 * thinking about this in the context of the evaluation model,
+	 * 
+	 * b is evaluated first, and evaluates to a functor, since it needs one argument.
+	 *   The next chained element is [c d], which is applied to the result of b being evaluated.
+	 *     
+	 * 
+	 * 
+	 * 
+	 */
+	
 	
 	/**
 	 * What we do we know about this cell?
