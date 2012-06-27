@@ -1,0 +1,37 @@
+
+a: 2
+
+# the 'a:' is equivalent to (define a <next-symbol>)
+
+a: 2 b: 3
+
+# (define 
+
+
+
+#============================
+
+ a: 4 + 2
+ a: 4[ + [ 2 ] ]
+       ^ evaluate '+' within the context of a 4 (it has access to 'this')
+        ^ bind '+' to the cell [2]
+   ^       the result of '+ [2]' evaluated in the context of 4 is stored in a
+
+
+#============================
+
+a: [ 2 4 8 7 ]
+a: [ 2 [4 [8 [7 ] ] ] ]
+
+# token stream := <KeyDef, "a"> <BeginCell> <Symbol, "2"> <Symbol, "4"> <Symbol, "8"> <Symbol, "7"> <EndCell>
+
+
+
+
+#============================
+
+b: [ [e f] e + f ]  c: 2  d: 4
+a: [ b [c d] ]
+ 
+ # result of a => [ <#function> <list of c,d> ]
+ 

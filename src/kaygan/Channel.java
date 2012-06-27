@@ -10,7 +10,7 @@ package kaygan;
  * @author Brian
  *
  */
-public class Channel
+public interface Channel
 {
-
+	Cell invoke(Cell arg);
 }

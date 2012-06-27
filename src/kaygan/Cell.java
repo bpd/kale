@@ -9,6 +9,11 @@ public class Cell
 {
 	private final Map<Object, Object> entries = new LinkedHashMap<Object, Object>();
 	
+	// 
+	//
+	// Cell definedIn;
+	// Cell evaluatedIn;
+	
 	//private final List<?> members = new ArrayList<Object>();
 	
 	// Cell Traits:
@@ -190,13 +195,16 @@ public class Cell
 	 *        ^ 4 is evaluated within the context of a list with a 2 in it, and by the default list
 	 *          implementation that results in a list with a 2 and a 4 in it... etc
 	 *      
+	 *   ^ this is (I believe) the cons structure of a LISP list... but we need to optimize storage
+	 *     of this so we don't have the pointer overhead associated with the LISP cons structures
+	 *   
+	 * ** so does this mean we have a Cell { context:Cell ; next:Cell } structure underpinning everything just like a cons cell?
+	 *   
+	 *    >> this is just the source code representation, and doesn't necessarily represent memory layout
+	 *       after an optimizer actually does (eventually) native code gen.
 	 * 
 	 * 
-	 * 
-	 * thinking about this in the context of the evaluation model,
-	 * 
-	 * b is evaluated first, and evaluates to a functor, since it needs one argument.
-	 *   The next chained element is [c d], which is applied to the result of b being evaluated.
+	 * ** symbols act as a kind of 'pointer', so reuse ` notation for literal symbols
 	 *     
 	 * 
 	 * 
