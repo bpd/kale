@@ -147,6 +147,78 @@ e: ( (b plus a) plus d )
     
     # would be lexed as Pair<a,2> Pair<b,3> Pair<0,2> Pair<3,4>
 
+#============================
+# function declarations
+#============================
+
+  a: ([b c] b + c)
+  
+  (a 1 2)
+  
+  # => 3
+  
+  # looking at it more closely...
+  
+  a: ([b c] b + c)
+
+  #   ^^^^^          a block as the first element of an invocation declares bindable symbols
+  #         ^^^^^    the rest of the invocation behaves normally
+
+  # since the parameter declaration behaves as a normal block, symbols
+  # can be constrained to types, etc
+  
+  a: ([b:Int c] b + c)
+
+
+#============================
+# constrained types
+#============================
+
+  Person: [ name:Str  age:(Int > 0) ]
+  
+  p: (Person name:'Brian' age:28)
+  
+  Person: ([ name:Str  age:Int ] where:[ (age > 0) ])
+
+#============================
+# boolean expressions
+#============================
+
+  b: false
+  c: true
+  d: false
+  
+  a: (b and c or d)
+  
+  # read as  a -> b.and(c).or(d)
+  #      also   ((b and c) or d)
+  #
+  # evaluated as a normal function invocation
+
+
+#============================
+# TODO references
+#============================
+
+  # using the boolean example:
+
+  b: false
+  c: true
+  d: false
+  
+  a: (b and c or d)
+  
+  # is the symbol 'a' bound to a symbol or a function?
+  
+  # in this case it is a value, since 
+
+
+#============================
+
+
+  a: [a b| (a + b)]
+
+
 
 #============================
 
