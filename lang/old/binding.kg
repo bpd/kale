@@ -21,35 +21,6 @@ a.bind: [ callsite | assert b.type = Int ]
 a: [ b:Int | b + 2 ]
 	# ^ this is a bind, Int is a function with certain bind properties
 
-
-#============================
-# Invocation
-
-a 2
-a(2)
-a [ b:2 | 'scope where b = 4' ]
-a(b:2)
-
-a b:2   [c | ' c is the incremented value of b' ]
-e: a b: 2
-# ^^^^^^^ ambiguous:   e->a, b->2  OR e-> a(b:2)
-
-# alternative A
-e: a, b: 2     # comma acts as binding separator (smalltalk uses 'full stop')
-
-# alternative B
-e: a(b:2)      # explicit invocation
-
-
-#============================
-
-
-b: [ :a + 2 ]
-     ^ unbound variable
-
-b a:2
-# => 4
-
 #============================
 
 add: [ :b + :a ]

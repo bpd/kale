@@ -1,0 +1,26 @@
+
+
+  SomeType: [ name:String  age:Int  ]
+  
+  # SomeType -> Table{}
+  
+  a: (SomeType [ name:"Brian"  age:28 ])
+  
+  # invoke Table{ SomeType [] }
+  
+  # invoking SomeType by binding it to a Table causes a new
+  # instance of that to be created
+  
+  
+  theName: (a name)    # get the name
+  
+  theAge: (a age)      # get the age
+  
+  b: (a name:"Tom")    # sets the name
+  
+  c: (a name:"Anton" age:27)    # sets the name and age atomically
+  
+  (print a name)       # prints "Brian" since the implicit conversion of that is (print (a name) )
+  (print b name)       # prints "Tom"
+  
+  
