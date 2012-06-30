@@ -1,11 +1,169 @@
 
-d: "World"
+a: [ b c | b + c ]
 
-a: [ "Hello %{d}" format d  ]
+a: [| 3 ]
 
-b: [ [f]
-     f   # default function just invokes 'f'
-     @: [ [caller arg-cell]
-     		caller is-external [ [error "external references not allowed"] else: b ]  ]
-]
+#============================
+
+a: [ b |
+	this.bind: [ callsite | assert b.type = Int ]    # only re-evaluate expressions when dependent values change
+							#      ^ this has scope of function, so 'b' can be directly referenced
+							#             ^ since ':' is assign, '=' can be equal
+	b + 2]
+
+ # OR
+
+a: [ b | b + 2 ]
+a.bind: [ callsite | assert b.type = Int ]
+
+ # OR
+
+a: [ b:Int | b + 2 ]
+	# ^ this is a bind, Int is a function with certain bind properties
+
+
+#============================
+# Invocation
+
+a 2
+a(2)
+a [ b:2 | 'scope where b = 4' ]
+a(b:2)
+
+a b:2   [c | ' c is the incremented value of b' ]
+e: a b: 2
+# ^^^^^^^ ambiguous:   e->a, b->2  OR e-> a(b:2)
+
+# alternative A
+e: a, b: 2     # comma acts as binding separator (smalltalk uses 'full stop')
+
+# alternative B
+e: a(b:2)      # explicit invocation
+
+
+#============================
+
+
+b: [ :a + 2 ]
+     ^ unbound variable
+
+b a:2
+# => 4
+
+#============================
+
+add: [ :b + :a ]
+
+add b:1 a:2
+
+  # this is a little silly though, since the order of the arguments
+  # is not significant and the names generally would not provide
+  # any additional description
+  
+  # ideally (and in many other languages), this would just be:
+
+add(1 2)
+
+  # and there is no reason to model this any differently.
+  # The arguments are identified by their ordinal (0 and 1, respectively)
+  # and that can serve as their implicit 'name' as well.
+  #  
+  # If the same function invocation as above was made explicitly,
+  # if would be:
+
+add( 0:1 1:2 )
+
+  # this stays consistent with the philosophy that everything
+  # is a map of keys to values, and arrays are just a special
+  # case where the keys are sequential integers starting at 0
+
+#============================
+
+add: [ b + a ]
+
+# => add<function<a: b:>>
+
+  # add has two unbound symbols, 'b' and 'a'
+
+newAdd: add( b:2 )
+
+# => newAdd<function<a:Int>>
+
+  # newAdd is add with the 'b' bound to 2, so now only 'a' is unbound
+  # however, binding 'b' to 2 also binds '+' to 2, which probably
+  # imposed some restrictions on 'a' (like requiring that it must be an integer)
+
+newAdd( a: 3 )
+
+# => 5
+
+
+#============================
+# ambiguity of message sends
+#============================
+ 
+ # integer class with a 'plus' method that takes another Int  (make This the type of this?)
+Int: [ plus:[ other:Int | <primitive-add this + other> ] ]
+
+ # and bind the symbol 'plus' in the scope
+a: 3
+b: 2
+plus: 4
+
+
+d: [ b plus a ]
+
+    # is 'd' a list of integers or is the method 'plus'
+    # of the symbol 'b' (of type Int) being invoked with ordinal
+    # parameter 'a'?
+    
+d: (b plus a)
+
+e: ( (b plus a) plus d )
+
+
+    # defining this generally, symbols between []s are independent,
+    # there is no implicit relation from one element to another
+    # (other than uniqueness constraints for map values) 
+    
+    d: [ 1 2 3 a b c ]
+    
+    # alternatively, symbols between ()s are linearly chained,
+    # meaning each subsequent symbol is defined within the context
+    # of the previous symbol
+    
+    e: ( a b c )
+    
+    # would mathematically be represented as e -> a(b(c))
+    # normal nesting rules apply
+    
+    e: ( (a b) c )
+    
+    # represents e -> a(b)(c)
+    
+    # pairs are defined at the language level
+    
+    a:2   b :3   0:2   3 :4
+    
+    # would be lexed as Pair<a,2> Pair<b,3> Pair<0,2> Pair<3,4>
+
+
+#============================
+
+Person: [ this.name = :name ]
+
+p: Person name:'Brian'
+
+#============================
+
+Person: [ name | this.name = name ]
+
+p: Person name: 'Brian'
+
+a: [ Person name: 'Brian' ]
+
+b: [ p [ a ] ]
+
+
+
 
