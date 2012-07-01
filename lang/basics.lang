@@ -1,0 +1,68 @@
+
+#=======================
+# Sequences and Chains
+#=======================
+
+	# In a Sequence, symbols between []s are independent,
+	# there is no implicit relation from one element to another
+	# (other than uniqueness constraints for map values) 
+	
+	d: [ 1 2 3 a b c ]
+	
+	
+	# alternatively, symbols between ()s comprise a linear Chain,
+	# meaning each subsequent symbol is defined within the context
+	# of the previous symbol
+	
+	e: ( a b c )
+	
+	# would mathematically be represented as e -> a(b(c))
+	# normal nesting rules apply
+	
+	e: ( (a b) c )
+	
+	# represents e -> a(b)(c)
+	
+	# pairs are defined at the language level
+	
+	a:2   b :3   0:2   3 :4
+	
+	# would be lexed as Pair<a,2> Pair<b,3> Pair<0,2> Pair<3,4>
+
+
+#=======================
+# BNF
+#=======================
+
+Atom := Number | StringLiteral | Symbol | Quote
+
+Symbol := [^:\[\]\(\)] [a-zA-Z0-9-_]*
+
+Pair:= Symbol : ws* (Atom | Cell)
+
+Number := IntegerLiteral | RealLiteral | BinaryLiteral | HexLiteral
+
+	IntegerLiteral := [0-9]+
+
+	RealLiteral := IntegerLiteral .[0-9]+
+
+	BinaryLiteral := 0b[01]+
+	
+	HexLiteral := 0x[a-fA-F]+
+
+StringLiteral := "[^\"]"
+
+Quote := ` (Symbol | Cell)
+
+Cell := Sequence | Chain
+
+Sequence := ws* '[' ws* (Cell | Atom) ws* ']' ws*
+
+Chain := ws* '(' ws* (Cell | Atom) ws* ')' ws*
+
+ws := \t | \n | ' '
+
+	
+
+
+	

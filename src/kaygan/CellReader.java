@@ -16,6 +16,17 @@ public class CellReader implements Closeable
 	private int prevColumn;
 	
 	
+	private static final String TOK_BEGIN_CELL = "[";
+	
+	private static final String TOK_END_CELL = "]";
+	
+	
+	
+	private static final String COLON = ":";
+	
+	private static final String TOK_EOF = "";
+	
+	
 	public CellReader(Reader reader)
 	{
 		this.reader = new PushbackReader(reader, 1);
@@ -129,13 +140,7 @@ public class CellReader implements Closeable
 		return cell;
 	}
 	
-	private static final String TOK_END_CELL = "]";
 	
-	private static final String TOK_BEGIN_CELL = "[";
-	
-	private static final String COLON = ":";
-	
-	private static final String TOK_EOF = "";
 	
 	protected String readSymbol()
 	{
