@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import kaygan.atom.Num;
+import kaygan.atom.Pair;
+import kaygan.atom.Symbol;
 
 public class BlockReader implements Closeable
 {
@@ -86,7 +86,7 @@ public class BlockReader implements Closeable
 		}
 	}
 	
-	public Object eval()
+	public Function eval()
 	{
 		ignoreWhitespace();
 		
@@ -98,17 +98,17 @@ public class BlockReader implements Closeable
 			if( next == 'x' )
 			{
 				// hex literal
-				return readHexNumber();
+				return new Num( readHexNumber() );
 			}
 			else if( next == 'b' )
 			{
 				// binary literal				
-				return readBinaryNumber();
+				return new Num( readBinaryNumber() );
 			}
 			else if( Character.isDigit(next) )
 			{
 				// number literal
-				return readNumber();
+				return new Num( readNumber() );
 			}
 			else
 			{
@@ -118,7 +118,7 @@ public class BlockReader implements Closeable
 		else if( isDigit(c) )
 		{
 			unread(c);
-			return readNumber();
+			return new Num( readNumber() );
 		}
 //		else if( c == '`' )
 //		{
@@ -164,7 +164,7 @@ public class BlockReader implements Closeable
 			{
 				ignoreWhitespace();
 				
-				Object cell = eval();
+				Function cell = eval();
 				if( cell == null )
 				{
 					error("Expected value after " + symbol + ":");
@@ -175,7 +175,7 @@ public class BlockReader implements Closeable
 			else
 			{
 				unread(next);
-				return symbol;
+				return new Symbol(symbol);
 			}
 		}
 		else if( c == '[' )
@@ -470,9 +470,10 @@ public class BlockReader implements Closeable
 //		}
 	}
 	
-	public static Object eval(String input)
+	public static Sequence eval(String input)
 	{
-		return new BlockReader(new StringReader(input)).eval();
+		//return new BlockReader(new StringReader(input)).eval();
+		return eval( input, new Chain() );
 	}
 	
 	/**
@@ -482,13 +483,12 @@ public class BlockReader implements Closeable
 	 *   it will function as expected
 	 * 
 	 * @param input
-	 * @param chain
+	 * @param sequence
 	 * @return
 	 */
-	public static Object eval(String input, Chain chain)
+	public static Sequence eval(String input, Sequence sequence)
 	{
-		new BlockReader(new StringReader(input)).evalChain(chain);
-		return chain;
+		return new BlockReader(new StringReader(input)).evalSequence(sequence);
 	}
 
 }

@@ -1,0 +1,78 @@
+#============================
+# function declarations
+#============================
+
+  a: ([b c] b + c)
+  
+  b: ([f] f 1 2)
+  
+  (a 1 2)  # => 3
+  
+  (b a)    # => 3
+
+#============================
+# Step 1
+#============================
+
+Sequence {
+  Pair<a, Chain { Sequence { Symbol<b> Symbol<c> } Symbol<b> Symbol<+> Symbol<c> }>
+  
+  Pair<b, Chain { Sequence { Symbol<f> } Symbol<f> IntLiteral<1> IntLiteral<2> }>
+  
+  Chain { Symbol<a> IntLiteral<1> IntLiteral<2> }
+  
+  Chain { Symbol<b> Symbol<a> }
+}
+
+#============================
+# Step 2
+#============================
+
+Sequence {
+  @bindings: {
+    a => Chain { Sequence { Symbol<b> Symbol<c> } Symbol<b> Symbol<+> Symbol<c> }
+    b => Chain { Sequence { Symbol<f> } Symbol<f> IntLiteral<1> IntLiteral<2> }
+  }
+  
+  Chain { Symbol<a> IntLiteral<1> IntLiteral<2> }
+  
+  Chain { Symbol<b> Symbol<a> }
+}
+
+#============================
+# Step 3
+#============================
+
+Sequence {
+  @bindings: {
+    a => Chain {
+      # this.resolve( Sequence { Symbol<b> Symbol<c> } )
+      
+      Symbol<b>
+      Symbol<+>
+      Symbol<c>
+    }
+    b => Chain { Sequence { Symbol<f> } Symbol<f> IntLiteral<1> IntLiteral<2> }
+  }
+  
+  Chain { Symbol<a> IntLiteral<1> IntLiteral<2> }
+  
+  Chain { Symbol<b> Symbol<a> }
+}
+
+  
+#============================
+
+( a:1234 a )
+
+
+
+#============================
+
+In the implicit (file) Sequence:
+
+ Step 1: iterate each atom in the sequence, bind them
+         the elements above are:
+         Pair< Symbol, Chain >, Chain
+ 
+ Step 2: 
