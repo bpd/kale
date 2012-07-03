@@ -1,11 +1,8 @@
 package kaygan.atom;
 
-import kaygan.Bindable;
-import kaygan.Binding;
 import kaygan.Function;
-import kaygan.Scope;
 
-public class Num implements Bindable, Function
+public class Num implements Function
 {
 	private final Number value;
 	
@@ -14,14 +11,18 @@ public class Num implements Bindable, Function
 		this.value = value;
 	}
 	
-	public Function eval(Scope scope)
+	public Function eval()
 	{
 		return this;
 	}
 
 	@Override
-	public Binding bind(Bindable parent)
+	public Function bind(Function f)
 	{
+		
+		
+		
+		
 //		if( caller instanceof Symbol )
 //		{
 //			Symbol symbolRef = (Symbol)caller;

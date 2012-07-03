@@ -1,6 +1,6 @@
 package kaygan;
 
-public class Error extends Binding
+public class Error implements Function
 {
 	private final String message;
 	
@@ -9,7 +9,14 @@ public class Error extends Binding
 		this.message = message;
 	}
 	
-	public Object invoke(Scope scope)
+	@Override
+	public Function bind(Function f)
+	{
+		return this;
+	}
+	
+	@Override
+	public Function eval()
 	{
 		throw new RuntimeException(this.message);
 	}

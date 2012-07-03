@@ -1,44 +1,77 @@
 package kaygan;
 
-import kaygan.atom.Pair;
-import kaygan.atom.Symbol;
-
 public class Chain extends Sequence
 {
-
-	public void add(Function element)
+	
+	@Override
+	public Function bind(Function f)
 	{
-		if( element instanceof Sequence
+		System.out.println("chain.bind(): " + f);
+		
+		if( f instanceof Sequence
 			&& size() == 0 )
 		{
-			// first element is a sequence,
-			// this turns this chain into a function
-			
-			Sequence arguments = (Sequence)element;
-			
-			for( Function argument : arguments )
+			System.out.println("found function");
+			return new Function()
 			{
-				if( argument instanceof Symbol )
+				@Override
+				public Function bind(Function f)
 				{
-					// TODO new empty binding instead of null?
-					scope.set( (Symbol)argument, null );
+					return f;
 				}
-				else if( argument instanceof Pair )
+				
+				@Override
+				public Function eval()
 				{
-					Pair pair = (Pair)argument;
-					scope.set( pair.symbol, pair.value );
+					return this;
 				}
-				else
+				
+				@Override
+				public String toString()
 				{
-					throw new RuntimeException("Expected Symbol or Pair");
+					return "<Function>";
 				}
-			}
+			};
 		}
-		else
-		{
-			super.add( element );
-		}
+		
+		return super.bind(f);
 	}
+
+//	public void add(Function element)
+//	{
+//		if( element instanceof Sequence
+//			&& size() == 0 )
+//		{
+//			// first element is a sequence,
+//			// this turns this chain into a function
+//			
+//			//Scope subScope = new Scope(this.scope);
+//			
+//			Sequence arguments = (Sequence)element;
+//			
+//			for( Function argument : arguments )
+//			{
+//				if( argument instanceof Symbol )
+//				{
+//					// TODO new empty binding instead of null?
+//					//subScope.set( (Symbol)argument, null );
+//				}
+//				else if( argument instanceof Pair )
+//				{
+//					Pair pair = (Pair)argument;
+//					//subScope.set( pair.symbol, pair.value );
+//				}
+//				else
+//				{
+//					throw new RuntimeException("Expected Symbol or Pair");
+//				}
+//			}
+//		}
+//		else
+//		{
+//			super.add( element );
+//		}
+//	}
 //	
 //	public Binding bind(Bindable parent)
 //	{

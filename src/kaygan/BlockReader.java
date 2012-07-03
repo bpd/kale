@@ -120,37 +120,6 @@ public class BlockReader implements Closeable
 			unread(c);
 			return new Num( readNumber() );
 		}
-//		else if( c == '`' )
-//		{
-//			// quoted symbol
-//			
-//			ignoreWhitespace();
-//			
-////			
-////			int next = read();
-////			if( next == '[' || next == '(' )
-////			{
-////				// quoted cell
-////				Object cell = readCell();
-////				
-////				int close = read();
-////				if( !(close == '[' || close == '(') )
-////				{
-////					error("Expected end of cell");
-////				}
-////				
-////				return cell;
-////			}
-////			else if( isLetter(next) )
-////			{
-////				// quoted symbol
-////				// TODO broken, needs to propagate quoted
-////				return readSymbol();
-////			}
-//			
-//			return readSymbol();
-//			
-//		}
 		else if( isSymbolChar(c) )
 		{
 			// symbol
@@ -202,11 +171,15 @@ public class BlockReader implements Closeable
 		return c == 65535;
 	}
 	
-	public Sequence evalSequence(Sequence sequence)
+	public Function evalSequence(Sequence sequence)
 	{
+		Function previous = sequence;
+		
 		while( true )
 		{
-			sequence.add( eval() );
+			Function f = eval();
+			
+			previous = sequence.bind(f);
 			
 			// look for the end of the cell
 			ignoreWhitespace();
@@ -222,14 +195,16 @@ public class BlockReader implements Closeable
 			unread(next);
 		}
 		
-		return sequence;
+		return previous;
 	}
 	
-	public Chain evalChain(Chain chain)
+	public Function evalChain(Chain chain)
 	{
+		Function current = chain;
+		
 		while( true )
 		{
-			chain.add( eval() );
+			current = current.bind( eval() );
 			
 			// look for the end of the cell
 			ignoreWhitespace();
@@ -244,7 +219,7 @@ public class BlockReader implements Closeable
 			unread(next);
 		}
 		
-		return chain;
+		return current;
 	}
 	
 	static boolean isHexDigit(int c)
@@ -470,10 +445,10 @@ public class BlockReader implements Closeable
 //		}
 	}
 	
-	public static Sequence eval(String input)
+	public static Function eval(String input)
 	{
 		//return new BlockReader(new StringReader(input)).eval();
-		return eval( input, new Chain() );
+		return eval( input, new Sequence() );
 	}
 	
 	/**
@@ -486,7 +461,7 @@ public class BlockReader implements Closeable
 	 * @param sequence
 	 * @return
 	 */
-	public static Sequence eval(String input, Sequence sequence)
+	public static Function eval(String input, Sequence sequence)
 	{
 		return new BlockReader(new StringReader(input)).evalSequence(sequence);
 	}

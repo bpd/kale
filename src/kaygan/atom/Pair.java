@@ -1,11 +1,8 @@
 package kaygan.atom;
 
-import kaygan.Bindable;
-import kaygan.Binding;
 import kaygan.Function;
-import kaygan.Scope;
 
-public class Pair implements Bindable, Function
+public class Pair implements Function
 {
 	public final String symbol;
 	
@@ -18,13 +15,13 @@ public class Pair implements Bindable, Function
 	}
 	
 	@Override
-	public Function eval(Scope scope)
+	public Function eval()
 	{
 		return this;
 	}
 	
 	@Override
-	public Binding bind(Bindable parent)
+	public Function bind(Function f)
 	{
 		
 		return null;

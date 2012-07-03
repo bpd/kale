@@ -1,8 +1,5 @@
 package kaygan;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-
 import junit.framework.TestCase;
 
 public class BlockReaderTest extends TestCase

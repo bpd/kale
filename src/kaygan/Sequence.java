@@ -7,111 +7,103 @@ import java.util.List;
 import java.util.Map;
 
 import kaygan.atom.Pair;
+import kaygan.atom.Symbol;
 
-public class Sequence implements Iterable<Function>, Bindable, Function
+public class Sequence implements Iterable<Function>,  Function
 {
 	private final List<Function> elements = new ArrayList<Function>();
 	
-	protected final Scope scope = new Scope();
+	private final Map<Object, Function> bindings = new HashMap<Object, Function>();
 	
-	public void add(Function element)
-	{
-		if( element instanceof Pair )
-		{
-			Pair pair = (Pair)element;
-			scope.set( pair.symbol, pair.value );
-		}
-		
-		elements.add( element );
-	}
+//	public void add(Function element)
+//	{
+//		if( element instanceof Pair )
+//		{
+//			Pair pair = (Pair)element;
+//			scope.set( pair.symbol, pair.value );
+//		}
+//		
+//		elements.add( element );
+//	}
 	
 	public int size()
 	{
 		return elements.size();
 	}
 	
-	public Function eval(Scope scope)
+
+	@Override
+	public Function bind(Function f)
 	{
-		Sequence sequence = new Sequence();
+		
+		
+		if( f instanceof Symbol )
+		{
+			// bind the calling symbol to the Bindable
+			// the symbol refers to in this scope
+			final Symbol symbol = (Symbol)f;
+			return new Function()
+			{
+				@Override
+				public Function bind(Function f)
+				{
+					System.out.println("binding " + f + " to symbol " + symbol);
+					return symbol.bind(f);
+				}
+				
+				@Override
+				public Function eval()
+				{
+					Function f = bindings.get(symbol);
+					if( f == null )
+					{
+						throw new RuntimeException("Unresolved symbol: " + symbol);
+					}
+					System.out.println("resolved symbol " + symbol + " to " + f);
+					return f.eval();
+				}
+				
+				@Override
+				public String toString()
+				{
+					return "<SymbolRef '"+symbol+"'>";
+				}
+			};
+			//return bindings.get( symbol );
+		}
+		else if( f instanceof Pair )
+		{
+			Pair pair = (Pair)f;
+			
+			System.out.println("binding symbol " + pair.symbol + " to " + pair.value);
+			
+			bindings.put( pair.symbol, pair.value );
+		}
+		
+		if( f != null )
+		{
+			elements.add( f );
+		}
+		
+		
+		return this;
+	}
+	
+	@Override
+	public Function eval()
+	{
+		Function sequence = new Sequence();
 		
 		for( Function element : elements )
 		{
 			// FIXME this scope or the parent scope?
-			sequence.add( element.eval(this.scope) );
+			System.out.println("binding: " + element);
+			sequence = sequence.bind( element.eval() );
 		}
 		
 		return sequence;
 	}
 	
-	public Function bind(Scope scope)
-	{
-		// replace the current sequence with a sequence of functions
-		return null;
-	}
-	
-	public Binding bind(Bindable parent)
-	{
-		
-//		if( caller instanceof Symbol )
-//		{
-//			// bind the calling symbol to the Bindable
-//			// the symbol refers to in this scope
-//			Symbol symbol = (Symbol)caller;
-//			return bindings.get( symbol ).bind( caller );
-//		}
-		
-		
-		// default: 
-		return null; //caller.bind( EMPTY );
-		
-		
-//		if( elements.size() == 0 )
-//		{
-//			// empty chain evaluates to itself
-//			//return this;
-//			return null;
-//		}
-//		
-//		Object head = elements.get(0);
-//		if( head instanceof Sequence )
-//		{
-//			// head is a sequence, this is a function
-//			
-//			Sequence arguments = (Sequence)head;
-//			
-//			for( Object argument : arguments )
-//			{
-//				// each argument should be a symbol (String) or Pair
-//				//   (anything else doesn't make sense as an argument)
-//				
-//				if( argument instanceof String )
-//				{
-//					// null binding, tracking the argument but
-//					// annotating that it is not bound to anything
-//					bindings.put( (String)argument, null );
-//				}
-//				else if( argument instanceof Pair )
-//				{
-//					Pair arg = (Pair)argument;
-//					bindings.put( arg.symbol, arg.value );
-//				}
-//			}
-//			
-//		}
-//		else
-//		{
-//			// not a function, so evaluate each element of the sequence
-//			// in the context of its Bindable parent
-//			
-//			for( Bindable element : elements )
-//			{
-//				element.bind(this);
-//			}
-//			
-//		}
-//		
-//		return null;
-	}
 	
 	@Override
 	public String toString()

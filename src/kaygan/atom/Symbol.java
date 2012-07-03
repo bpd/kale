@@ -1,11 +1,8 @@
 package kaygan.atom;
 
-import kaygan.Bindable;
-import kaygan.Binding;
 import kaygan.Function;
-import kaygan.Scope;
 
-public class Symbol implements Bindable, Function
+public class Symbol implements Function
 {
 	private final String value;
 	
@@ -15,20 +12,15 @@ public class Symbol implements Bindable, Function
 	}
 
 	@Override
-	public Binding bind(Bindable parent)
+	public Function bind(Function f)
 	{
-		return parent.bind(this);
+		return this;
 	}
 	
 	@Override
-	public Function eval(Scope scope)
+	public Function eval()
 	{
-		Function f = scope.get(value);
-		if( f == null )
-		{
-			throw new RuntimeException("Symbol not found: " + value);
-		}
-		return f.eval(scope);
+		return this;
 	}
 	
 	@Override
@@ -48,13 +40,4 @@ public class Symbol implements Bindable, Function
 	{
 		return value.toString();
 	}
-	
-	private final Binding invokable = new Binding()
-	{
-		@Override
-		public Object invoke(Scope scope)
-		{
-			return value;
-		}
-	};
 }

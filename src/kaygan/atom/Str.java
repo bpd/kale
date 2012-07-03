@@ -1,10 +1,8 @@
 package kaygan.atom;
 
-import kaygan.Bindable;
-import kaygan.Binding;
-import kaygan.Scope;
+import kaygan.Function;
 
-public class Str implements Bindable
+public class Str implements Function
 {
 	private final String value;
 	
@@ -14,9 +12,15 @@ public class Str implements Bindable
 	}
 
 	@Override
-	public Binding bind(Bindable parent)
+	public Function bind(Function f)
 	{
-		return invokable;
+		return this;
+	}
+	
+	@Override
+	public Function eval()
+	{
+		return this;
 	}
 	
 	@Override
@@ -24,14 +28,5 @@ public class Str implements Bindable
 	{
 		return value.toString();
 	}
-	
-	private final Binding invokable = new Binding()
-	{
-		@Override
-		public Object invoke(Scope scope)
-		{
-			return value;
-		}
-	};
 	
 }
