@@ -48,7 +48,7 @@ public class Num implements Function
 //				};
 //			}
 //		}
-		return null;
+		return this;
 	}
 	
 	@Override

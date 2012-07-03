@@ -17,14 +17,13 @@ public class Pair implements Function
 	@Override
 	public Function eval()
 	{
-		return this;
+		return value.eval();
 	}
 	
 	@Override
 	public Function bind(Function f)
 	{
-		
-		return null;
+		return this;
 	}
 	
 	@Override

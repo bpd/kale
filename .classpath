@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="kaygan/Cell.java|kaygan/CellReader.java|kaygan/Channel.java|kaygan/Bindable.java|kaygan/Binding.java|kaygan/Scope.java" kind="src" path="src"/>
-	<classpathentry excluding="kaygan/CellReaderTest.java" kind="src" path="test"/>
+	<classpathentry excluding="kaygan/CellReaderTest.java|kaygan/BlockReaderTest.java" kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="output" path="bin"/>

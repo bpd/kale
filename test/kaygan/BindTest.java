@@ -22,13 +22,34 @@ public class BindTest extends TestCase
 	{
 		Object o = eval(" a: 5678  a ");
 		
-		System.out.println(" o => " + o);
+		assertEquals("[ a:5678 5678 ]", o.toString());
 	}
 	
-	public void testReadFunction()
+	public void testReadSequence()
 	{
-		Object o = eval(" a: ([a b] a + b)  a  ");
+		Object o = eval(" a: 7 b: [ 1 2 3 a ] ");
 		
-		System.out.println(" o => " + o);
+		assertEquals("[ a:7 b:[ 1 2 3 7 ] ]", o.toString());
 	}
+	
+	public void testReadNestedSequence()
+	{
+		Object o = eval(" a: 7 b: [ 1 2 3 a [8 a] ] ");
+		
+		assertEquals("[ a:7 b:[ 1 2 3 7 [ 8 7 ] ] ]", o.toString());
+	}
+	
+	public void testReadNestedRebind()
+	{
+		Object o = eval(" a: 7 b: [ 1 2 3 a a:6 [8 a] ] ");
+		
+		assertEquals("[ a:7 b:[ 1 2 3 7 a:6 [ 8 6 ] ] ]", o.toString());
+	}
+	
+//	public void testReadFunction()
+//	{
+//		Object o = eval(" a: ([a b] a + b)  a  ");
+//		
+//		System.out.println(" o => " + o);
+//	}
 }

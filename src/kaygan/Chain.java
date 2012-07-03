@@ -2,16 +2,20 @@ package kaygan;
 
 public class Chain extends Sequence
 {
+	public Chain( Sequence parent )
+	{
+		super( parent );
+	}
 	
 	@Override
 	public Function bind(Function f)
 	{
 		System.out.println("chain.bind(): " + f);
 		
-		if( f instanceof Sequence
-			&& size() == 0 )
+		if( f instanceof Sequence )
 		{
 			System.out.println("found function");
+			System.exit(1);
 			return new Function()
 			{
 				@Override

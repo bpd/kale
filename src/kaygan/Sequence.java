@@ -11,77 +11,79 @@ import kaygan.atom.Symbol;
 
 public class Sequence implements Iterable<Function>,  Function
 {
+	private final Sequence parent;
+	
 	private final List<Function> elements = new ArrayList<Function>();
 	
 	private final Map<Object, Function> bindings = new HashMap<Object, Function>();
 	
-//	public void add(Function element)
-//	{
-//		if( element instanceof Pair )
-//		{
-//			Pair pair = (Pair)element;
-//			scope.set( pair.symbol, pair.value );
-//		}
-//		
-//		elements.add( element );
-//	}
+	public Sequence( Sequence parent )
+	{
+		this.parent = parent;
+	}
+	
+	public Sequence()
+	{
+		this( null );
+	}
 	
 	public int size()
 	{
 		return elements.size();
 	}
 	
+	public Function resolve(Symbol symbol)
+	{
+		Sequence sequence = this;
+		while( sequence != null )
+		{
+			Function f = sequence.bindings.get(symbol);
+			if( f != null )
+			{
+				// we found a binding for the symbol
+				return f;
+			}
+			
+			// traverse up parent scopes
+			sequence = sequence.parent;
+		}
+		throw new RuntimeException("Unresolved symbol: " + symbol);
+	}
 
 	@Override
 	public Function bind(Function f)
 	{
 		
-		
-		if( f instanceof Symbol )
+		if( f instanceof Sequence )
+		{
+			// sequence or chain
+			elements.add( f );
+			
+		}
+		else if( f instanceof Symbol )
 		{
 			// bind the calling symbol to the Bindable
-			// the symbol refers to in this scope
+			// the symbol refers to in this scope			
+			
 			final Symbol symbol = (Symbol)f;
-			return new Function()
-			{
-				@Override
-				public Function bind(Function f)
-				{
-					System.out.println("binding " + f + " to symbol " + symbol);
-					return symbol.bind(f);
-				}
-				
-				@Override
-				public Function eval()
-				{
-					Function f = bindings.get(symbol);
-					if( f == null )
-					{
-						throw new RuntimeException("Unresolved symbol: " + symbol);
-					}
-					System.out.println("resolved symbol " + symbol + " to " + f);
-					return f.eval();
-				}
-				
-				@Override
-				public String toString()
-				{
-					return "<SymbolRef '"+symbol+"'>";
-				}
-			};
-			//return bindings.get( symbol );
+			
+			Function binding = resolve( symbol );
+			
+			elements.add( binding );
+			
 		}
 		else if( f instanceof Pair )
 		{
 			Pair pair = (Pair)f;
 			
-			System.out.println("binding symbol " + pair.symbol + " to " + pair.value);
-			
 			bindings.put( pair.symbol, pair.value );
+			
+			elements.add( pair );
 		}
-		
-		if( f != null )
+		else
 		{
+			// catch-all for Int, Num, etc.
+			
 			elements.add( f );
 		}
 		
@@ -96,9 +98,16 @@ public class Sequence implements Iterable<Function>,  Function
 		
 		for( Function element : elements )
 		{
-			// FIXME this scope or the parent scope?
-			System.out.println("binding: " + element);
-			sequence = sequence.bind( element.eval() );
+			if( element instanceof Pair )
+			{
+				// pairs have already done their job in the bind phase
+				// by binding the named element
+				sequence = sequence.bind( element );
+			}
+			else
+			{
+				sequence = sequence.bind( element.eval() );
+			}
 		}
 		
 		return sequence;

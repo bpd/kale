@@ -86,7 +86,7 @@ public class BlockReader implements Closeable
 		}
 	}
 	
-	public Function eval()
+	public Function eval( Sequence parent )
 	{
 		ignoreWhitespace();
 		
@@ -133,7 +133,7 @@ public class BlockReader implements Closeable
 			{
 				ignoreWhitespace();
 				
-				Function cell = eval();
+				Function cell = eval( parent );
 				if( cell == null )
 				{
 					error("Expected value after " + symbol + ":");
@@ -149,11 +149,11 @@ public class BlockReader implements Closeable
 		}
 		else if( c == '[' )
 		{
-			return evalSequence( new Sequence() );
+			return evalSequence( new Sequence( parent ) );
 		}
 		else if( c == '(' )
 		{
-			return evalChain( new Chain() );
+			return evalChain( new Chain( parent ) );
 		}
 		else if( c == 65535 )
 		{
@@ -177,9 +177,9 @@ public class BlockReader implements Closeable
 		
 		while( true )
 		{
-			Function f = eval();
+			Function f = eval( sequence );
 			
-			previous = sequence.bind(f);
+			previous = previous.bind(f);
 			
 			// look for the end of the cell
 			ignoreWhitespace();
@@ -204,7 +204,7 @@ public class BlockReader implements Closeable
 		
 		while( true )
 		{
-			current = current.bind( eval() );
+			current = current.bind( eval( chain ) );
 			
 			// look for the end of the cell
 			ignoreWhitespace();
@@ -367,9 +367,6 @@ public class BlockReader implements Closeable
 	
 	static boolean isSymbolChar(int c)
 	{
-//		return (c >= 'a' && c <= 'z')
-//			|| (c >= 'A' && c <= 'Z');
-		
 		return !(  c == ':'
 				|| c == '['
 				|| c == ']'
@@ -404,50 +401,10 @@ public class BlockReader implements Closeable
 		unread(c);
 		
 		return symbol.toString();
-//		
-//		if( c == ']' )
-//		{
-//			return TOK_END_CELL;
-//		}
-//		else if( c == '[' )
-//		{
-//			return TOK_BEGIN_CELL;
-//		}
-//		else if( c == -1 || c == 65535 )
-//		{
-//			return TOK_EOF;
-//		}
-//		else
-//		{
-//			// read symbol
-//			StringBuilder atom = new StringBuilder();
-//			
-//			while( !Character.isWhitespace(c) && c != 65535 )
-//			{
-//				if( c == '[' || c == ']' )
-//				{
-//					// we've encountered the next cell structure
-//					unread(c);
-//					return atom.toString();
-//				}
-//				if( c == ':' )
-//				{
-//					// we've encountered the end of the key, so
-//					// retain the ':' ending char and return the symbol
-//					atom.append((char)c);
-//					return atom.toString();
-//				}
-//				atom.append((char)c);
-//				
-//				c = read();
-//			}
-//			return atom.toString();
-//		}
 	}
 	
 	public static Function eval(String input)
 	{
-		//return new BlockReader(new StringReader(input)).eval();
 		return eval( input, new Sequence() );
 	}
 	
