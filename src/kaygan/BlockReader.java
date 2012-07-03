@@ -155,7 +155,7 @@ public class BlockReader implements Closeable
 		{
 			return evalChain( new Chain( parent ) );
 		}
-		else if( c == 65535 )
+		else if( isEOF(c) )
 		{
 			// TODO eof, null or explicit EOF element?
 			return null;
@@ -166,9 +166,9 @@ public class BlockReader implements Closeable
 		return null;
 	}
 	
-	protected boolean isEOF(int c)
+	protected static boolean isEOF(int c)
 	{
-		return c == 65535;
+		return c == 65535 || c == -1;
 	}
 	
 	public Function evalSequence(Sequence sequence)
@@ -371,7 +371,8 @@ public class BlockReader implements Closeable
 				|| c == '['
 				|| c == ']'
 				|| c == '('
-				|| c == ')')
+				|| c == ')'
+				|| isEOF(c) )
 				&& !Character.isWhitespace(c);
 		
 	}
