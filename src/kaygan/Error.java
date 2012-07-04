@@ -1,6 +1,6 @@
 package kaygan;
 
-public class Error implements Function
+public class Error extends Function
 {
 	private final String message;
 	
@@ -24,6 +24,14 @@ public class Error implements Function
 	public Function eval()
 	{
 		return this; //();
+	}
+	
+	private static final Type TYPE = new Type("<Error>");
+	
+	@Override
+	public Type getType()
+	{
+		return TYPE;
 	}
 	
 	@Override

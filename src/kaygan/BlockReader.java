@@ -86,7 +86,12 @@ public class BlockReader implements Closeable
 		}
 	}
 	
-	protected Function eval( Sequence parent )
+//	protected Function eval()
+//	{
+//		return this.eval((Function)null);
+//	}
+	
+	protected Function eval(Function parent)
 	{
 		ignoreWhitespace();
 		
@@ -133,7 +138,7 @@ public class BlockReader implements Closeable
 			{
 				ignoreWhitespace();
 				
-				Function cell = eval( parent );
+				Function cell = eval(parent);
 				if( cell == null )
 				{
 					error("Expected value after " + symbol + ":");
@@ -149,11 +154,11 @@ public class BlockReader implements Closeable
 		}
 		else if( c == '[' )
 		{
-			return evalSequence( new Sequence( parent ) );
+			return evalSequence(parent);
 		}
 		else if( c == '(' )
 		{
-			return evalChain( new Chain( parent ) );
+			return evalChain();
 		}
 		else if( isEOF(c) )
 		{
@@ -171,13 +176,16 @@ public class BlockReader implements Closeable
 		return c == 65535 || c == -1;
 	}
 	
-	public Sequence evalSequence(Sequence sequence)
+	public Sequence evalSequence(Function parent)
 	{
+		Sequence sequence = new Sequence();
+		sequence.setParent(parent);
+		
 		while( true )
 		{
-			Function f = eval( sequence );
+			Function f = eval(sequence);
 			
-			sequence.add( f );
+			sequence.add( sequence.bind( f ) );
 			
 			// look for the end of the cell
 			ignoreWhitespace();
@@ -195,13 +203,14 @@ public class BlockReader implements Closeable
 		return sequence;
 	}
 	
-	public Function evalChain(Chain chain)
+	public Function evalChain()
 	{
-		Function current = chain;
+		Chain chain = new Chain();
 		
 		while( true )
 		{
-			current = current.bind( eval( chain ) );
+			// TODO parse chain
+			//chain.add( eval() );
 			
 			// look for the end of the cell
 			ignoreWhitespace();
@@ -216,7 +225,7 @@ public class BlockReader implements Closeable
 			unread(next);
 		}
 		
-		return current;
+		return chain;
 	}
 	
 	static boolean isHexDigit(int c)
@@ -401,27 +410,38 @@ public class BlockReader implements Closeable
 		return symbol.toString();
 	}
 	
-	public static Sequence eval(String input)
+	public static Function eval(String input)
 	{
-		return eval( input, new Sequence() );
+		return eval(input, new Sequence() );
 	}
 	
-	/**
-	 * By default, the default scope is a chain.
-	 * 
-	 * That way, at a REPL when someone types '1 + 2'
-	 *   it will function as expected
-	 * 
-	 * @param input
-	 * @param sequence
-	 * @return
-	 */
-	public static Sequence eval(String input, Sequence sequence)
+	public static Function eval(String input, Sequence sequence)
 	{
-		Sequence resultSequence = new BlockReader(new StringReader(input)).evalSequence(sequence);
+		final BlockReader reader = new BlockReader(new StringReader(input));
 		
-		return resultSequence;
+		int resultCount = 0;
 		
+		Function f = reader.eval(sequence);
+		while( f != null )
+		{
+			f = sequence.bind(f);
+			
+			sequence.add(f);
+			
+			resultCount++;
+			
+			Function next = reader.eval(sequence);
+			if( next == null )
+			{
+				if( resultCount == 1 )
+				{
+					return f;
+				}
+			}
+			f = next;
+		}
+
+		return sequence;		
 	}
 
 }

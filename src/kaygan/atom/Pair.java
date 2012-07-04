@@ -1,8 +1,9 @@
 package kaygan.atom;
 
 import kaygan.Function;
+import kaygan.Type;
 
-public class Pair implements Function
+public class Pair extends Function
 {
 	public final String symbol;
 	
@@ -15,6 +16,13 @@ public class Pair implements Function
 	}
 	
 	@Override
+	public void setParent(Function parent)
+	{
+		this.parent = parent;
+		this.value.setParent(parent);
+	}
+	
+	@Override
 	public Function eval()
 	{
 		return this;
@@ -24,6 +32,16 @@ public class Pair implements Function
 	public Function bind(Function f)
 	{
 		return this;
+	}
+	
+	@Override
+	public Type getType()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("<Pair<");
+		sb.append(value.getType().toString());
+		sb.append(">>");
+		return new Type(sb.toString());
 	}
 	
 	@Override

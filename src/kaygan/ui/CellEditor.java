@@ -17,11 +17,11 @@ public class CellEditor extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	
-	private volatile Sequence sequence = new Sequence();
+	//private volatile Sequence sequence = new Sequence();
 
 	private final CellTextEditor text = new CellTextEditor();
 	
-	private final ReadEvalPrintPane repl = new ReadEvalPrintPane(sequence);
+	private final ReadEvalPrintPane repl = new ReadEvalPrintPane();
 	
 	public CellEditor()
 	{
@@ -59,20 +59,10 @@ public class CellEditor extends JPanel
 	{
 		try
 		{
-			Sequence result = BlockReader.eval( input );
-			
-			result.bind();
-			
-			// the result of the text eval is the new environment sequence,
-			// so set it here and on the REPL
-			this.sequence = result;
-			
-			repl.setSequence(result);
-			
+			repl.addInfo("Load");
 			repl.reset();
-			repl.addResult(result);
+			repl.eval(input);
 			
-			repl.addInfo("Loaded.");
 			repl.focus();
 		}
 		catch(RuntimeException re)

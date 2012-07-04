@@ -25,13 +25,9 @@ public class ReadEvalPrintPane extends JPanel
 	
 	final JTextField input = new JTextField();
 	
-	volatile Sequence sequence;
-	public void setSequence(Sequence sequence)
-	{
-		this.sequence = sequence;
-	}
+	volatile Sequence sequence = new Sequence();
 	
-	public ReadEvalPrintPane(Sequence sequence)
+	public ReadEvalPrintPane()
 	{
 		this.sequence = sequence;
 		
@@ -78,14 +74,28 @@ public class ReadEvalPrintPane extends JPanel
 	{
 		try
 		{
-			Sequence result = BlockReader.eval( input );
+			Function result = BlockReader.eval( input, this.sequence );
 			
-			result.bindTo(this.sequence);
-			
-			for( Function f : result )
-			{
-				this.sequence.add( f );
-			}
+//			if( result instanceof Sequence )
+//			{
+//				for( Function f : ((Sequence)result) )
+//				{
+//					//f = this.sequence.bind(f);
+//					
+//					//if( f instanceof Pair )
+//					//{
+//					//	this.sequence.add( f );
+//					//}
+//					
+//					addResult( f.eval() );
+//				}
+//			}
+//			else
+//			{
+//				System.out.println("result: " + result.getType());
+//				
+//				addResult( result.eval() );
+//			}
 			
 			addResult( result.eval() );
 		}
@@ -125,25 +135,14 @@ public class ReadEvalPrintPane extends JPanel
 		}
 	}
 	
-	public void addResult( Sequence sequence )
+	public void addResult( Function f )
 	{
 		StyledDocument doc = output.getStyledDocument();
 		
-		StringBuilder sb = new StringBuilder();
-		
-		for( Function f : sequence )
-		{
-			if( !(f instanceof Pair) )
-			{
-				sb.append("=> ");
-				sb.append( f.toString() );
-				sb.append('\n');
-			}
-		}
-		
 		try
 		{
-			doc.insertString(doc.getLength(), sb.toString(), null);
+			doc.insertString(doc.getLength(), f.toString(), null);
+			doc.insertString(doc.getLength(), "\n", null);
 		}
 		catch(BadLocationException e)
 		{

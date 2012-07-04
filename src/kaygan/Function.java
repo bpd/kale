@@ -1,8 +1,32 @@
 package kaygan;
 
-public interface Function
+import java.util.HashMap;
+import java.util.Map;
+
+import kaygan.atom.Pair;
+import kaygan.atom.Symbol;
+
+public abstract class Function
 {
-	// Scope getScope();
+	// TODO this needs to be an immutable constructor argument for all Functions
+	protected volatile Function parent;
+	
+	public void setParent(Function parent)
+	{
+		this.parent = parent;
+	}
+	
+	public Function getParent()
+	{
+		return parent;
+	}
+	
+	private final Map<Object, Function> bindings = new HashMap<Object, Function>();
+	
+	public void bind(Object key, Function value)
+	{
+		bindings.put(key, value);
+	}
 	
 	/**
 	 * 
@@ -29,7 +53,57 @@ public interface Function
 	 * @param f
 	 * @return
 	 */
-	Function bind(Function f);
+	public Function bind(Function f)
+	{
+		System.out.println("bind(): " + f);
+		
+		if( f instanceof Pair )
+		{
+			Pair pair = (Pair)f;
+			
+			Function bound = bind(pair.value);
+			
+			bindings.put( pair.symbol, bound );
+			
+			System.out.println(pair.symbol + " => " + bound);
+			
+			return pair;
+			
+			// TODO adjust type signature
+		}
+		else if( f instanceof Symbol )
+		{
+			// bind the calling symbol to the Bindable
+			// the symbol refers to in this scope			
+			
+			final Symbol symbol = (Symbol)f;
+			
+			Function resolved = bindings.get(symbol);
+			if( resolved == null && parent != null )
+			{
+				resolved = parent.bind(symbol);
+			}
+			
+			if( resolved == null )
+			{
+				throw new RuntimeException("Unresolved symbol: " + symbol);
+			}
+			
+			return resolved;
+		}
+		
+		return f;
+	}
 	
-	Function eval();
+	public abstract Type getType();
+	
+	public abstract Function eval();
+	
+	//private final List<String> errors = new ArrayList<String>();
+	
+	public void error(String message)
+	{
+		//errors.add(message);
+		throw new RuntimeException(message);
+	}
 }

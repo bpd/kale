@@ -1,8 +1,9 @@
 package kaygan.atom;
 
 import kaygan.Function;
+import kaygan.Type;
 
-public class Symbol implements Function
+public class Symbol extends Function
 {
 	private final String value;
 	
@@ -21,6 +22,14 @@ public class Symbol implements Function
 	public Function eval()
 	{
 		return this;
+	}
+	
+	private static final Type TYPE = new Type("<Symbol>");
+	
+	@Override
+	public Type getType()
+	{
+		return TYPE;
 	}
 	
 	@Override

@@ -2,8 +2,9 @@ package kaygan.atom;
 
 import kaygan.Function;
 import kaygan.Sequence;
+import kaygan.Type;
 
-public class Ref implements Function
+public class Ref extends Function
 {
 	private final Sequence sequence;
 	
@@ -24,15 +25,24 @@ public class Ref implements Function
 	@Override
 	public Function eval()
 	{
-		Function f = sequence.resolve(symbol);
-		
-		System.out.println("symbol " + symbol + " resolved to " + f + " within sequence: " + sequence);
-		
-		Function result = f.eval();
-		
-		System.out.println("eval'd to: " + result);
-		
-		return result;
+//		Function f = sequence.resolve(symbol);
+//		
+//		System.out.println("symbol " + symbol + " resolved to " + f + " within sequence: " + sequence);
+//		
+//		Function result = f.eval();
+//		
+//		System.out.println("eval'd to: " + result);
+//		
+//		return result;
+		return null;
+	}
+	
+	private static final Type TYPE = new Type("<Ref>");
+	
+	@Override
+	public Type getType()
+	{
+		return TYPE;
 	}
 	
 	@Override

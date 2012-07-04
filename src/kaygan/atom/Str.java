@@ -1,8 +1,9 @@
 package kaygan.atom;
 
 import kaygan.Function;
+import kaygan.Type;
 
-public class Str implements Function
+public class Str extends Function
 {
 	private final String value;
 	
@@ -21,6 +22,14 @@ public class Str implements Function
 	public Function eval()
 	{
 		return this;
+	}
+	
+	private static final Type TYPE = new Type("<Str>");
+	
+	@Override
+	public Type getType()
+	{
+		return TYPE;
 	}
 	
 	@Override

@@ -2,41 +2,12 @@ package kaygan;
 
 public class Chain extends Sequence
 {
-	public Chain( Sequence parent )
-	{
-		super( parent );
-	}
 	
 	@Override
 	public Function bind(Function f)
 	{
 		System.out.println("chain.bind(): " + f);
 		
-		if( f instanceof Sequence )
-		{
-			System.out.println("found function");
-			System.exit(1);
-			return new Function()
-			{
-				@Override
-				public Function bind(Function f)
-				{
-					return f;
-				}
-				
-				@Override
-				public Function eval()
-				{
-					return this;
-				}
-				
-				@Override
-				public String toString()
-				{
-					return "<Function>";
-				}
-			};
-		}
 		
 		return super.bind(f);
 	}

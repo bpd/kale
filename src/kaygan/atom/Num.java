@@ -1,14 +1,28 @@
 package kaygan.atom;
 
 import kaygan.Function;
+import kaygan.Type;
 
-public class Num implements Function
+public class Num extends Function
 {
 	private final Number value;
 	
 	public Num(Number value)
 	{
 		this.value = value;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return value.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		return other instanceof Num
+			&& ((Num)other).value.equals(this.value);
 	}
 	
 	public Function eval()
@@ -19,36 +33,15 @@ public class Num implements Function
 	@Override
 	public Function bind(Function f)
 	{
-		
-		
-		
-		
-//		if( caller instanceof Symbol )
-//		{
-//			Symbol symbolRef = (Symbol)caller;
-//			if( symbolRef.equals("+") )
-//			{
-//				return new Binding()
-//				{
-//					@Override
-//					public Binding bind(Bindable parent)
-//					{
-//						if( !(caller instanceof Num) )
-//						{
-//							return null; //new Error("'+' requires Num");
-//						}
-//						return caller.bind(null);
-//					}
-//
-//					@Override
-//					public Object invoke(Scope scope) {
-//						// TODO Auto-generated method stub
-//						return null;
-//					}
-//				};
-//			}
-//		}
 		return this;
+	}
+	
+	private static final Type TYPE = new Type("<Num>");
+	
+	@Override
+	public Type getType()
+	{
+		return TYPE;
 	}
 	
 	@Override
