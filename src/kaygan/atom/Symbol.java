@@ -38,6 +38,6 @@ public class Symbol implements Function
 	@Override
 	public String toString()
 	{
-		return "<Symbol '"+value.toString()+"'>";
+		return value;
 	}
 }

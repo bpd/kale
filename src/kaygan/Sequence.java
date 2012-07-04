@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import kaygan.atom.Pair;
+import kaygan.atom.Ref;
 import kaygan.atom.Symbol;
 
 public class Sequence implements Iterable<Function>,  Function
@@ -44,25 +45,37 @@ public class Sequence implements Iterable<Function>,  Function
 				return f;
 			}
 			
+			System.out.println("symbol " + symbol + " not found in: " + sequence);
+			
 			// traverse up parent scopes
 			sequence = sequence.parent;
 		}
-		throw new RuntimeException("Unresolved symbol: " + symbol);
+		//throw new RuntimeException("Unresolved symbol: " + symbol);
+		return new Error("Unresolved symbol: " + symbol);
 	}
 	
 	public void add(Function f)
 	{
-		elements.add( f );
+		if( f instanceof Pair )
+		{
+			Pair pair = (Pair)f;
+			bindings.put( pair.symbol, bind(pair.value) );
+		}
+		else
+		{
+			elements.add( f );
+		}
 	}
 	
 	public void bind()
 	{
-		for(int i=0; i<elements.size(); i++ )
-		{
-			Function f = elements.get(i);
-			
-			elements.set(i, bind(f));
-		}
+//		for(int i=0; i<elements.size(); i++ )
+//		{
+//			Function f = elements.get(i);
+//			
+//			elements.set(i, bind(f));
+//		}
+		bindTo(this);
 	}
 	
 	public void bindTo(Sequence sequence)
@@ -71,19 +84,23 @@ public class Sequence implements Iterable<Function>,  Function
 		{
 			Function f = elements.get(i);
 			
-			elements.set(i, sequence.bind(f));
+			Function bound = sequence.bind(f);
+			
+			elements.set(i, bound);
 		}
 	}
 
 	@Override
 	public Function bind(Function f)
 	{
+		Function bound = f;
+		
 		if( f instanceof Sequence )
 		{
-			// sequence or chain
-			((Sequence)f).bind();
+			System.out.println("found sequence");
 			
-			return f;
+			// sequence or chain
+			((Sequence)f).bindTo(this);			
 		}
 		else if( f instanceof Symbol )
 		{
@@ -92,33 +109,28 @@ public class Sequence implements Iterable<Function>,  Function
 			
 			final Symbol symbol = (Symbol)f;
 			
-			Function resolved = resolve( symbol );
-			
-			return resolved;
+			bound = new Ref(this, symbol);
 		}
-		else if( f instanceof Pair )
-		{
-			Pair pair = (Pair)f;
-			
-			bindings.put( pair.symbol, bind(pair.value) );
-			
-			return pair;
-		}
-		else
-		{
-			// catch-all for Int, Num, etc.
-			return f;
-		}
+		
+		System.out.println("bound " + f + " => " + bound);
+
+		return bound;
 	}
 	
 	@Override
-	public Function eval()
+	public Sequence eval()
 	{
+		System.out.println("eval()");
+		
 		Sequence sequence = new Sequence();
 		
 		for( Function element : elements )
 		{
-			sequence.add( element.eval() );
+			Function evalResult = element.eval();
+			
+			System.out.println("evalResult: " + evalResult);
+			
+			sequence.elements.add( evalResult );
 		}
 		
 		return sequence;

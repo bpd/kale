@@ -78,11 +78,16 @@ public class ReadEvalPrintPane extends JPanel
 	{
 		try
 		{
-			Sequence result = BlockReader.eval( input, this.sequence );
+			Sequence result = BlockReader.eval( input );
 			
 			result.bindTo(this.sequence);
 			
-			addResult( result );
+			for( Function f : result )
+			{
+				this.sequence.add( f );
+			}
+			
+			addResult( result.eval() );
 		}
 		catch(RuntimeException re)
 		{

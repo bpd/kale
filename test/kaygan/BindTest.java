@@ -27,9 +27,9 @@ public class BindTest extends TestCase
 	
 	public void testReadSequence()
 	{
-		Object o = eval(" a: 7 b: [ 1 2 3 a ] ");
+		Object o = eval(" a: 7 b: [ 1 2 3 a ] b ");
 		
-		assertEquals("[ a:7 b:[ 1 2 3 7 ] ]", o.toString());
+		assertEquals("[ [ 1 2 3 7 ] ]", o.toString());
 	}
 	
 	public void testReadNestedSequence()
@@ -43,7 +43,14 @@ public class BindTest extends TestCase
 	{
 		Object o = eval(" a: 7 b: [ 1 2 3 a a:6 [8 a] ] ");
 		
-		assertEquals("[ a:7 b:[ 1 2 3 7 a:6 [ 8 6 ] ] ]", o.toString());
+		assertEquals("[ a:7 b:[ 1 2 3 6 a:6 [ 8 6 ] ] ]", o.toString());
+	}
+	
+	public void testExchange()
+	{
+		Object o = eval(" a: 7 b:8 [ b:a a:b ] ");
+		
+		System.out.println("o: " + o);
 	}
 	
 //	public void testReadFunction()
