@@ -28,6 +28,20 @@ public abstract class Function
 		bindings.put(key, value);
 	}
 	
+	public <T extends Function> T clone(T prototype)
+	{
+		prototype.setParent(this.parent);
+		
+		prototype.bindings.putAll(this.bindings);
+		
+		return prototype;
+	}
+	
+	public Function bindTo(Function function)
+	{
+		return this;
+	}
+	
 	/**
 	 * 
 	 * In a Sequence:
@@ -78,9 +92,14 @@ public abstract class Function
 			
 			final Symbol symbol = (Symbol)f;
 			
+			System.out.println("resolving symbol " + symbol);
+			System.out.println("my bindings: " + bindings + ", my parent: " + this.parent);
+			
 			Function resolved = bindings.get(symbol);
 			if( resolved == null && parent != null )
 			{
+				System.out.println("resolving symbol through parent");
+				
 				resolved = parent.bind(symbol);
 			}
 			
@@ -88,6 +107,12 @@ public abstract class Function
 			{
 				throw new RuntimeException("Unresolved symbol: " + symbol);
 			}
+			
+			System.out.println("symbol " + symbol + " resolved to " + resolved);
+			
+			resolved = resolved.bindTo(this);
+			
+			System.out.println("resolved symbol " + symbol + " bound to " + resolved);
 			
 			return resolved;
 		}

@@ -15,7 +15,6 @@ import javax.swing.text.StyledDocument;
 import kaygan.BlockReader;
 import kaygan.Function;
 import kaygan.Sequence;
-import kaygan.atom.Pair;
 
 public class ReadEvalPrintPane extends JPanel
 {
@@ -25,7 +24,7 @@ public class ReadEvalPrintPane extends JPanel
 	
 	final JTextField input = new JTextField();
 	
-	volatile Sequence sequence = new Sequence();
+	volatile Function sequence = new Sequence();
 	
 	public ReadEvalPrintPane()
 	{
@@ -74,18 +73,18 @@ public class ReadEvalPrintPane extends JPanel
 	{
 		try
 		{
-			Function result = BlockReader.eval( input, this.sequence );
+			Function result = BlockReader.eval( input );
 			
 //			if( result instanceof Sequence )
 //			{
 //				for( Function f : ((Sequence)result) )
 //				{
-//					//f = this.sequence.bind(f);
+//					f = f.bindTo(this.sequence);
 //					
-//					//if( f instanceof Pair )
-//					//{
-//					//	this.sequence.add( f );
-//					//}
+//					if( f instanceof Pair )
+//					{
+//						this.sequence.add( f );
+//					}
 //					
 //					addResult( f.eval() );
 //				}
@@ -97,7 +96,16 @@ public class ReadEvalPrintPane extends JPanel
 //				addResult( result.eval() );
 //			}
 			
+			result = result.bindTo(this.sequence);
+			
 			addResult( result.eval() );
+			
+			// TODO cleaner way of duplicating/pulling in function bindings
+			this.sequence = result.clone(this.sequence);
+			
+//			this.sequence.add( result );
+			
+			
 		}
 		catch(RuntimeException re)
 		{

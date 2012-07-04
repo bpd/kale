@@ -91,7 +91,7 @@ public class BlockReader implements Closeable
 //		return this.eval((Function)null);
 //	}
 	
-	protected Function eval(Function parent)
+	protected Function eval()
 	{
 		ignoreWhitespace();
 		
@@ -138,7 +138,7 @@ public class BlockReader implements Closeable
 			{
 				ignoreWhitespace();
 				
-				Function cell = eval(parent);
+				Function cell = eval();
 				if( cell == null )
 				{
 					error("Expected value after " + symbol + ":");
@@ -154,7 +154,7 @@ public class BlockReader implements Closeable
 		}
 		else if( c == '[' )
 		{
-			return evalSequence(parent);
+			return evalSequence();
 		}
 		else if( c == '(' )
 		{
@@ -176,16 +176,15 @@ public class BlockReader implements Closeable
 		return c == 65535 || c == -1;
 	}
 	
-	public Sequence evalSequence(Function parent)
+	public Sequence evalSequence()
 	{
 		Sequence sequence = new Sequence();
-		sequence.setParent(parent);
 		
 		while( true )
 		{
-			Function f = eval(sequence);
+			Function f = eval();
 			
-			sequence.add( sequence.bind( f ) );
+			sequence.add( f );
 			
 			// look for the end of the cell
 			ignoreWhitespace();
@@ -412,25 +411,20 @@ public class BlockReader implements Closeable
 	
 	public static Function eval(String input)
 	{
-		return eval(input, new Sequence() );
-	}
-	
-	public static Function eval(String input, Sequence sequence)
-	{
 		final BlockReader reader = new BlockReader(new StringReader(input));
 		
 		int resultCount = 0;
 		
-		Function f = reader.eval(sequence);
+		Sequence sequence = new Sequence();
+		
+		Function f = reader.eval();
 		while( f != null )
 		{
-			f = sequence.bind(f);
-			
 			sequence.add(f);
 			
 			resultCount++;
 			
-			Function next = reader.eval(sequence);
+			Function next = reader.eval();
 			if( next == null )
 			{
 				if( resultCount == 1 )

@@ -7,7 +7,7 @@ public class BindTest extends TestCase
 	protected Function eval(String input)
 	{
 		Function f = BlockReader.eval(input);
-		f.bind(f);
+		f = f.bindTo(null);
 		return f.eval();
 	}
 	

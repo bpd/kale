@@ -11,6 +11,12 @@ public class Symbol extends Function
 	{
 		this.value = value;
 	}
+	
+	@Override
+	public Function bindTo(Function f)
+	{
+		return f.bind(this);
+	}
 
 	@Override
 	public Function bind(Function f)

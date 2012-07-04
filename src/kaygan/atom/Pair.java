@@ -29,6 +29,12 @@ public class Pair extends Function
 	}
 	
 	@Override
+	public Function bindTo(Function f)
+	{
+		return f.bind(this);
+	}
+	
+	@Override
 	public Function bind(Function f)
 	{
 		return this;
