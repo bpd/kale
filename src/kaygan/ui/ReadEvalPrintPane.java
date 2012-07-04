@@ -2,7 +2,6 @@ package kaygan.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -39,7 +38,6 @@ public class ReadEvalPrintPane extends JPanel
 		setLayout( new BorderLayout() );
 		
 		// text output
-		//output.setAutoscrolls(true);
 		output.setEditable(false);
 		output.setPreferredSize( new Dimension(-1, 150) );
 		
@@ -80,7 +78,7 @@ public class ReadEvalPrintPane extends JPanel
 	{
 		try
 		{
-			Sequence result = BlockReader.eval( input );
+			Sequence result = BlockReader.eval( input, this.sequence );
 			
 			result.bindTo(this.sequence);
 			
