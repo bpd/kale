@@ -1,5 +1,9 @@
 package kaygan;
 
+import kaygan.atom.Pair;
+import kaygan.atom.Symbol;
+import kaygan.type.Any;
+
 public class Chain extends Sequence
 {
 	
@@ -11,77 +15,78 @@ public class Chain extends Sequence
 		
 		return super.bind(f);
 	}
+	
+	@Override
+	public Function bindTo(Function function)
+	{
+		System.out.println("chain.bindTo(): " + function + ":" + function.getClass().getSimpleName()
+							+ " from " + this + ":" + this.getClass().getSimpleName());
 
-//	public void add(Function element)
-//	{
-//		if( element instanceof Sequence
-//			&& size() == 0 )
+		if( elements.size() > 0 )
+		{
+			Function first = elements.get(0);
+			if( first instanceof Sequence )
+			{
+				// this is a function
+				System.out.println("function");
+				
+				setParent(function);
+				
+				Sequence arguments = (Sequence)first;
+				
+				for( Function argument : arguments )
+				{
+					if( argument instanceof Symbol )
+					{
+						set((Symbol)argument, new Any());
+					}
+					else if( argument instanceof Pair )
+					{
+						Pair pair = (Pair)argument;
+						set(pair.symbol, pair.value);
+					}
+					else
+					{
+						throw new RuntimeException("Illegal function in arguments: " + argument);
+					}
+				}
+				
+				if( elements.size() > 1 )
+				{
+					Function previous = this;
+					
+					for( int i=1; i<elements.size(); i++ )
+					{
+						Function element = elements.get(i);
+						
+						Function bound = previous.bind(element);
+						
+						elements.set(i, bound);
+						
+						previous = bound;
+					}
+				}
+				
+				return this;
+			}
+		}
+		
+
+		return super.bindTo(function);
+	}
+
+	@Override
+	public Function eval()
+	{
+//		Function previous = null;
+//		for( int i=0; i<elements.size(); i++ )
 //		{
-//			// first element is a sequence,
-//			// this turns this chain into a function
-//			
-//			//Scope subScope = new Scope(this.scope);
-//			
-//			Sequence arguments = (Sequence)element;
-//			
-//			for( Function argument : arguments )
-//			{
-//				if( argument instanceof Symbol )
-//				{
-//					// TODO new empty binding instead of null?
-//					//subScope.set( (Symbol)argument, null );
-//				}
-//				else if( argument instanceof Pair )
-//				{
-//					Pair pair = (Pair)argument;
-//					//subScope.set( pair.symbol, pair.value );
-//				}
-//				else
-//				{
-//					throw new RuntimeException("Expected Symbol or Pair");
-//				}
-//			}
-//		}
-//		else
-//		{
-//			super.add( element );
-//		}
-//	}
-//	
-//	public Binding bind(Bindable parent)
-//	{
-//		Bindable head = elements.get(0);
-//		if( head instanceof Sequence )
-//		{
-//			// head is a sequence, this is a function
-//			
-//			Sequence arguments = (Sequence)head;
-//			
-//			for( Bindable argument : arguments )
-//			{
-//				
-//				
-//				
-//			}
-//			
-//		}
-//		else
-//		{
-//			// not a function, so evaluate each element of the chain
-//			// in the context of the previous element
-//			
-//			Bindable previous = this;
-//			
-//			for( Bindable element : this.elements )
-//			{
-//				element.bind(previous);
-//				previous = element;
-//			}
 //			
 //		}
-//		
 //		return null;
-//	}
+		
+		return this;
+	}
 	
 	
 	@Override

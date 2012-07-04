@@ -66,10 +66,10 @@ public class BindTest extends TestCase
 //		System.out.println("o: " + o);
 //	}
 	
-//	public void testReadFunction()
-//	{
-//		Object o = eval(" a: ([a b] a + b)  a  ");
-//		
-//		System.out.println(" o => " + o);
-//	}
+	public void testReadFunction()
+	{
+		Object o = eval(" a: ([a:Int b] a + b)  a  ");
+		
+		System.out.println(" o => " + o);
+	}
 }

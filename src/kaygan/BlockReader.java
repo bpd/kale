@@ -208,8 +208,7 @@ public class BlockReader implements Closeable
 		
 		while( true )
 		{
-			// TODO parse chain
-			//chain.add( eval() );
+			chain.add( eval() );
 			
 			// look for the end of the cell
 			ignoreWhitespace();

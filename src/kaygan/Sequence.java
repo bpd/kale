@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Sequence extends Function implements Iterable<Function>
 {
-	private final List<Function> elements = new ArrayList<Function>();
+	protected final List<Function> elements = new ArrayList<Function>();
 	
 	private final Set<Type> types = new LinkedHashSet<Type>();
 
@@ -75,7 +75,7 @@ public class Sequence extends Function implements Iterable<Function>
 	}
 	
 	@Override
-	public Sequence eval()
+	public Function eval()
 	{
 		Sequence sequence = new Sequence();
 		

@@ -47,7 +47,15 @@ public class Symbol extends Function
 	@Override
 	public boolean equals(Object obj)
 	{
-		return value.equals(obj);
+		if( obj instanceof Symbol )
+		{
+			return value.equals(((Symbol)obj).value);
+		}
+		else if( obj instanceof String )
+		{
+			return value.equals((String)obj);
+		}
+		return false;
 	}
 
 	@Override

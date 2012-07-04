@@ -1,6 +1,6 @@
 package kaygan;
 
-public class Type
+public class Type extends Function
 {
 	private final String signature;
 	

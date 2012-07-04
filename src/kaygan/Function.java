@@ -5,11 +5,14 @@ import java.util.Map;
 
 import kaygan.atom.Pair;
 import kaygan.atom.Symbol;
+import kaygan.type.Any;
 
 public abstract class Function
 {
 	// TODO this needs to be an immutable constructor argument for all Functions
 	protected volatile Function parent;
+	
+	private final Map<Object, Function> bindings = new HashMap<Object, Function>();
 	
 	public void setParent(Function parent)
 	{
@@ -21,11 +24,26 @@ public abstract class Function
 		return parent;
 	}
 	
-	private final Map<Object, Function> bindings = new HashMap<Object, Function>();
-	
-	public void bind(Object key, Function value)
+	public void set(Object key, Function value)
 	{
 		bindings.put(key, value);
+	}
+	
+	public Function get(Object key)
+	{
+		System.out.println("resolving " + key + ":" + key.getClass().getSimpleName()
+								+ " within " + this + " (bindings: " + traceBindings() + ")");
+		
+		
+		
+		Function f = bindings.get(key);
+		if( f == null
+			&& parent != null
+			&& parent != this)
+		{
+			f = parent.get(key);
+		}
+		return f;
 	}
 	
 	public <T extends Function> T clone(T prototype)
@@ -40,6 +58,32 @@ public abstract class Function
 	public Function bindTo(Function function)
 	{
 		return this;
+	}
+	
+	public String traceBindings()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append('{');
+		sb.append(' ');
+		for( Map.Entry<Object, Function> entry : bindings.entrySet() )
+		{
+			Object key = entry.getKey();
+			Function value = entry.getValue();
+			
+			sb.append(key);
+			sb.append(':');
+			sb.append(key.getClass().getSimpleName());
+			
+			sb.append('=');
+			
+			sb.append(value);
+			sb.append(':');
+			sb.append(value.getClass().getSimpleName());
+			
+			sb.append(' ');
+		}
+		sb.append('}');
+		return sb.toString();
 	}
 	
 	/**
@@ -75,9 +119,11 @@ public abstract class Function
 		{
 			Pair pair = (Pair)f;
 			
-			Function bound = bind(pair.value);
+			//Function bound = bind(pair.value);
 			
-			bindings.put( pair.symbol, bound );
+			Function bound = pair.value;
+			
+			set( pair.symbol, bound );
 			
 			System.out.println(pair.symbol + " => " + bound);
 			
@@ -92,16 +138,10 @@ public abstract class Function
 			
 			final Symbol symbol = (Symbol)f;
 			
-			System.out.println("resolving symbol " + symbol);
+			System.out.println("resolving symbol " + symbol + " from " + this);
 			System.out.println("my bindings: " + bindings + ", my parent: " + this.parent);
 			
-			Function resolved = bindings.get(symbol);
-			if( resolved == null && parent != null )
-			{
-				System.out.println("resolving symbol through parent");
-				
-				resolved = parent.bind(symbol);
-			}
+			Function resolved = get(symbol);
 			
 			if( resolved == null )
 			{
@@ -120,9 +160,17 @@ public abstract class Function
 		return f;
 	}
 	
-	public abstract Type getType();
+	private static final Any ANY = new Any();
 	
-	public abstract Function eval();
+	public Type getType()
+	{
+		return ANY;
+	}
+	
+	public Function eval()
+	{
+		return this;
+	}
 	
 	//private final List<String> errors = new ArrayList<String>();
 	

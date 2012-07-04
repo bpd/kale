@@ -10,6 +10,28 @@ public class Num extends Function
 	public Num(Number value)
 	{
 		this.value = value;
+		
+		set("+", new Function()
+		{
+			@Override
+			public Function bind(Function f)
+			{
+				if( f instanceof Symbol )
+				{
+					Symbol symbol = (Symbol)f;
+					
+					System.out.println("binding " + f);
+				}
+				// TODO a
+				return this;
+			}
+			
+			@Override
+			public Function eval()
+			{
+				return this;
+			}
+		} );
 	}
 	
 	@Override
