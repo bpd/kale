@@ -17,7 +17,7 @@ public class Pair implements Function
 	@Override
 	public Function eval()
 	{
-		return value.eval();
+		return this;
 	}
 	
 	@Override

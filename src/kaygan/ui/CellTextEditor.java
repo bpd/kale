@@ -1,8 +1,6 @@
 package kaygan.ui;
 
 import java.awt.Font;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -20,7 +18,7 @@ public class CellTextEditor extends JTextPane
 		
 		try
 		{
-			doc.insertString(0, "Hello World", null);
+			doc.insertString(0, "a: 2\nb: [ 1 2 3 a ]\n\n", null);
 		}
 		catch(BadLocationException e)
 		{

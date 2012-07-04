@@ -86,7 +86,7 @@ public class BlockReader implements Closeable
 		}
 	}
 	
-	public Function eval( Sequence parent )
+	protected Function eval( Sequence parent )
 	{
 		ignoreWhitespace();
 		
@@ -171,22 +171,19 @@ public class BlockReader implements Closeable
 		return c == 65535 || c == -1;
 	}
 	
-	public Function evalSequence(Sequence sequence)
+	public Sequence evalSequence(Sequence sequence)
 	{
-		Function previous = sequence;
-		
 		while( true )
 		{
 			Function f = eval( sequence );
 			
-			previous = previous.bind(f);
+			sequence.add( f );
 			
 			// look for the end of the cell
 			ignoreWhitespace();
 			
 			int next = read();
 			if( next == ']'
-				|| next == ')'
 				|| isEOF(next) )
 			{
 				// found the end of the cell
@@ -195,7 +192,7 @@ public class BlockReader implements Closeable
 			unread(next);
 		}
 		
-		return previous;
+		return sequence;
 	}
 	
 	public Function evalChain(Chain chain)
@@ -404,7 +401,7 @@ public class BlockReader implements Closeable
 		return symbol.toString();
 	}
 	
-	public static Function eval(String input)
+	public static Sequence eval(String input)
 	{
 		return eval( input, new Sequence() );
 	}
@@ -419,9 +416,12 @@ public class BlockReader implements Closeable
 	 * @param sequence
 	 * @return
 	 */
-	public static Function eval(String input, Sequence sequence)
+	public static Sequence eval(String input, Sequence sequence)
 	{
-		return new BlockReader(new StringReader(input)).evalSequence(sequence);
+		Sequence resultSequence = new BlockReader(new StringReader(input)).evalSequence(sequence);
+		
+		return resultSequence;
+		
 	}
 
 }

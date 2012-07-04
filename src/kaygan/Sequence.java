@@ -49,16 +49,41 @@ public class Sequence implements Iterable<Function>,  Function
 		}
 		throw new RuntimeException("Unresolved symbol: " + symbol);
 	}
+	
+	public void add(Function f)
+	{
+		elements.add( f );
+	}
+	
+	public void bind()
+	{
+		for(int i=0; i<elements.size(); i++ )
+		{
+			Function f = elements.get(i);
+			
+			elements.set(i, bind(f));
+		}
+	}
+	
+	public void bindTo(Sequence sequence)
+	{
+		for(int i=0; i<elements.size(); i++ )
+		{
+			Function f = elements.get(i);
+			
+			elements.set(i, sequence.bind(f));
+		}
+	}
 
 	@Override
 	public Function bind(Function f)
 	{
-		
 		if( f instanceof Sequence )
 		{
 			// sequence or chain
-			elements.add( f );
+			((Sequence)f).bind();
 			
+			return f;
 		}
 		else if( f instanceof Symbol )
 		{
@@ -67,47 +92,33 @@ public class Sequence implements Iterable<Function>,  Function
 			
 			final Symbol symbol = (Symbol)f;
 			
-			Function binding = resolve( symbol );
+			Function resolved = resolve( symbol );
 			
-			elements.add( binding );
-			
+			return resolved;
 		}
 		else if( f instanceof Pair )
 		{
 			Pair pair = (Pair)f;
 			
-			bindings.put( pair.symbol, pair.value );
+			bindings.put( pair.symbol, bind(pair.value) );
 			
-			elements.add( pair );
+			return pair;
 		}
 		else
 		{
 			// catch-all for Int, Num, etc.
-			
-			elements.add( f );
+			return f;
 		}
-		
-		
-		return this;
 	}
 	
 	@Override
 	public Function eval()
 	{
-		Function sequence = new Sequence();
+		Sequence sequence = new Sequence();
 		
 		for( Function element : elements )
 		{
-			if( element instanceof Pair )
-			{
-				// pairs have already done their job in the bind phase
-				// by binding the named element
-				sequence = sequence.bind( element );
-			}
-			else
-			{
-				sequence = sequence.bind( element.eval() );
-			}
+			sequence.add( element.eval() );
 		}
 		
 		return sequence;

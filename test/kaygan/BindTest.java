@@ -6,8 +6,8 @@ public class BindTest extends TestCase
 {
 	protected Object eval(String input)
 	{
-		Function sequence = BlockReader.eval(input);
-		
+		Sequence sequence = BlockReader.eval(input);
+		sequence.bind();
 		return sequence.eval();
 	}
 	
