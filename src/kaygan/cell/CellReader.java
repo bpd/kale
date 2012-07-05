@@ -358,7 +358,7 @@ public class CellReader implements Closeable
 		return new Atom(symbol.toString(), Type.Symbol);
 	}
 	
-	public static Object parse(String input)
+	public static Cell parse(String input)
 	{
 		final CellReader reader = new CellReader(new StringReader(input));
 		

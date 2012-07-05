@@ -48,7 +48,7 @@ public class Atom implements Cell
 	@Override
 	public String toString()
 	{
-		return value == null ? "Nil" : value.toString();
+		return value == null ? "Nil" : value.toString() + ':' + type.toString();
 	}
 
 }

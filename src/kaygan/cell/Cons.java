@@ -12,7 +12,7 @@ public class Cons implements Cell
 		this.right = next;
 	}
 	
-	public Type type = Type.Nil;
+	public Type type = Type.Sequence;
 	
 	@Override
 	public Type getType()

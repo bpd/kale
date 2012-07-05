@@ -9,18 +9,18 @@ public interface Cell
 	public enum Type implements Cell
 	{
 		// Base Types
-		Cons(0),      // 0000
+		Nil(0),       // 0000
+		Cons(8),      // 1000
 		Atom(1),      // 0001
 		
 		// Atom Types
-		Nil(3),       // 0011
-		Num(5),       // 0101
+		Num(3),       // 0011
 		Str(7),       // 0111
-		Symbol(9),    // 1001
+		Symbol(5),    // 0101
 		
 		// Cons Types
-		Sequence(2),  // 0010
-		Chain(4)      // 0100
+		Sequence(10), // 1010
+		Chain(12)     // 1100
 		
 		;
 		
@@ -35,7 +35,8 @@ public interface Cell
 		
 		public boolean isInstance(Type type)
 		{
-			return (this.mask & type.mask) == this.mask;
+			Integer.toBinaryString(this.mask);
+			return (this.mask & type.mask) == type.mask;
 		}
 		
 		public Type getType()
