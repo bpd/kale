@@ -10,9 +10,9 @@ public class CellReader implements Closeable
 {
 	private final PushbackReader reader;
 	
-	private int line;
+	int line;
 	
-	private int column;
+	int column;
 	
 	
 	public CellReader(Reader reader)
@@ -77,9 +77,9 @@ public class CellReader implements Closeable
 		}
 	}
 	
-	protected Object parse()
+	protected Cell parse()
 	{
-		Object cell = parseCell();
+		Cell cell = parseCell();
 		
 		ignoreWhitespace();
 		
@@ -88,7 +88,7 @@ public class CellReader implements Closeable
 			read(); // consume ':'
 			
 			// left cell is being bound to right cell
-			return new Cell( cell, parseCell() );
+			return new Cons( cell, parseCell() );
 		}
 		else
 		{
@@ -96,7 +96,7 @@ public class CellReader implements Closeable
 		}
 	}
 	
-	protected Object parseCell()
+	protected Cell parseCell()
 	{
 		ignoreWhitespace();
 		
@@ -128,18 +128,18 @@ public class CellReader implements Closeable
 			{
 				// zero followed by something that's not a digit,
 				// so just make it a zero and defer to the next pass
-				return new Integer(0);
+				return new Atom(new Integer(0), Atom.Num);
 			}
 		}
 		else if( c == '[' )
 		{
 			read();
-			return readList( BEGIN_SEQUENCE, END_SEQUENCE );
+			return readList( Atom.Sequence, END_SEQUENCE );
 		}
 		else if( c == '(' )
 		{
 			read();
-			return readList( BEGIN_CHAIN, END_CHAIN );
+			return readList( Atom.Chain, END_CHAIN );
 		}
 		else if( c == ']' )
 		{
@@ -162,7 +162,7 @@ public class CellReader implements Closeable
 		else if( isEOF(c) )
 		{
 			// TODO eof, null or explicit EOF element?
-			return null;
+			return Atom.Nil;
 		}
 		
 		error("Unknown input: " + (char) c);
@@ -170,36 +170,41 @@ public class CellReader implements Closeable
 		return null;
 	}
 	
-	private static final String BEGIN_SEQUENCE = "[";
+	//private static final Atom BEGIN_SEQUENCE = new Atom("[", Atom.Symbol);
 	
-	private static final String END_SEQUENCE = "]";
+	private static final Atom END_SEQUENCE = new Atom("]", Atom.Symbol);
 	
-	private static final String BEGIN_CHAIN = "(";
+	//private static final Atom BEGIN_CHAIN = new Atom("(", Atom.Symbol);
 	
-	private static final String END_CHAIN = ")";
+	private static final Atom END_CHAIN = new Atom(")", Atom.Symbol);
 	
 	protected static boolean isEOF(int c)
 	{
 		return c == 65535 || c == -1;
 	}
 	
-	protected Object readList( String begin, String end )
+	protected Cell readList( Cell type, Atom end )
 	{
-		Cell list = new Cell( begin, null );
+		Cell next = parse();
 		
-		Cell current = list;
+		Cons list, current;
+		current = list = new Cons(next, Atom.Nil);
 		
-		Object next = parse();
+		next = parse();
 		
 		while( next != end )
 		{
-			Cell cell = new Cell(next, null);
+			Cons cell = new Cons(next, Atom.Nil);
 			
 			current.right = cell;
 			current = cell;
 			
 			next = parse();
 		}
+		
+		list.setType(type);
+		
+		System.out.println("list: " + list.toCellString());
 		
 		return list;
 	}
@@ -211,7 +216,7 @@ public class CellReader implements Closeable
 			|| (c >= '0' && c <= '9');
 	}
 	
-	protected Number readHexNumber()
+	protected Atom readHexNumber()
 	{
 		if( !isHexDigit( peek() ) )
 		{
@@ -234,7 +239,7 @@ public class CellReader implements Closeable
 		{
 			error("Bad hex value: " + e.getMessage());
 		}
-		return i;
+		return new Atom(i, Atom.Num);
 	}
 	
 	static boolean isBinaryDigit(int c)
@@ -242,7 +247,7 @@ public class CellReader implements Closeable
 		return c == '0' || c == '1';
 	}
 	
-	protected Number readBinaryNumber()
+	protected Atom readBinaryNumber()
 	{
 		if( !isBinaryDigit( peek() ) )
 		{
@@ -265,7 +270,7 @@ public class CellReader implements Closeable
 		{
 			error("Bad binary value: " + e.getMessage());
 		}
-		return i;
+		return new Atom(i, Atom.Num);
 	}
 	
 	static boolean isDigit(int c)
@@ -276,7 +281,7 @@ public class CellReader implements Closeable
 		return Character.isDigit(c);
 	}
 	
-	protected Number readNumber()
+	protected Atom readNumber()
 	{
 		StringBuilder sb = new StringBuilder();
 		
@@ -309,7 +314,7 @@ public class CellReader implements Closeable
 		{
 			error("Bad number value: " + e.getMessage());
 		}
-		return i;
+		return new Atom(i, Atom.Num);
 	}
 	
 	protected void error(String message)
@@ -332,7 +337,7 @@ public class CellReader implements Closeable
 	}
 	
 	
-	protected String readSymbol()
+	protected Atom readSymbol()
 	{
 		ignoreWhitespace();
 		
@@ -348,29 +353,29 @@ public class CellReader implements Closeable
 			symbol.append( (char) read() );
 		}
 		
-		return symbol.toString();
+		return new Atom(symbol.toString(), Atom.Symbol);
 	}
 	
 	public static Object parse(String input)
 	{
 		final CellReader reader = new CellReader(new StringReader(input));
 		
-		Object first = reader.parse();
+		Cell first = reader.parse();
 		
-		Object next = reader.parse();
-		if( next == null )
+		Cell next = reader.parse();
+		if( next == Atom.Nil )
 		{
 			// no additional inputs, just return the parsed value
 			return first;
 		}
 
 		// there are multiple inputs, so built a list
-		Cell cell = new Cell(next, null);
-		Cell root = new Cell(first, cell);
+		Cons cell = new Cons(next, Atom.Nil);
+		Cons root = new Cons(first, cell);
 		
-		while( (next = reader.parse()) != null )
+		while( (next = reader.parse()) != Atom.Nil )
 		{
-			cell.right = cell = new Cell(next, null);
+			cell.right = cell = new Cons(next, Atom.Nil);
 		}
 		
 		return root;

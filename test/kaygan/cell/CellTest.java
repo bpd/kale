@@ -8,40 +8,40 @@ public class CellTest extends TestCase
 	{
 		Object o = CellReader.parse(" 12 ");
 		
-		assertEquals( new Integer(12), o );
+		assertEquals( new Atom(new Integer(12), Atom.Num), o );
 	}
 	
 	public void testReadMultipleNumber()
 	{
 		Object o = CellReader.parse(" 12 12.2 13 0xaf ");
 		
-		assertTrue( o instanceof Cell );
+		assertTrue( o instanceof Cons );
 		
-		Cell cell = (Cell)o;
+		Cons cell = (Cons)o;
 		
-		assertEquals( cell.left, new Integer(12) );
-		assertEquals( ((Cell)cell.right).left, new Double(12.2) );
-		assertEquals( ((Cell)((Cell)cell.right).right).left, new Integer(13) );
-		assertEquals( ((Cell)((Cell)((Cell)cell.right).right).right).left, new Integer(0xaf) );
+		assertEquals( cell.left, new Atom(new Integer(12), Atom.Num) );
+		assertEquals( ((Cons)cell.right).left, new Atom(new Double(12.2), Atom.Num) );
+		assertEquals( ((Cons)((Cons)cell.right).right).left, new Atom(new Integer(13), Atom.Num) );
+		assertEquals( ((Cons)((Cons)((Cons)cell.right).right).right).left, new Atom(new Integer(0xaf), Atom.Num) );
 	}
 	
 	public void testReadReal()
 	{
 		Object o = CellReader.parse(" 12.2 ");
 		
-		assertEquals( new Double(12.2), o );
+		assertEquals( new Atom(new Double(12.2), Atom.Num), o );
 	}
 	
 	public void testReadRange()
 	{
 		Object o = CellReader.parse(" 0:24 ");
 		
-		assertTrue( o instanceof Cell );
+		assertTrue( o instanceof Cons );
 		
-		Cell cell = (Cell)o;
+		Cons cell = (Cons)o;
 		
-		assertEquals( new Integer(0), cell.left );
-		assertEquals( new Integer(24), cell.right );
+		assertEquals(  new Atom(new Integer(0), Atom.Num), cell.left );
+		assertEquals(  new Atom(new Integer(24), Atom.Num), cell.right );
 	}
 	
 	public void testBind()
@@ -62,7 +62,7 @@ public class CellTest extends TestCase
 	
 	public void testSequence()
 	{
-		Cell o = (Cell)CellReader.parse(" a: [ 2 ] ");
+		Cons o = (Cons)CellReader.parse(" a: [ 2 ] ");
 		
 		System.out.println("==================================");
 		System.out.println("o => " + o.toString());
@@ -72,7 +72,7 @@ public class CellTest extends TestCase
 	
 	public void testChain()
 	{
-		Cell o = (Cell)CellReader.parse(" b: (a 3) ");
+		Cons o = (Cons)CellReader.parse(" b: (a 3) ");
 		
 		System.out.println("==================================");
 		System.out.println("o => " + o.toString());
@@ -82,7 +82,7 @@ public class CellTest extends TestCase
 	
 	public void testNestedSequence()
 	{
-		Cell o = (Cell)CellReader.parse(" a: [b c [d e] f] ");
+		Cons o = (Cons)CellReader.parse(" a: [b c [d e] f] ");
 		
 		System.out.println("==================================");
 		System.out.println("o => " + o.toString());

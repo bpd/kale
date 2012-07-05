@@ -12,7 +12,7 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
-import kaygan.cell.Cell;
+import kaygan.cell.Cons;
 import kaygan.cell.CellReader;
 
 public class ReadEvalPrintPane extends JPanel
@@ -118,9 +118,9 @@ public class ReadEvalPrintPane extends JPanel
 		
 		try
 		{
-			if( f instanceof Cell )
+			if( f instanceof Cons )
 			{
-				doc.insertString(doc.getLength(), ((Cell)f).toCellString(), null);
+				doc.insertString(doc.getLength(), ((Cons)f).toCellString(), null);
 			}
 			else
 			{
