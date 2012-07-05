@@ -58,7 +58,7 @@ public class Num extends Function
 		return this;
 	}
 	
-	private static final Type TYPE = new Type("<Num>");
+	public static final Type TYPE = new Type("<Num>");
 	
 	@Override
 	public Type getType()

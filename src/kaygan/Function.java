@@ -24,6 +24,23 @@ public abstract class Function
 		return parent;
 	}
 	
+//	public boolean isChildOf(Function f)
+//	{
+//		Function parent = this.parent;
+//		Function previous = this;
+//		while( parent != null && parent != previous )
+//		{
+//			if( parent == f )
+//			{
+//				return true;
+//			}
+//			
+//			previous = parent;
+//			parent = parent.parent;
+//		}
+//		return false;
+//	}
+	
 	public void set(Object key, Function value)
 	{
 		bindings.put(key, value);
@@ -178,5 +195,15 @@ public abstract class Function
 	{
 		//errors.add(message);
 		throw new RuntimeException(message);
+	}
+	
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("<Function:");
+		sb.append(getType().toString());
+		sb.append('>');
+		return sb.toString();
 	}
 }

@@ -10,9 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import kaygan.BlockReader;
-import kaygan.Sequence;
-
 public class CellEditor extends JPanel
 {
 	private static final long serialVersionUID = 1L;

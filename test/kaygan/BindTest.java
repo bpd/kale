@@ -1,6 +1,8 @@
 package kaygan;
 
 import junit.framework.TestCase;
+import kaygan.atom.Num;
+import kaygan.atom.Pair;
 
 public class BindTest extends TestCase
 {
@@ -52,11 +54,7 @@ public class BindTest extends TestCase
 	{
 		Function o = eval(" b:[ a:6 a ] b ");
 		
-		System.out.println("o.type: " + o.getType());
-		
-		System.out.println("o: " + o.toString());
-		
-		//assertEquals("[ 1 2 3 7 [ 8 6 ] ]", o.toString());
+		assertEquals("[ b:[ a:6 6 ] [ a:6 6 ] ]", o.toString());
 	}
 	
 //	public void testExchange()
@@ -68,7 +66,14 @@ public class BindTest extends TestCase
 	
 	public void testReadFunction()
 	{
-		Object o = eval(" a: ([a:Int b] a + b)  a  ");
+		Object o = eval(" a: ([a b] a)  a  ");
+		
+		System.out.println(" o => " + o);
+	}
+	
+	public void testType1()
+	{
+		Object o = eval(" a: 7 a ");
 		
 		System.out.println(" o => " + o);
 	}

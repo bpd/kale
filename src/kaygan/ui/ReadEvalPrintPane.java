@@ -12,9 +12,8 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
-import kaygan.BlockReader;
-import kaygan.Function;
-import kaygan.Sequence;
+import kaygan.cell.Cell;
+import kaygan.cell.CellReader;
 
 public class ReadEvalPrintPane extends JPanel
 {
@@ -24,12 +23,8 @@ public class ReadEvalPrintPane extends JPanel
 	
 	final JTextField input = new JTextField();
 	
-	volatile Function sequence = new Sequence();
-	
 	public ReadEvalPrintPane()
 	{
-		this.sequence = sequence;
-		
 		setLayout( new BorderLayout() );
 		
 		// text output
@@ -73,38 +68,12 @@ public class ReadEvalPrintPane extends JPanel
 	{
 		try
 		{
-			Function result = BlockReader.eval( input );
+			Object o = CellReader.parse( input );
 			
-//			if( result instanceof Sequence )
-//			{
-//				for( Function f : ((Sequence)result) )
-//				{
-//					f = f.bindTo(this.sequence);
-//					
-//					if( f instanceof Pair )
-//					{
-//						this.sequence.add( f );
-//					}
-//					
-//					addResult( f.eval() );
-//				}
-//			}
-//			else
-//			{
-//				System.out.println("result: " + result.getType());
-//				
-//				addResult( result.eval() );
-//			}
-			
-			result = result.bindTo(this.sequence);
-			
-			addResult( result.eval() );
+			addResult( o );
 			
 			// TODO cleaner way of duplicating/pulling in function bindings
-			this.sequence = result.clone(this.sequence);
-			
-//			this.sequence.add( result );
-			
+			//this.sequence = result.clone(this.sequence);			
 			
 		}
 		catch(RuntimeException re)
@@ -143,13 +112,20 @@ public class ReadEvalPrintPane extends JPanel
 		}
 	}
 	
-	public void addResult( Function f )
+	public void addResult( Object f )
 	{
 		StyledDocument doc = output.getStyledDocument();
 		
 		try
 		{
-			doc.insertString(doc.getLength(), f.toString(), null);
+			if( f instanceof Cell )
+			{
+				doc.insertString(doc.getLength(), ((Cell)f).toCellString(), null);
+			}
+			else
+			{
+				doc.insertString(doc.getLength(), f.toString(), null);
+			}
 			doc.insertString(doc.getLength(), "\n", null);
 		}
 		catch(BadLocationException e)

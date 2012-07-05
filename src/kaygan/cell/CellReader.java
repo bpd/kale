@@ -6,8 +6,6 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.StringReader;
 
-import kaygan.atom.Symbol;
-
 public class CellReader implements Closeable
 {
 	private final PushbackReader reader;
@@ -172,20 +170,20 @@ public class CellReader implements Closeable
 		return null;
 	}
 	
-	private static final Symbol BEGIN_SEQUENCE = new Symbol("[");
+	private static final String BEGIN_SEQUENCE = "[";
 	
-	private static final Symbol END_SEQUENCE = new Symbol("]");
+	private static final String END_SEQUENCE = "]";
 	
-	private static final Symbol BEGIN_CHAIN = new Symbol("(");
+	private static final String BEGIN_CHAIN = "(";
 	
-	private static final Symbol END_CHAIN = new Symbol(")");
+	private static final String END_CHAIN = ")";
 	
 	protected static boolean isEOF(int c)
 	{
 		return c == 65535 || c == -1;
 	}
 	
-	protected Object readList( Symbol begin, Symbol end )
+	protected Object readList( String begin, String end )
 	{
 		Cell list = new Cell( begin, null );
 		
