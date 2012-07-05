@@ -102,7 +102,7 @@ public class CellReader implements Closeable
 				// binary literal				
 				return readBinaryNumber();
 			}
-			else if( Character.isDigit(next) )
+			else if( isDigit(next) )
 			{
 				// number literal
 				return readNumber();
@@ -110,30 +110,6 @@ public class CellReader implements Closeable
 			else
 			{
 				error("Unknown number token: " + (char) next );
-			}
-		}
-		else if( isDigit(c) )
-		{
-			return readNumber();
-		}
-		else if( isSymbolChar(c) )
-		{
-			// symbol
-			String symbol = readSymbol();
-			
-			ignoreWhitespace();
-			
-			int next = peek();
-			if( next == ':' )
-			{
-				read(); // consume ':'
-				ignoreWhitespace();
-				
-				return new Cell(new Bind(symbol), parse());
-			}
-			else
-			{
-				return new Symbol(symbol);
 			}
 		}
 		else if( c == '[' )
@@ -155,6 +131,29 @@ public class CellReader implements Closeable
 		{
 			read();
 			return END_CHAIN;
+		}
+		else if( isDigit(c) )
+		{
+			return readNumber();
+		}
+		else if( isSymbolChar(c) )
+		{
+			// symbol
+			String symbol = readSymbol();
+			
+			ignoreWhitespace();
+			
+			if( peek() == ':' )
+			{
+				read(); // consume ':'
+				ignoreWhitespace();
+				
+				return new Cell(new Bind(symbol), parse());
+			}
+			else
+			{
+				return new Symbol(symbol);
+			}
 		}
 		else if( isEOF(c) )
 		{
@@ -210,15 +209,12 @@ public class CellReader implements Closeable
 	
 	protected Number readHexNumber()
 	{
-		int first = read();
-		
-		if( !isHexDigit(first) )
+		if( !isHexDigit( peek() ) )
 		{
 			error("Expected hex digit");
 		}
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append( (char) first );
 		
 		while( isHexDigit( peek() ) )
 		{
@@ -244,15 +240,12 @@ public class CellReader implements Closeable
 	
 	protected Number readBinaryNumber()
 	{
-		int first = read();
-		
-		if( !isBinaryDigit(first) )
+		if( !isBinaryDigit( peek() ) )
 		{
 			error("Expected binary digit");
 		}
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append( (char) first );
 		
 		while( isBinaryDigit( peek() ) )
 		{
@@ -340,12 +333,12 @@ public class CellReader implements Closeable
 	{
 		ignoreWhitespace();
 		
-		StringBuilder symbol = new StringBuilder();
-		
 		if( !isSymbolChar( peek() ) )
 		{
 			error("Expected letter to begin symbol");
 		}
+		
+		StringBuilder symbol = new StringBuilder();
 		
 		while(	isSymbolChar( peek() ) )
 		{
@@ -369,21 +362,12 @@ public class CellReader implements Closeable
 		}
 
 		// there are multiple inputs, so built a list
-		Cell second = new Cell(next, null);
-		Cell root = new Cell(first, second);
+		Cell cell = new Cell(next, null);
+		Cell root = new Cell(first, cell);
 		
-		Cell cell = root;
-		
-		next = reader.parse();
-		
-		while( next != null )
+		while( (next = reader.parse()) != null )
 		{
-			Cell nextCell = new Cell(next, null);
-			
-			cell.right = nextCell;
-			cell = nextCell;
-			
-			next = reader.parse();
+			cell.right = cell = new Cell(next, null);
 		}
 		
 		return root;

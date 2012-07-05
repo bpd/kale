@@ -11,6 +11,20 @@ public class CellTest extends TestCase
 		assertEquals( new Integer(12), o );
 	}
 	
+	public void testReadMultipleNumber()
+	{
+		Object o = CellReader.parse(" 12 12.2 13 0xaf ");
+		
+		assertTrue( o instanceof Cell );
+		
+		Cell cell = (Cell)o;
+		
+		assertEquals( cell.left, new Integer(12) );
+		assertEquals( ((Cell)cell.right).left, new Double(12.2) );
+		assertEquals( ((Cell)((Cell)cell.right).right).left, new Integer(13) );
+		assertEquals( ((Cell)((Cell)((Cell)cell.right).right).right).left, new Integer(0xaf) );
+	}
+	
 	public void testReadReal()
 	{
 		Object o = CellReader.parse(" 12.2 ");
