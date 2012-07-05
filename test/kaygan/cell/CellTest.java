@@ -4,12 +4,18 @@ import junit.framework.TestCase;
 
 public class CellTest extends TestCase
 {
-	public void testSimple()
+	public void testReadNumber()
 	{
 		Object o = CellReader.parse(" 12 ");
 		
-		System.out.println("o => " + o);
-		System.out.println("o.type => " + o.getClass().getSimpleName());
+		assertEquals( new Integer(12), o );
+	}
+	
+	public void testReadReal()
+	{
+		Object o = CellReader.parse(" 12.2 ");
+		
+		assertEquals( new Double(12.2), o );
 	}
 	
 	public void testBind()
@@ -18,8 +24,6 @@ public class CellTest extends TestCase
 		
 		System.out.println("o => " + o.toString());
 		System.out.println("o.type => " + o.getClass().getSimpleName());
-		
-		
 	}
 	
 	public void testSequence()
@@ -27,6 +31,7 @@ public class CellTest extends TestCase
 		Cell o = (Cell)CellReader.parse(" a: [ 2 ] ");
 		
 		System.out.println("==================================");
+		System.out.println("o => " + o.toString());
 		System.out.println("o => " + o.toCellString());
 		System.out.println("o.type => " + o.getClass().getSimpleName());
 	}
@@ -36,6 +41,7 @@ public class CellTest extends TestCase
 		Cell o = (Cell)CellReader.parse(" b: (a 3) ");
 		
 		System.out.println("==================================");
+		System.out.println("o => " + o.toString());
 		System.out.println("o => " + o.toCellString());
 		System.out.println("o.type => " + o.getClass().getSimpleName());
 	}

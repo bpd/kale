@@ -6,11 +6,6 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.StringReader;
 
-import kaygan.Chain;
-import kaygan.Function;
-import kaygan.Sequence;
-import kaygan.atom.Num;
-import kaygan.atom.Pair;
 import kaygan.atom.Symbol;
 
 public class CellReader implements Closeable
@@ -20,8 +15,6 @@ public class CellReader implements Closeable
 	private int line;
 	
 	private int column;
-	
-	private int prevColumn;
 	
 	
 	public CellReader(Reader reader)
@@ -44,12 +37,26 @@ public class CellReader implements Closeable
 	
 	protected void ignoreWhitespace()
 	{
-		int c = read();
-		while( Character.isWhitespace(c) )
+		while( Character.isWhitespace( peek() ) )
 		{
-			c = read();
+			read();
 		}
-		unread(c);
+	}
+	
+	protected int peek()
+	{
+		try
+		{
+			int peekChar = reader.read();
+			
+			reader.unread( peekChar );
+
+			return peekChar;
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 	
 	protected int read()
@@ -72,39 +79,26 @@ public class CellReader implements Closeable
 		}
 	}
 	
-	protected void unread(int c)
-	{
-		try
-		{
-			if( c == '\n' )
-			{
-				line--;
-				column = prevColumn;
-			}
-			reader.unread(c);
-		}
-		catch(IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-	
 	protected Object parse()
 	{
 		ignoreWhitespace();
 		
-		int c = read();
+		int c = peek();
 		
 		if( c == '0' )
 		{
-			int next = read();
+			read(); // consume '0'
+			
+			int next = peek();
 			if( next == 'x' )
 			{
+				read(); // consume 'x'
 				// hex literal
 				return readHexNumber();
 			}
 			else if( next == 'b' )
 			{
+				read(); // consume 'b'
 				// binary literal				
 				return readBinaryNumber();
 			}
@@ -115,49 +109,51 @@ public class CellReader implements Closeable
 			}
 			else
 			{
-				error("Unknown number token: " + (char) c );
+				error("Unknown number token: " + (char) next );
 			}
 		}
 		else if( isDigit(c) )
 		{
-			unread(c);
 			return readNumber();
 		}
 		else if( isSymbolChar(c) )
 		{
 			// symbol
-			unread(c);
 			String symbol = readSymbol();
 			
 			ignoreWhitespace();
 			
-			int next = read();
+			int next = peek();
 			if( next == ':' )
 			{
+				read(); // consume ':'
 				ignoreWhitespace();
 				
 				return new Cell(new Bind(symbol), parse());
 			}
 			else
 			{
-				unread(next);
 				return new Symbol(symbol);
 			}
 		}
 		else if( c == '[' )
 		{
+			read();
 			return readList( BEGIN_SEQUENCE, END_SEQUENCE );
 		}
 		else if( c == '(' )
 		{
+			read();
 			return readList( BEGIN_CHAIN, END_CHAIN );
 		}
 		else if( c == ']' )
 		{
+			read();
 			return END_SEQUENCE;
 		}
 		else if( c == ')' )
 		{
+			read();
 			return END_CHAIN;
 		}
 		else if( isEOF(c) )
@@ -205,56 +201,6 @@ public class CellReader implements Closeable
 		return list;
 	}
 	
-//	public Cell evalSequence()
-//	{
-//		//Sequence sequence = new Sequence();
-//		
-//		while( true )
-//		{
-//			Object f = eval();
-//			
-//			sequence.add( f );
-//			
-//			// look for the end of the cell
-//			ignoreWhitespace();
-//			
-//			int next = read();
-//			if( next == ']'
-//				|| isEOF(next) )
-//			{
-//				// found the end of the cell
-//				break;
-//			}
-//			unread(next);
-//		}
-//		
-//		return sequence;
-//	}
-	
-//	public Function evalChain()
-//	{
-//		Chain chain = new Chain();
-//		
-//		while( true )
-//		{
-//			chain.add( eval() );
-//			
-//			// look for the end of the cell
-//			ignoreWhitespace();
-//			
-//			int next = read();
-//			if( next == ')'
-//				|| isEOF(next) )
-//			{
-//				// found the end of the cell
-//				break;
-//			}
-//			unread(next);
-//		}
-//		
-//		return chain;
-//	}
-	
 	static boolean isHexDigit(int c)
 	{
 		return (c >= 'a' && c <= 'z')
@@ -274,15 +220,10 @@ public class CellReader implements Closeable
 		StringBuilder sb = new StringBuilder();
 		sb.append( (char) first );
 		
-		int c = read();
-		
-		while( isHexDigit(c) )
+		while( isHexDigit( peek() ) )
 		{
-			sb.append( (char) c );
-			c = read();
+			sb.append( (char) read() );
 		}
-		
-		unread(c);
 		
 		Integer i = 0;
 		try
@@ -313,14 +254,10 @@ public class CellReader implements Closeable
 		StringBuilder sb = new StringBuilder();
 		sb.append( (char) first );
 		
-		int c = read();
-		
-		while( isBinaryDigit(c) )
+		while( isBinaryDigit( peek() ) )
 		{
-			sb.append( (char) c );
-			c = read();
+			sb.append( (char) read() );
 		}
-		unread(c);
 		
 		Integer i = 0;
 		try
@@ -344,32 +281,20 @@ public class CellReader implements Closeable
 	
 	protected Number readNumber()
 	{
-		
-		int c = read();
-		
-		if( !isDigit(c) )
-		{
-			error("Expected digit");
-		}
-		
 		StringBuilder sb = new StringBuilder();
 		
 		boolean real = false;
 		
-		do
+		while( isDigit( peek() ) )
 		{
-			sb.append( (char) c );
-			c = read();
-			if( c == '.' )
+			sb.append( (char) read() );
+
+			if( peek() == '.' )
 			{
 				real = true;
-				sb.append( (char) c);
-				c = read();
+				sb.append( (char) read());
 			}
 		}
-		while( isDigit(c) );
-		
-		unread(c);
 		
 		Number i = 0;
 		try
@@ -417,22 +342,15 @@ public class CellReader implements Closeable
 		
 		StringBuilder symbol = new StringBuilder();
 		
-		int c = read();
-		
-		if( !isSymbolChar(c) )
+		if( !isSymbolChar( peek() ) )
 		{
 			error("Expected letter to begin symbol");
 		}
 		
-		symbol.append( (char) c );
-		
-		c = read();
-		while(	isSymbolChar(c) )
+		while(	isSymbolChar( peek() ) )
 		{
-			symbol.append( (char) c );
-			c = read();
+			symbol.append( (char) read() );
 		}
-		unread(c);
 		
 		return symbol.toString();
 	}
