@@ -32,6 +32,18 @@ public class CellTest extends TestCase
 		assertEquals( new Double(12.2), o );
 	}
 	
+	public void testReadRange()
+	{
+		Object o = CellReader.parse(" 0:24 ");
+		
+		assertTrue( o instanceof Cell );
+		
+		Cell cell = (Cell)o;
+		
+		assertEquals( new Integer(0), cell.left );
+		assertEquals( new Integer(24), cell.right );
+	}
+	
 	public void testBind()
 	{
 		Object o = CellReader.parse(" a:2 ");

@@ -81,6 +81,25 @@ public class CellReader implements Closeable
 	
 	protected Object parse()
 	{
+		Object cell = parseCell();
+		
+		ignoreWhitespace();
+		
+		if( peek() == ':' )
+		{
+			read(); // consume ':'
+			
+			// left cell is being bound to right cell
+			return new Cell( cell, parseCell() );
+		}
+		else
+		{
+			return cell;
+		}
+	}
+	
+	protected Object parseCell()
+	{
 		ignoreWhitespace();
 		
 		int c = peek();
@@ -109,7 +128,9 @@ public class CellReader implements Closeable
 			}
 			else
 			{
-				error("Unknown number token: " + (char) next );
+				// zero followed by something that's not a digit,
+				// so just make it a zero and defer to the next pass
+				return new Integer(0);
 			}
 		}
 		else if( c == '[' )
@@ -138,22 +159,7 @@ public class CellReader implements Closeable
 		}
 		else if( isSymbolChar(c) )
 		{
-			// symbol
-			String symbol = readSymbol();
-			
-			ignoreWhitespace();
-			
-			if( peek() == ':' )
-			{
-				read(); // consume ':'
-				ignoreWhitespace();
-				
-				return new Cell(new Bind(symbol), parse());
-			}
-			else
-			{
-				return new Symbol(symbol);
-			}
+			return readSymbol();
 		}
 		else if( isEOF(c) )
 		{
@@ -325,7 +331,6 @@ public class CellReader implements Closeable
 				|| c == ')'
 				|| isEOF(c) )
 				&& !Character.isWhitespace(c);
-		
 	}
 	
 	
