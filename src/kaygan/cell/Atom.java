@@ -4,16 +4,16 @@ public class Atom implements Cell
 {
 	private Object value;
 	
-	private Cell type;
+	private Type type;
 	
-	public Atom(Object value, Cell type)
+	public Atom(Object value, Type type)
 	{
 		this.value = value;
 		this.type = type;
 	}
 	
 	@Override
-	public Cell getType()
+	public Cell.Type getType()
 	{
 		return type;
 	}
@@ -50,32 +50,5 @@ public class Atom implements Cell
 	{
 		return value == null ? "Nil" : value.toString();
 	}
-	
-	public static final Atom Nil = new Atom("Nil", null);
-	static
-	{
-		// circular Nil type TODO is this a good idea?
-		Nil.type = Nil;
-	}
-	
-	// Types
-	public static final Atom Type = new Atom("<Type>", Atom.Nil);
-	
-	public static final Atom OrType = new Atom("<OrType>", Type);
-	
-	// Atom Types
-	public static final Atom Num = new Atom("<Num>", Type);
-	
-	public static final Atom Str = new Atom("<Str>", Type);
-	
-	public static final Atom Symbol = new Atom("<Symbol>", Type);
-	
-	// List Types
-	public static final Atom Sequence = new Atom("<Sequence>", Type);
-	
-	public static final Atom Chain = new Atom("<Chain>", Type);
-	
-	
-	
-	
+
 }

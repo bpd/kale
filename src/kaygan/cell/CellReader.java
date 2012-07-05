@@ -6,6 +6,8 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.StringReader;
 
+import kaygan.cell.Cell.Type;
+
 public class CellReader implements Closeable
 {
 	private final PushbackReader reader;
@@ -128,18 +130,18 @@ public class CellReader implements Closeable
 			{
 				// zero followed by something that's not a digit,
 				// so just make it a zero and defer to the next pass
-				return new Atom(new Integer(0), Atom.Num);
+				return new Atom(new Integer(0), Type.Num);
 			}
 		}
 		else if( c == '[' )
 		{
 			read();
-			return readList( Atom.Sequence, END_SEQUENCE );
+			return readList( Type.Sequence, END_SEQUENCE );
 		}
 		else if( c == '(' )
 		{
 			read();
-			return readList( Atom.Chain, END_CHAIN );
+			return readList( Type.Chain, END_CHAIN );
 		}
 		else if( c == ']' )
 		{
@@ -162,7 +164,7 @@ public class CellReader implements Closeable
 		else if( isEOF(c) )
 		{
 			// TODO eof, null or explicit EOF element?
-			return Atom.Nil;
+			return Type.Nil;
 		}
 		
 		error("Unknown input: " + (char) c);
@@ -172,29 +174,29 @@ public class CellReader implements Closeable
 	
 	//private static final Atom BEGIN_SEQUENCE = new Atom("[", Atom.Symbol);
 	
-	private static final Atom END_SEQUENCE = new Atom("]", Atom.Symbol);
+	private static final Atom END_SEQUENCE = new Atom("]", Type.Symbol);
 	
 	//private static final Atom BEGIN_CHAIN = new Atom("(", Atom.Symbol);
 	
-	private static final Atom END_CHAIN = new Atom(")", Atom.Symbol);
+	private static final Atom END_CHAIN = new Atom(")", Type.Symbol);
 	
 	protected static boolean isEOF(int c)
 	{
 		return c == 65535 || c == -1;
 	}
 	
-	protected Cell readList( Cell type, Atom end )
+	protected Cell readList( Type type, Atom end )
 	{
 		Cell next = parse();
 		
 		Cons list, current;
-		current = list = new Cons(next, Atom.Nil);
+		current = list = new Cons(next, Type.Nil);
 		
 		next = parse();
 		
 		while( next != end )
 		{
-			Cons cell = new Cons(next, Atom.Nil);
+			Cons cell = new Cons(next, Type.Nil);
 			
 			current.right = cell;
 			current = cell;
@@ -239,7 +241,7 @@ public class CellReader implements Closeable
 		{
 			error("Bad hex value: " + e.getMessage());
 		}
-		return new Atom(i, Atom.Num);
+		return new Atom(i, Type.Num);
 	}
 	
 	static boolean isBinaryDigit(int c)
@@ -270,7 +272,7 @@ public class CellReader implements Closeable
 		{
 			error("Bad binary value: " + e.getMessage());
 		}
-		return new Atom(i, Atom.Num);
+		return new Atom(i, Type.Num);
 	}
 	
 	static boolean isDigit(int c)
@@ -314,7 +316,7 @@ public class CellReader implements Closeable
 		{
 			error("Bad number value: " + e.getMessage());
 		}
-		return new Atom(i, Atom.Num);
+		return new Atom(i, Type.Num);
 	}
 	
 	protected void error(String message)
@@ -353,7 +355,7 @@ public class CellReader implements Closeable
 			symbol.append( (char) read() );
 		}
 		
-		return new Atom(symbol.toString(), Atom.Symbol);
+		return new Atom(symbol.toString(), Type.Symbol);
 	}
 	
 	public static Object parse(String input)
@@ -363,19 +365,19 @@ public class CellReader implements Closeable
 		Cell first = reader.parse();
 		
 		Cell next = reader.parse();
-		if( next == Atom.Nil )
+		if( next == Type.Nil )
 		{
 			// no additional inputs, just return the parsed value
 			return first;
 		}
 
 		// there are multiple inputs, so built a list
-		Cons cell = new Cons(next, Atom.Nil);
+		Cons cell = new Cons(next, Type.Nil);
 		Cons root = new Cons(first, cell);
 		
-		while( (next = reader.parse()) != Atom.Nil )
+		while( (next = reader.parse()) != Type.Nil )
 		{
-			cell.right = cell = new Cons(next, Atom.Nil);
+			cell.right = cell = new Cons(next, Type.Nil);
 		}
 		
 		return root;

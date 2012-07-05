@@ -12,33 +12,17 @@ public class Cons implements Cell
 		this.right = next;
 	}
 	
-	public Cell type = Atom.Nil;
+	public Type type = Type.Nil;
 	
 	@Override
-	public Cell getType()
+	public Type getType()
 	{
-		if( type == Atom.Nil )
-		{
-			type = deriveType();
-		}
 		return type;
 	}
 	
-	public void setType(Cell type)
+	public void setType(Type type)
 	{
 		this.type = type;
-	}
-	
-	protected Cell deriveType()
-	{
-		if( left.getType() == Atom.Symbol )
-		{
-			return right.getType();
-		}
-		else
-		{
-			return new Atom( left.getType() + " | " + right.getType(), Atom.OrType );
-		}
 	}
 	
 	@Override
@@ -51,7 +35,7 @@ public class Cons implements Cell
 	@Override
 	public String toString()
 	{
-		if( right == Atom.Nil )
+		if( right == Type.Nil )
 		{
 			return left.toString();
 		}
@@ -59,7 +43,7 @@ public class Cons implements Cell
 		{
 			StringBuilder sb = new StringBuilder();
 			
-			if( getType() == Atom.Sequence )
+			if( getType() == Type.Sequence )
 			{
 				sb.append('[');
 				sb.append(left.toString());
@@ -67,7 +51,7 @@ public class Cons implements Cell
 				sb.append(right.toString());
 				sb.append(']');
 			}
-			else if( getType() == Atom.Chain )
+			else if( getType() == Type.Chain )
 			{
 				sb.append('(');
 				sb.append(left.toString());
@@ -101,7 +85,7 @@ public class Cons implements Cell
 			sb.append(left.toString());
 		}
 		
-		if( right != Atom.Nil )
+		if( right != Type.Nil )
 		{
 			if( right instanceof Cons )
 			{

@@ -1,6 +1,7 @@
 package kaygan.cell;
 
 import junit.framework.TestCase;
+import kaygan.cell.Cell.Type;
 
 public class CellTest extends TestCase
 {
@@ -8,7 +9,7 @@ public class CellTest extends TestCase
 	{
 		Object o = CellReader.parse(" 12 ");
 		
-		assertEquals( new Atom(new Integer(12), Atom.Num), o );
+		assertEquals( new Atom(new Integer(12), Type.Num), o );
 	}
 	
 	public void testReadMultipleNumber()
@@ -19,17 +20,17 @@ public class CellTest extends TestCase
 		
 		Cons cell = (Cons)o;
 		
-		assertEquals( cell.left, new Atom(new Integer(12), Atom.Num) );
-		assertEquals( ((Cons)cell.right).left, new Atom(new Double(12.2), Atom.Num) );
-		assertEquals( ((Cons)((Cons)cell.right).right).left, new Atom(new Integer(13), Atom.Num) );
-		assertEquals( ((Cons)((Cons)((Cons)cell.right).right).right).left, new Atom(new Integer(0xaf), Atom.Num) );
+		assertEquals( cell.left, new Atom(new Integer(12), Type.Num) );
+		assertEquals( ((Cons)cell.right).left, new Atom(new Double(12.2), Type.Num) );
+		assertEquals( ((Cons)((Cons)cell.right).right).left, new Atom(new Integer(13), Type.Num) );
+		assertEquals( ((Cons)((Cons)((Cons)cell.right).right).right).left, new Atom(new Integer(0xaf), Type.Num) );
 	}
 	
 	public void testReadReal()
 	{
 		Object o = CellReader.parse(" 12.2 ");
 		
-		assertEquals( new Atom(new Double(12.2), Atom.Num), o );
+		assertEquals( new Atom(new Double(12.2), Type.Num), o );
 	}
 	
 	public void testReadRange()
@@ -40,8 +41,8 @@ public class CellTest extends TestCase
 		
 		Cons cell = (Cons)o;
 		
-		assertEquals(  new Atom(new Integer(0), Atom.Num), cell.left );
-		assertEquals(  new Atom(new Integer(24), Atom.Num), cell.right );
+		assertEquals(  new Atom(new Integer(0), Type.Num), cell.left );
+		assertEquals(  new Atom(new Integer(24), Type.Num), cell.right );
 	}
 	
 	public void testBind()
