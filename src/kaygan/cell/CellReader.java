@@ -359,32 +359,34 @@ public class CellReader implements Closeable
 	{
 		final CellReader reader = new CellReader(new StringReader(input));
 		
-//		int resultCount = 0;
+		Object first = reader.parse();
 		
+		Object next = reader.parse();
+		if( next == null )
+		{
+			// no additional inputs, just return the parsed value
+			return first;
+		}
+
+		// there are multiple inputs, so built a list
+		Cell second = new Cell(next, null);
+		Cell root = new Cell(first, second);
 		
-		return reader.parse();
+		Cell cell = root;
 		
-//		Sequence sequence = new Sequence();
-//		
-//		Function f = reader.eval();
-//		while( f != null )
-//		{
-//			sequence.add(f);
-//			
-//			resultCount++;
-//			
-//			Function next = reader.eval();
-//			if( next == null )
-//			{
-//				if( resultCount == 1 )
-//				{
-//					return f;
-//				}
-//			}
-//			f = next;
-//		}
-//
-//		return sequence;		
+		next = reader.parse();
+		
+		while( next != null )
+		{
+			Cell nextCell = new Cell(next, null);
+			
+			cell.right = nextCell;
+			cell = nextCell;
+			
+			next = reader.parse();
+		}
+		
+		return root;
 	}
 
 }

@@ -26,6 +26,14 @@ public class CellTest extends TestCase
 		System.out.println("o.type => " + o.getClass().getSimpleName());
 	}
 	
+	public void testMultiBind()
+	{
+		Object o = CellReader.parse(" a:2 b:2 ");
+		
+		System.out.println("o => " + o.toString());
+		System.out.println("o.type => " + o.getClass().getSimpleName());
+	}
+	
 	public void testSequence()
 	{
 		Cell o = (Cell)CellReader.parse(" a: [ 2 ] ");
