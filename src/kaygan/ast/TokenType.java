@@ -24,5 +24,7 @@ public enum TokenType
 	CLOSE_PAREN,  // ')'
 	
 	OPEN_BRACKET, // '['
-	CLOSE_BRACKET // ']'
+	CLOSE_BRACKET,// ']'
+	
+	PIPE          // '|'
 }

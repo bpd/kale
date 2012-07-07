@@ -125,7 +125,8 @@ public class Lexer
 		return c == '{' || c == '}'
 			|| c == '(' || c == ')'
 			|| c == '[' || c == ']'
-			|| c == ':' || c == '.';
+			|| c == ':' || c == '.'
+			|| c == '|';
 	}
 	
 	protected boolean isSymbol(int c)
@@ -150,6 +151,20 @@ public class Lexer
 		{
 			int c = peekChar();
 			
+			// eat any whitespace
+			if( isWS(c) )
+			{
+				do
+				{
+					reader.read();
+				}
+				while( isWS( peekChar() ) );
+				
+				begin();
+				
+				c = peekChar();
+			}
+			
 			switch(c)
 			{
 			case '(': consume(); return end(TokenType.OPEN_PAREN);
@@ -161,6 +176,8 @@ public class Lexer
 			case '{': consume(); return end(TokenType.OPEN_BRACE);
 			case '}': consume(); return end(TokenType.CLOSE_BRACE);
 			
+			case '|': consume(); return end(TokenType.PIPE);
+			
 			case ':': consume(); return end(TokenType.COLON);
 			case '.':
 				consume();
@@ -170,17 +187,6 @@ public class Lexer
 					return end(TokenType.BETWEEN);
 				}
 				return end(TokenType.FULL_STOP);
-			}
-			
-			if( isWS(c) )
-			{
-				do
-				{
-					consume();
-				}
-				while( isWS( peekChar() ) );
-				
-				return end(TokenType.WS);
 			}
 			
 			if( c == '"' )

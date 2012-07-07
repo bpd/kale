@@ -42,7 +42,60 @@ public class Parser
 	
 	protected Function function()
 	{
-		return null;
+		Token open = next();
+		
+		List<Exp> args = new ArrayList<Exp>();
+		List<Exp> contents = new ArrayList<Exp>();
+		
+		// args
+		// accumulate expressions while they match the arg rule,
+		// though it may turn out (if we don't find '|')
+		// that what we thought were args were actually exps
+		// in an argless function
+		while( peek().type == TokenType.SymbolPart )
+		{
+			// symbol (':' symbol)? 
+			Token peek2 = peek(2);
+			if( peek2.type == TokenType.COLON )
+			{
+				if( peek(3).type == TokenType.SymbolPart )
+				{
+					// symbol ':' symbol
+					args.add( bind() );
+				}
+			}
+			else if( peek2.type == TokenType.SymbolPart
+					|| peek2.type == TokenType.PIPE )
+			{
+				// this is the next argument, but we
+				// can still assume we're in the arguments block
+				args.add( symbol() );
+			}
+		}
+		
+		// check args?
+		if( peek().type == TokenType.PIPE )
+		{
+			next(); 
+		}
+		else
+		{
+			// if we don't find a pipe after we're done parsing
+			// things that looked like arguments, that means it
+			// turns out the things we thought were arugments
+			// were just exps in the function body
+			contents.addAll( args );
+			args.clear();
+		}
+		
+		while( peek().type != TokenType.CLOSE_BRACE )
+		{
+			contents.add( exp() );
+		}
+		
+		Token close = next();
+		
+		return new Function(open, close, args, contents);
 	}
 	
 	protected Callsite callsite()
@@ -201,9 +254,7 @@ public class Parser
 		ws();
 		while( peek().type != TokenType.EOF )
 		{
-			Exp exp = exp();
-			System.out.println(exp);
-			expressions.add( exp );
+			expressions.add( exp() );
 			ws();
 		}
 		return expressions;

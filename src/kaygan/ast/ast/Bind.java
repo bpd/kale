@@ -2,9 +2,9 @@ package kaygan.ast.ast;
 
 public class Bind extends Exp
 {
-	private final Symbol symbol;
+	public final Symbol symbol;
 	
-	private final Exp exp;
+	public final Exp exp;
 	
 	public Bind(Symbol symbol, Exp exp)
 	{
