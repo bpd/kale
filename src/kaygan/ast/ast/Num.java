@@ -4,7 +4,7 @@ import kaygan.ast.Token;
 
 public class Num extends Value
 {
-	private final Token token;
+	public final Token token;
 	
 	public Num(Token token)
 	{

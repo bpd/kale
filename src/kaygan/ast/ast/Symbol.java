@@ -17,6 +17,18 @@ public class Symbol extends Exp
 		this.parts = parts;
 	}
 	
+	public String symbol()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(parts.get(0).value);
+		for(int i=1; i<parts.size(); i++)
+		{
+			sb.append('.');
+			sb.append(parts.get(i).value);
+		}
+		return sb.toString();
+	}
+	
 	@Override
 	public String toString()
 	{

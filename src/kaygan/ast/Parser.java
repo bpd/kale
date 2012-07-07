@@ -103,6 +103,10 @@ public class Parser
 		Token open = next();
 		List<Exp> exps = new ArrayList<Exp>();
 		
+		// callsite requires at least one expression
+		exps.add( exp() );
+		
+		// parse the rest of the expressions
 		while( peek().type != TokenType.CLOSE_PAREN )
 		{
 			exps.add( exp() );

@@ -13,6 +13,11 @@ public class Callsite extends Exp
 	
 	public Callsite(Token open, Token close, List<Exp> contents)
 	{
+		if( contents.size() < 1 )
+		{
+			throw new IllegalArgumentException(
+					"Callsite must have at least one expression");
+		}
 		this.open = open;
 		this.close = close;
 		this.contents = contents;
