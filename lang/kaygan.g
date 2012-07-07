@@ -13,7 +13,7 @@ Int	:	'0'..'9'+ ;
 
 Real	:	Int '.' Int ;
 
-SymbolPart:	( '0' | ~('{' | '}' | '(' | ')' | '[' | ']' | ':' | '.' | WS ) )+ ;
+SymbolPart:	( '0' | ~('{' | '}' | '(' | ')' | '[' | ']' | ':' | '.' | '|' | WS ) )+ ;
 
 
 
@@ -39,7 +39,7 @@ array	:	'[' WS* (exp WS*)* ']' ;
 
 callsite:	'(' WS* (exp WS*)+ ')' ;
 	
-exp 	:	bind | function | array | callsite | symbol | value | range ;
+exp 	:	function | array | callsite | bind | range | symbol | value ;
 	
 program	:	WS* (exp WS*)* ;
 
