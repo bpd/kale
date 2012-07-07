@@ -13,8 +13,7 @@ Int	:	'0'..'9'+ ;
 
 Real	:	Int '.' Int ;
 
-// TODO only need to exclude zero from the first character here?
-SymbolPart:	( ~( '0' | '{' | '}' | '(' | ')' | '[' | ']' | ':' | '.' | WS ) )+ ;
+SymbolPart:	( '0' | ~('{' | '}' | '(' | ')' | '[' | ']' | ':' | '.' | WS ) )+ ;
 
 
 
@@ -24,7 +23,7 @@ string	:	'"' ( ~('"') )* '"' ;
 
 value	:	num | string ;
 
-range	:	(value | symbol) '..' (value | symbol) ;
+range	:	(value | symbol) WS* '..' WS* (value | symbol) ;
 
 symbol 	:	SymbolPart ('.' SymbolPart)* ;
 
