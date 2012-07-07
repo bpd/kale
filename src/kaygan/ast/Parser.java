@@ -100,12 +100,32 @@ public class Parser
 	
 	protected Callsite callsite()
 	{
-		return null;
+		Token open = next();
+		List<Exp> exps = new ArrayList<Exp>();
+		
+		while( peek().type != TokenType.CLOSE_PAREN )
+		{
+			exps.add( exp() );
+		}
+		
+		Token close = next();
+		
+		return new Callsite(open, close, exps );
 	}
 	
 	protected Array array()
 	{
-		return null;
+		Token open = next();
+		List<Exp> exps = new ArrayList<Exp>();
+		
+		while( peek().type != TokenType.CLOSE_BRACKET )
+		{
+			exps.add( exp() );
+		}
+		
+		Token close = next();
+		
+		return new Array( open, close, exps );
 	}
 	
 	protected boolean isNum(TokenType type)
