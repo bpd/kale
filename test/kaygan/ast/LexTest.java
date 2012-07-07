@@ -54,6 +54,59 @@ public class LexTest extends TestCase
 		assertEquals( lexer.next().type, TokenType.EOF );
 	}
 	
+	public void testSymbolPart() throws IOException
+	{
+		String input = " asdf fds @#%*fdsa ";
+		Lexer lexer = new Lexer(new StringReader(input));
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertToken( lexer.next(), TokenType.SymbolPart, "asdf" );
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertToken( lexer.next(), TokenType.SymbolPart, "fds" );
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertToken( lexer.next(), TokenType.SymbolPart, "@#%*fdsa" );
+
+		assertEquals( lexer.next().type, TokenType.WS );
+		
+		assertEquals( lexer.next().type, TokenType.EOF );
+	}
+	
+	public void testControl() throws IOException
+	{
+		String input = " { } ( ) [ ] : . .. ";
+		Lexer lexer = new Lexer(new StringReader(input));
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.OPEN_BRACE );
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.CLOSE_BRACE );
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.OPEN_PAREN );
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.CLOSE_PAREN );
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.OPEN_BRACKET );
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.CLOSE_BRACKET );
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.COLON );
+
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.FULL_STOP );
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertEquals( lexer.next().type, TokenType.BETWEEN );
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		
+		assertEquals( lexer.next().type, TokenType.EOF );
+	}
+	
 	protected void assertToken(Token token, TokenType type, String value)
 	{
 		assertEquals(type, token.type);

@@ -126,15 +126,40 @@ public class Lexer
 			|| c == ':' || c == '.';
 	}
 	
+	protected boolean isSymbol(int c)
+	{
+		return !(isControl(c) || isEOF(c) || isWS(c));
+	}
+	
 	
 	public Token next() throws IOException
 	{
 		int c = peekChar();
 		
+		switch(c)
+		{
+		case '(': consume(); return end(TokenType.OPEN_PAREN);
+		case ')': consume(); return end(TokenType.CLOSE_PAREN);
+		
+		case '[': consume(); return end(TokenType.OPEN_BRACKET);
+		case ']': consume(); return end(TokenType.CLOSE_BRACKET);
+		
+		case '{': consume(); return end(TokenType.OPEN_BRACE);
+		case '}': consume(); return end(TokenType.CLOSE_BRACE);
+		
+		case ':': consume(); return end(TokenType.COLON);
+		case '.':
+			consume();
+			if( peekChar() == '.' )
+			{
+				consume();
+				return end(TokenType.BETWEEN);
+			}
+			return end(TokenType.FULL_STOP);
+		}
 		
 		if( isWS(c) )
 		{
-			begin();
 			do
 			{
 				consume();
@@ -150,8 +175,6 @@ public class Lexer
 			
 			if( peekChar() == '*' )
 			{
-				begin(-1);
-				
 				// comment
 				consume_comment:
 				while(true)
@@ -185,7 +208,6 @@ public class Lexer
 			int peek = peekChar();
 			if( peek == 'b' )
 			{
-				begin(-1);
 				consume();
 				while( isBinaryDigit( peekChar() ) )
 				{
@@ -195,7 +217,6 @@ public class Lexer
 			}
 			else if( peek == 'x' )
 			{
-				begin(-1);
 				consume();
 				while( isHexDigit( peekChar() ) )
 				{
@@ -211,24 +232,23 @@ public class Lexer
 		
 		if( isDigit(c) )
 		{
-			begin();
-			consume();
-			
-			while( isDigit( peekChar() ) )
+			do
 			{
 				consume();
 			}
+			while( isDigit( peekChar() ) );
 			
 			// we've read up to a non-digit,
 			// if we find a decimal point here read a real
 			
 			if( peekChar() == '.' )
 			{
-				consume();
-				while( isDigit( peekChar() ) )
+				do
 				{
 					consume();
 				}
+				while( isDigit( peekChar() ) );
+				
 				return end(TokenType.Real);
 			}
 
@@ -236,9 +256,16 @@ public class Lexer
 			return end(TokenType.Int);
 		}
 		
-		if( !isControl(c) )
+		if( isSymbol(c) )
 		{
-			// symbol
+			// symbol part
+			int peek = peekChar();
+			while( isSymbol(peek) )
+			{
+				consume();
+				peek = peekChar();
+			}
+			return end(TokenType.SymbolPart);
 		}
 		
 		return end(TokenType.EOF);
