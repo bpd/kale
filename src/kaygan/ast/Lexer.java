@@ -2,14 +2,14 @@ package kaygan.ast;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Lexer
 {
 	private final CharReader reader;
 	
-	private final Deque<Token> buffer = new ArrayDeque<Token>();
+	private final List<Token> buffer = new ArrayList<Token>();
 	
 	private int beginOffset;
 	
@@ -20,18 +20,20 @@ public class Lexer
 		this.reader = new CharReader(reader, 2); // LA(2)
 	}
 	
-	public Token peek() throws IOException
+	public Token peek()
 	{
-		if( buffer.size() == 0 )
+		return peek(1);
+	}
+	
+	public Token peek(int lookAhead)
+	{
+		// populate the buffer with as many token as we need
+		for( int i=buffer.size(); i<=lookAhead+1; i++ )
 		{
-			Token next = next();
-			buffer.add(next);
-			return next;
+			buffer.add( read() );
 		}
-		else
-		{
-			return buffer.peek();
-		}
+		
+		return buffer.get(lookAhead - 1);
 	}
 	
 	
@@ -132,116 +134,130 @@ public class Lexer
 	}
 	
 	
-	public Token next() throws IOException
+	public Token next()
 	{
-		int c = peekChar();
-		
-		switch(c)
+		if( buffer.size() > 0 )
 		{
-		case '(': consume(); return end(TokenType.OPEN_PAREN);
-		case ')': consume(); return end(TokenType.CLOSE_PAREN);
-		
-		case '[': consume(); return end(TokenType.OPEN_BRACKET);
-		case ']': consume(); return end(TokenType.CLOSE_BRACKET);
-		
-		case '{': consume(); return end(TokenType.OPEN_BRACE);
-		case '}': consume(); return end(TokenType.CLOSE_BRACE);
-		
-		case ':': consume(); return end(TokenType.COLON);
-		case '.':
-			consume();
-			if( peekChar() == '.' )
-			{
-				consume();
-				return end(TokenType.BETWEEN);
-			}
-			return end(TokenType.FULL_STOP);
+			return buffer.remove(0);
 		}
 		
-		if( isWS(c) )
+		return read();
+	}
+	
+	protected Token read()
+	{
+		try
 		{
-			do
+			int c = peekChar();
+			
+			switch(c)
 			{
+			case '(': consume(); return end(TokenType.OPEN_PAREN);
+			case ')': consume(); return end(TokenType.CLOSE_PAREN);
+			
+			case '[': consume(); return end(TokenType.OPEN_BRACKET);
+			case ']': consume(); return end(TokenType.CLOSE_BRACKET);
+			
+			case '{': consume(); return end(TokenType.OPEN_BRACE);
+			case '}': consume(); return end(TokenType.CLOSE_BRACE);
+			
+			case ':': consume(); return end(TokenType.COLON);
+			case '.':
 				consume();
-			}
-			while( isWS( peekChar() ) );
-			
-			return end(TokenType.WS);
-		}
-		
-		if( c == '/' )
-		{
-			consume();
-			
-			if( peekChar() == '*' )
-			{
-				// comment
-				consume_comment:
-				while(true)
+				if( peekChar() == '.' )
 				{
 					consume();
-					
-					int peek = peekChar();
-					if( peek == '*' )
+					return end(TokenType.BETWEEN);
+				}
+				return end(TokenType.FULL_STOP);
+			}
+			
+			if( isWS(c) )
+			{
+				do
+				{
+					consume();
+				}
+				while( isWS( peekChar() ) );
+				
+				return end(TokenType.WS);
+			}
+			
+			if( c == '"' )
+			{
+				do
+				{
+					// TODO escaping
+					consume();
+				}
+				while( peekChar() != '"' );
+				
+				consume();
+				return end(TokenType.String);
+			}
+			
+			if( c == '/' )
+			{
+				consume();
+				
+				if( peekChar() == '*' )
+				{
+					// comment
+					consume_comment:
+					while(true)
 					{
 						consume();
-						if( peekChar() == '/' )
+						
+						int peek = peekChar();
+						if( peek == '*' )
 						{
 							consume();
-							break consume_comment;
+							if( peekChar() == '/' )
+							{
+								consume();
+								break consume_comment;
+							}
+						}
+						else if( isEOF(peek) )
+						{
+							throw new IOException("EOF reached before end /*");
 						}
 					}
-					else if( isEOF(peek) )
+					
+					return end(TokenType.Comment);
+				}
+			}
+			
+			if( c == '0' )
+			{
+				consume();
+				
+				int peek = peekChar();
+				if( peek == 'b' )
+				{
+					consume();
+					while( isBinaryDigit( peekChar() ) )
 					{
-						throw new IOException("EOF reached before end /*");
+						consume();
 					}
+					return end(TokenType.Binary);
+				}
+				else if( peek == 'x' )
+				{
+					consume();
+					while( isHexDigit( peekChar() ) )
+					{
+						consume();
+					}
+					return end(TokenType.Hex);
 				}
 				
-				return end(TokenType.Comment);
-			}
-		}
-		
-		if( c == '0' )
-		{
-			consume();
-			
-			int peek = peekChar();
-			if( peek == 'b' )
-			{
-				consume();
-				while( isBinaryDigit( peekChar() ) )
-				{
-					consume();
-				}
-				return end(TokenType.Binary);
-			}
-			else if( peek == 'x' )
-			{
-				consume();
-				while( isHexDigit( peekChar() ) )
-				{
-					consume();
-				}
-				return end(TokenType.Hex);
+				// we already have a zero, so fall through
+				// to the number lexer (put back the zero we consumed)
+				pushChar(c);
 			}
 			
-			// we already have a zero, so fall through
-			// to the number lexer (put back the zero we consumed)
-			pushChar(c);
-		}
-		
-		if( isDigit(c) )
-		{
-			do
-			{
-				consume();
-			}
-			while( isDigit( peekChar() ) );
-			
-			// we've read up to a non-digit,
-			// if we find a decimal point here read a real
-			
-			if( peekChar() == '.' )
+			if( isDigit(c) )
 			{
 				do
 				{
@@ -249,25 +265,41 @@ public class Lexer
 				}
 				while( isDigit( peekChar() ) );
 				
-				return end(TokenType.Real);
+				// we've read up to a non-digit,
+				// if we find a decimal point here read a real
+				
+				if( peekChar() == '.' )
+				{
+					do
+					{
+						consume();
+					}
+					while( isDigit( peekChar() ) );
+					
+					return end(TokenType.Real);
+				}
+	
+				// no decimal point, just an int
+				return end(TokenType.Int);
 			}
-
-			// no decimal point, just an int
-			return end(TokenType.Int);
-		}
-		
-		if( isSymbol(c) )
-		{
-			// symbol part
-			int peek = peekChar();
-			while( isSymbol(peek) )
+			
+			if( isSymbol(c) )
 			{
-				consume();
-				peek = peekChar();
+				// symbol part
+				int peek = peekChar();
+				while( isSymbol(peek) )
+				{
+					consume();
+					peek = peekChar();
+				}
+				return end(TokenType.SymbolPart);
 			}
-			return end(TokenType.SymbolPart);
+			
+			return end(TokenType.EOF);
 		}
-		
-		return end(TokenType.EOF);
+		catch(IOException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 }

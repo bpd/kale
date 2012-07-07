@@ -107,6 +107,21 @@ public class LexTest extends TestCase
 		assertEquals( lexer.next().type, TokenType.EOF );
 	}
 	
+	public void testString() throws IOException
+	{
+		String input = " \"asdf\" \"1234\" ";
+		Lexer lexer = new Lexer(new StringReader(input));
+		
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertToken( lexer.next(), TokenType.String, "\"asdf\"" );
+		assertEquals( lexer.next().type, TokenType.WS );
+		assertToken( lexer.next(), TokenType.String, "\"1234\"" );
+
+		assertEquals( lexer.next().type, TokenType.WS );
+		
+		assertEquals( lexer.next().type, TokenType.EOF );
+	}
+	
 	protected void assertToken(Token token, TokenType type, String value)
 	{
 		assertEquals(type, token.type);
