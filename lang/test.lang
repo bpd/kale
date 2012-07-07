@@ -1,0 +1,44 @@
+
+/*  a data structure */
+a: [ b:2 c:Int ]
+
+/* arrays */
+a : [ 1 2 3 ]
+
+a:[]
+
+/*  */
+a : [ a b b:Int ]
+
+/* define a function, call a function */
+a: { a:Int | a + 2 }
+
+b: (a 2)  /* call 'a' with two as the first argument */
+
+/* define a parameter, call by name
+ * (defining types for 'to' and 'from' isn't really necessary)
+ */
+make_range: { from:Int to:Int | from..to }
+
+b: (make_range from :2 to: 2)
+
+/* stress tests */
+a: [ ( b b:2 2 ) (c 3 4 a:5 0..2  b..c 2.2 3.14159 ) d ]
+
+a: [ 0..2 [ a:Int b { a:Int | [ a 2 3 4 ] } ] ]
+
+b: 2
+
+(a)
+
+c: "asdf"
+
+d: (b + 0b01010 + 0xffea09ff) e: [ a 1 c 3 ] f: { a + 2 }
+
+g: { a:Int | a:2 0 "Hello" (a + 2) }
+
+h: f      i: (g 2)    j        : [ (g 2) ]
+
+a.b.c:f.d
+
+c.d.e(a:2 b:7)
