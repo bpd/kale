@@ -69,6 +69,15 @@ public class CharReader extends FilterReader
     	unread(c);
     	return c;
     }
+    
+    public int peek2() throws IOException
+    {
+    	int c1 = read();
+    	int c2 = read();
+    	unread(c2);
+    	unread(c1);
+    	return c2;
+    }
 
     /**
      * Pushes back a single character by copying it to the front of the

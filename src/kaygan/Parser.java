@@ -237,26 +237,23 @@ public class Parser
 		}
 		
 		
+		Token peek2 = peek(2);
+		
+		if( peek2.type == TokenType.COLON )
+		{
+			return bind();
+		}
+		else if( peek2.type == TokenType.BETWEEN )
+		{
+			return range();
+		}
+		
 		if( peek.type == TokenType.SymbolPart )
 		{
 			// bind | symbol | range
 			
 			// rule out bind and range to infer symbol
-			
-			Token peek2 = peek(2);
-			
-			if( peek2.type == TokenType.COLON )
-			{
-				return bind();
-			}
-			else if( peek2.type == TokenType.BETWEEN )
-			{
-				return range();
-			}
-			else
-			{
-				return symbol();
-			}
+			return symbol();
 		}
 		
 		// default to Value

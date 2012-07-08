@@ -4,9 +4,9 @@ import kaygan.Token;
 
 public class Range extends Exp
 {
-	ASTNode from; // Value | Symbol
-	Token between;
-	ASTNode to;   // Value | Symbol
+	public final Exp from; // Value | Symbol
+	public final Token between;
+	public final Exp to;   // Value | Symbol
 	
 	public Range(Value from, Token between, Value to)
 	{

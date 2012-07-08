@@ -106,4 +106,17 @@ public class ParseTest extends TestCase
 		assertTrue( a.contents.get(1) instanceof Num );
 		assertTrue( a.contents.get(2) instanceof Symbol );
 	}
+	
+	public void testParseRange()
+	{
+		String input = " 2..2 ";
+		Parser parser = new Parser(new StringReader(input));
+		
+		List<Exp> exps = parser.program();
+		
+		assertEquals( 1, exps.size() );
+		assertTrue( exps.get(0) instanceof Range );
+		
+		
+	}
 }

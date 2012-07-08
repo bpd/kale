@@ -58,7 +58,7 @@ public class Interpreter
 		}
 		else if( exp instanceof Range )
 		{
-			
+			return intrRange((Range)exp, scope);
 		}
 		else if( exp instanceof Symbol )
 		{
@@ -181,7 +181,14 @@ public class Interpreter
 		return null;
 	}
 	
-	
+	protected static Object intrRange(Range range, Scope scope)
+	{
+		Object from = interpret(range.from, scope);
+		Object to = interpret(range.to, scope);
+		
+		return new StringBuilder()
+			.append("<Range ").append(from).append("..").append(to).append(">");
+	}
 	
 	protected static Object intrValue(Value value, Scope scope)
 	{

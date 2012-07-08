@@ -259,7 +259,7 @@ public class Lexer
 				// we've read up to a non-digit,
 				// if we find a decimal point here read a real
 				
-				if( peekChar() == '.' )
+				if( peekChar() == '.' && reader.peek2() != '.' )
 				{
 					do
 					{
@@ -282,6 +282,12 @@ public class Lexer
 				{
 					consume();
 					peek = peekChar();
+					if( peek == '.' && isSymbol(reader.peek2()) )
+					{
+						// symbolpart1.symbolpart2
+						consume(); // consume the '.'
+						peek = peekChar();
+					}
 				}
 				return end(TokenType.SymbolPart);
 			}
