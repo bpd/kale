@@ -13,8 +13,8 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
-import kaygan.ast.Interpreter;
-import kaygan.ast.Scope;
+import kaygan.Interpreter;
+import kaygan.Scope;
 
 public class ReadEvalPrintPane extends JPanel
 {

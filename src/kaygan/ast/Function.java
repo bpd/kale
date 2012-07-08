@@ -1,8 +1,8 @@
-package kaygan.ast.ast;
+package kaygan.ast;
 
 import java.util.List;
 
-import kaygan.ast.Token;
+import kaygan.Token;
 
 public class Function extends Exp
 {

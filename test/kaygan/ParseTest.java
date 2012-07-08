@@ -1,10 +1,10 @@
-package kaygan.ast;
+package kaygan;
 
 import java.io.StringReader;
 import java.util.List;
 
 import junit.framework.TestCase;
-import kaygan.ast.ast.*;
+import kaygan.ast.*;
 
 public class ParseTest extends TestCase
 {

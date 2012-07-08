@@ -1,4 +1,4 @@
-package kaygan.ast;
+package kaygan;
 
 import java.io.FilterReader;
 import java.io.IOException;

@@ -1,6 +1,6 @@
-package kaygan.ast.ast;
+package kaygan.ast;
 
-import kaygan.ast.Token;
+import kaygan.Token;
 
 public class Range extends Exp
 {

@@ -1,9 +1,9 @@
-package kaygan.ast;
+package kaygan;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import kaygan.ast.ast.Exp;
+import kaygan.ast.Exp;
 
 public class Scope
 {

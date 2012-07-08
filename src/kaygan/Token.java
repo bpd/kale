@@ -1,4 +1,4 @@
-package kaygan.ast;
+package kaygan;
 
 public class Token
 {

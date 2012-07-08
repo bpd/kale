@@ -1,4 +1,4 @@
-package kaygan.ast.ast;
+package kaygan.ast;
 
 public class ASTNode {
 

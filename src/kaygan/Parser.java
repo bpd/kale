@@ -1,10 +1,10 @@
-package kaygan.ast;
+package kaygan;
 
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import kaygan.ast.ast.*;
+import kaygan.ast.*;
 
 public class Parser
 {
