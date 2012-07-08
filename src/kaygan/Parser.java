@@ -30,16 +30,6 @@ public class Parser
 		return lexer.next();
 	}
 	
-	protected void ws()
-	{
-		// eat whitespace tokens
-		while( peek().type == TokenType.WS )
-		{
-			System.out.println("eating whitespace");
-			next();
-		}
-	}
-	
 	protected Function function()
 	{
 		Token open = next();
@@ -210,9 +200,9 @@ public class Parser
 	protected Range range()
 	{
 		Exp left = range_endpoint();
-		ws();
+
 		Token between = next();
-		ws();
+
 		Exp right = range_endpoint();
 		
 		return new Range( left, between, right );
@@ -221,9 +211,9 @@ public class Parser
 	protected Bind bind()
 	{
 		Symbol symbol = symbol();
-		ws();
+
 		next();
-		ws();
+
 		Exp exp = exp();
 
 		return new Bind( symbol, exp );
@@ -276,11 +266,10 @@ public class Parser
 	public List<Exp> program()
 	{
 		List<Exp> expressions = new ArrayList<Exp>();
-		ws();
+
 		while( peek().type != TokenType.EOF )
 		{
 			expressions.add( exp() );
-			ws();
 		}
 		return expressions;
 	}
