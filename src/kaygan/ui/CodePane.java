@@ -6,11 +6,11 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
-public class CellTextEditor extends JTextPane
+public class CodePane extends JTextPane
 {
 	private static final long serialVersionUID = 1L;
 
-	public CellTextEditor()
+	public CodePane()
 	{	
 		setFont( new Font("Consolas", Font.PLAIN, 12) );
 		

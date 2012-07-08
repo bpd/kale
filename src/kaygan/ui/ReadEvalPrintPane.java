@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -12,8 +13,8 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
-import kaygan.cell.Cons;
-import kaygan.cell.CellReader;
+import kaygan.ast.Interpreter;
+import kaygan.ast.Scope;
 
 public class ReadEvalPrintPane extends JPanel
 {
@@ -22,6 +23,8 @@ public class ReadEvalPrintPane extends JPanel
 	final JTextPane output = new JTextPane();
 	
 	final JTextField input = new JTextField();
+	
+	transient Scope scope = new Scope();
 	
 	public ReadEvalPrintPane()
 	{
@@ -55,6 +58,8 @@ public class ReadEvalPrintPane extends JPanel
 	
 	public void reset()
 	{
+		scope = new Scope();
+		
 		output.setText("");
 		input.setText("");
 	}
@@ -68,13 +73,12 @@ public class ReadEvalPrintPane extends JPanel
 	{
 		try
 		{
-			Object o = CellReader.parse( input );
+			List<Object> results = Interpreter.interpret( input, scope );
 			
-			addResult( o );
-			
-			// TODO cleaner way of duplicating/pulling in function bindings
-			//this.sequence = result.clone(this.sequence);			
-			
+			for( Object result : results )
+			{
+				addResult( result );
+			}
 		}
 		catch(RuntimeException re)
 		{
@@ -118,14 +122,8 @@ public class ReadEvalPrintPane extends JPanel
 		
 		try
 		{
-			if( f instanceof Cons )
-			{
-				doc.insertString(doc.getLength(), ((Cons)f).toCellString(), null);
-			}
-			else
-			{
-				doc.insertString(doc.getLength(), f.toString(), null);
-			}
+			doc.insertString(doc.getLength(), f.toString(), null);
+
 			doc.insertString(doc.getLength(), "\n", null);
 		}
 		catch(BadLocationException e)

@@ -12,13 +12,18 @@ public class Interpreter
 	{
 		Parser parser = new Parser(new StringReader(input));
 		
-		return interpret(parser.program());
+		return interpret(parser.program(), new Scope());
 	}
 	
-	public static List<Object> interpret(List<Exp> exps)
+	public static List<Object> interpret(String input, Scope scope)
 	{
-		Scope scope = new Scope();
+		Parser parser = new Parser(new StringReader(input));
 		
+		return interpret(parser.program(), scope);
+	}
+	
+	public static List<Object> interpret(List<Exp> exps, Scope scope)
+	{
 		List<Object> results = new ArrayList<Object>();
 		
 		for( Exp exp : exps )

@@ -10,17 +10,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class CellEditor extends JPanel
+public class CodeEditor extends JPanel
 {
 	private static final long serialVersionUID = 1L;
-	
-	//private volatile Sequence sequence = new Sequence();
 
-	private final CellTextEditor text = new CellTextEditor();
+	private final CodePane text = new CodePane();
 	
 	private final ReadEvalPrintPane repl = new ReadEvalPrintPane();
 	
-	public CellEditor()
+	public CodeEditor()
 	{
 		setLayout( new BorderLayout() );
 		
@@ -59,8 +57,6 @@ public class CellEditor extends JPanel
 			repl.addInfo("Load");
 			repl.reset();
 			repl.eval(input);
-			
-			repl.focus();
 		}
 		catch(RuntimeException re)
 		{
@@ -77,10 +73,10 @@ public class CellEditor extends JPanel
 			@Override
 			public void run()
 			{
-				JFrame frame = new JFrame("Cell Editor");
+				JFrame frame = new JFrame("Kaygan Editor");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				
-				frame.add( new CellEditor() );
+				frame.add( new CodeEditor() );
 				
 				frame.pack();
 				frame.setVisible(true);
