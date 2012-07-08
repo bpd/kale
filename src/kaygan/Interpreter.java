@@ -89,7 +89,8 @@ public class Interpreter
 	
 	protected static Object intrCallsite(Callsite c, Scope parentScope)
 	{
-		Object o = interpret( c.contents.get(0), parentScope );
+		Exp first = c.contents.get(0);
+		Object o = interpret( first, parentScope );
 		
 		// TODO how a call site is interpreted by its receiver
 		//      really depends on the receiver...
@@ -160,6 +161,7 @@ public class Interpreter
 		}
 		else
 		{
+			
 		
 //			for( int i=1; i<c.contents.size(); i++ )
 //			{
@@ -170,7 +172,7 @@ public class Interpreter
 //				}
 //			}
 		}
-		return null;
+		throw new RuntimeException("Unknown expression: " + first);
 	}
 	
 	protected static Object intrBind(Bind bind, Scope scope)
