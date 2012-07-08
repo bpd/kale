@@ -187,7 +187,8 @@ public class Parser
 	
 	protected void error(String message)
 	{
-		throw new RuntimeException(message);
+		Token token = peek();
+		throw new ParseException( token, message );
 	}
 	
 	protected Exp range_endpoint()
@@ -282,5 +283,19 @@ public class Parser
 			ws();
 		}
 		return expressions;
+	}
+	
+	public static class ParseException extends RuntimeException
+	{
+		private static final long serialVersionUID = 1L;
+		
+		public final Token token;
+		
+		public ParseException(Token token, String message)
+		{
+			super( message );
+			
+			this.token = token;
+		}
 	}
 }

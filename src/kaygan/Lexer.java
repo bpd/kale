@@ -15,6 +15,12 @@ public class Lexer
 	
 	private final StringBuilder contentBuffer = new StringBuilder();
 	
+	/**
+	 * ignore carriage returns in token offsets, since Java
+	 * text editors ignore that when calculating character offsets
+	 */
+	int crCount = 0;
+	
 	public Lexer(Reader reader)
 	{
 		this.reader = new CharReader(reader, 2); // LA(2)
@@ -36,38 +42,19 @@ public class Lexer
 		return buffer.get(lookAhead - 1);
 	}
 	
-	
-	
-	protected void begin()
-	{
-		begin(0);
-	}
-	
-	/**
-	 * 
-	 * @param startOffset - offset from the current read position when
-	 *                      the token actually started
-	 */
-	protected void begin(int startOffset)
-	{
-		beginOffset = reader.getOffset() + startOffset;
-	}
-	
 	protected Token end(TokenType type)
 	{
+		String value = contentBuffer.toString();
+		
 		Token token = new Token(	type, 
-									beginOffset, reader.getOffset(), 
-									contentBuffer.toString());
+									beginOffset,
+									beginOffset + value.length(), 
+									value);
 		
 		// reset token state
-		reset();
+		contentBuffer.setLength(0);
 		
 		return token;
-	}
-	
-	protected void consume(int c)
-	{
-		contentBuffer.appendCodePoint(c);
 	}
 	
 	protected void consume() throws IOException
@@ -85,13 +72,6 @@ public class Lexer
 		contentBuffer.setLength( contentBuffer.length() -1 );
 		reader.unread(c);
 	}
-	
-	protected void reset()
-	{
-		beginOffset = reader.getOffset();
-		contentBuffer.setLength(0);
-	}
-	
 	
 	protected boolean isWS(int c)
 	{
@@ -145,6 +125,7 @@ public class Lexer
 		return read();
 	}
 	
+	
 	protected Token read()
 	{
 		try
@@ -156,14 +137,18 @@ public class Lexer
 			{
 				do
 				{
-					reader.read();
+					int ws = reader.read();
+					if( ws == '\r' )
+					{
+						crCount++;
+					}
 				}
 				while( isWS( peekChar() ) );
 				
-				begin();
-				
 				c = peekChar();
 			}
+			
+			beginOffset = reader.getOffset() - crCount;
 			
 			switch(c)
 			{

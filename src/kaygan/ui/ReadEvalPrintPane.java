@@ -71,18 +71,11 @@ public class ReadEvalPrintPane extends JPanel
 	
 	public void eval( String input )
 	{
-		try
+		List<Object> results = Interpreter.interpret( input, scope );
+		
+		for( Object result : results )
 		{
-			List<Object> results = Interpreter.interpret( input, scope );
-			
-			for( Object result : results )
-			{
-				addResult( result );
-			}
-		}
-		catch(RuntimeException re)
-		{
-			addError(re.getMessage());
+			addResult( result );
 		}
 	}
 	

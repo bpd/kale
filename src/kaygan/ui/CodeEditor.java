@@ -6,9 +6,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import kaygan.Parser;
 
 public class CodeEditor extends JPanel
 {
@@ -56,11 +57,23 @@ public class CodeEditor extends JPanel
 		{
 			repl.addInfo("Load");
 			repl.reset();
+			text.reset();
 			repl.eval(input);
+		}
+		catch(Parser.ParseException pe)
+		{
+			if( pe.token != null )
+			{
+				text.error(	pe.getMessage(), 
+							pe.token.beginOffset, 
+							pe.token.endOffset - pe.token.beginOffset );
+			}
+			repl.addError( "Error: " + pe.getMessage() );
+			
 		}
 		catch(RuntimeException re)
 		{
-			repl.add( new JLabel("Error: " + re.getMessage()) );
+			repl.addError( "Error: " + re.getMessage() );
 		}
 	}
 	
