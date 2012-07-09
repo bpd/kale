@@ -2,6 +2,11 @@ package kaygan.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -29,11 +34,38 @@ public class CodePane extends JTextPane
 //				new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
 //		textPane.getHighlighter().addHighlight(startPos, endPos, 
 //		            highlightPainter);
+	    
+	    StringBuilder code = new StringBuilder();
+	    try
+	    {
+		    InputStream is = CodePane.class.getResourceAsStream("/kaygan/example.lang");
+		    if( is != null )
+		    {
+		    	Reader reader = new BufferedReader(new InputStreamReader(is));
+		    	try
+		    	{
+			    	int c = -1;
+			    	while( (c = reader.read()) != -1 )
+			    	{
+			    		code.appendCodePoint(c);
+			    	}
+		    	}
+		    	finally
+		    	{
+		    		reader.close();
+		    	}
+		    }
+	    }
+	    catch(IOException e)
+	    {
+	    	// eat it
+	    }
+	    
 		
 	    StyledDocument doc = getStyledDocument();
 		try
 		{
-			doc.insertString(0, "a: 2\nb: [ 1 2 3 a ]\n\n", null);
+			doc.insertString(0, code.toString(), null);
 		}
 		catch(BadLocationException e)
 		{

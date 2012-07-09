@@ -4,15 +4,17 @@
 		<tstamp/>
 	</target>
 
-	<target name="compile" depends="init">
+	<target name="build" depends="init">
 	
 		<mkdir dir="build" />
 		
 		<javac srcdir="src" destdir="build" />
+		
+		<copy file="src/kaygan/example.lang" todir="build/kaygan" />
 	
 	</target>
 	
-	<target name="jar" depends="compile">
+	<target name="jar" depends="build">
 
 		<mkdir dir="dist" />
 
