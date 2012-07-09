@@ -6,7 +6,7 @@ import kaygan.Token;
 
 public class Symbol extends Exp
 {
-	private List<Token> parts;
+	public final List<Token> parts;
 	
 	public Symbol(List<Token> parts)
 	{

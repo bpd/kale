@@ -62,7 +62,15 @@ public class Interpreter
 		}
 		else if( exp instanceof Symbol )
 		{
-			return scope.get( ((Symbol)exp).symbol() );
+			Symbol symbol = ((Symbol)exp);
+			Object resolved = scope.get( symbol.symbol() );
+			if( resolved == null )
+			{
+				throw new Parser.ParseException(
+						symbol.parts.get(0),
+						"Unresolved symbol: " + symbol.symbol());
+			}
+			return resolved;
 		}
 		else if( exp instanceof Value )
 		{
@@ -138,11 +146,13 @@ public class Interpreter
 				
 				if( argReceiver instanceof Symbol )
 				{
-					functionScope.set( ((Symbol)argReceiver).symbol(), interpret(argSender, parentScope) );
+					functionScope.set(	((Symbol)argReceiver).symbol(),
+										interpret(argSender, parentScope) );
 				}
 				else if( argReceiver instanceof Bind )
 				{
-					functionScope.set( ((Bind)argReceiver).symbol.symbol(), interpret(argSender, parentScope) );
+					functionScope.set(	((Bind)argReceiver).symbol.symbol(),
+										interpret(argSender, parentScope) );
 				}
 				else
 				{
