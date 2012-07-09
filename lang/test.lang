@@ -41,4 +41,4 @@ h: f      i: (g 2)    j        : [ (g 2) ]
 
 a.b.c:f.d
 
-c.d.e(a:2 b:7)
+(c.d.e a:2 b:7)
