@@ -1,0 +1,28 @@
+<project name="kaygan" default="jar">
+	
+	<target name="init">
+		<tstamp/>
+	</target>
+
+	<target name="compile" depends="init">
+	
+		<mkdir dir="build" />
+		
+		<javac srcdir="src" destdir="build" />
+	
+	</target>
+	
+	<target name="jar" depends="compile">
+
+		<mkdir dir="dist" />
+
+		<jar jarfile="dist/kaygan-${DSTAMP}-${TSTAMP}.jar" basedir="build">
+			<manifest>
+				<attribute name="Main-Class" value="kaygan.ui.CodeEditor" />
+			</manifest>
+		</jar>
+
+	</target>
+
+
+</project>
