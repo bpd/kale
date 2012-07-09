@@ -74,6 +74,7 @@ public class Interpreter
 	
 	protected static Object intrFunction(Function f, Scope parentScope)
 	{
+		f.scope = parentScope.newSubScope();
 		return f;
 	}
 	
@@ -127,7 +128,7 @@ public class Interpreter
 			System.out.println("building arguments for " + f);
 			
 			// bind the parameters to a new function scope
-			Scope functionScope = parentScope.newSubScope();
+			Scope functionScope = f.scope.newSubScope(); //parentScope.newSubScope();
 			
 			for( int i=1; i<c.contents.size(); i++ )
 			{

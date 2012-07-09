@@ -2,6 +2,7 @@ package kaygan.ast;
 
 import java.util.List;
 
+import kaygan.Scope;
 import kaygan.Token;
 
 public class Function extends Exp
@@ -12,6 +13,10 @@ public class Function extends Exp
 	public final List<Exp> args;
 	
 	public final List<Exp> contents;
+	
+	// TODO this really needs to be moved somewhere else, after
+	//      the interpreter is more fleshed out
+	public Scope scope;
 	
 	public Function(Token open, Token close, List<Exp> args, List<Exp> contents)
 	{
