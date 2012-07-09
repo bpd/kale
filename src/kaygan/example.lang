@@ -8,4 +8,7 @@ c: { x | { y z | [ x y z a b ] } }
 
 d: { a | [ "Hello" a ] }
 
+e: "World"
+
+(d e)
 (d "World")
