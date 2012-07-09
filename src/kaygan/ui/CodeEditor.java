@@ -2,12 +2,16 @@ package kaygan.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 import kaygan.Parser;
 
@@ -22,6 +26,18 @@ public class CodeEditor extends JPanel
 	public CodeEditor()
 	{
 		setLayout( new BorderLayout() );
+		
+		// GO button
+		JButton goButton = new JButton("Run (F5)");
+		goButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				go();
+			}	
+		});
+		add( goButton, BorderLayout.NORTH );
 		
 		// text editor
 		text.setPreferredSize( new Dimension(400, 400) );
@@ -42,13 +58,18 @@ public class CodeEditor extends JPanel
 			{
 				if( e.getKeyCode() == KeyEvent.VK_F5 )
 				{
-					eval( text.getText() );
-					
-					repl.validate();
-					repl.repaint();
+					go();
 				}
 			}	
 		});
+	}
+	
+	protected void go()
+	{
+		eval( text.getText() );
+		
+		repl.validate();
+		repl.repaint();
 	}
 	
 	protected void eval( String input )
@@ -78,6 +99,19 @@ public class CodeEditor extends JPanel
 	}
 	
 	
+	static
+	{
+		// Install the look and feel
+		try
+		{
+		    UIManager.setLookAndFeel(
+		    		UIManager.getSystemLookAndFeelClassName() );
+		}
+		catch (Throwable e)
+		{
+			// can't do anything
+		}
+	}
 	
 	public static void main(String[] args)
 	{
