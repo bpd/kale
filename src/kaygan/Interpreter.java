@@ -126,7 +126,7 @@ public class Interpreter
 				// function arguments should match callsite size
 				//
 				// TODO this should be configurable by binding
-				error(f, 
+				error(c, 
 						"Expected " + f.args.size() 
 							+ " arguments, found " + (c.contents.size() - 1) );
 			}
