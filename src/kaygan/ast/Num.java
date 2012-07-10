@@ -12,6 +12,19 @@ public class Num extends Value
 	}
 	
 	@Override
+	public int getOffset()
+	{
+		return token.beginOffset;
+	}
+
+	@Override
+	public int getLength()
+	{
+		return token.endOffset - token.beginOffset;
+	}
+
+
+	@Override
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();

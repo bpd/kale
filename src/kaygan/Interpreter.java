@@ -66,9 +66,7 @@ public class Interpreter
 			Object resolved = scope.get( symbol.symbol() );
 			if( resolved == null )
 			{
-				throw new Parser.ParseException(
-						symbol.parts.get(0),
-						"Unresolved symbol: " + symbol.symbol());
+				return error(symbol, "Unresolved symbol: " + symbol.symbol());
 			}
 			return resolved;
 		}
@@ -77,7 +75,7 @@ public class Interpreter
 			return intrValue( ((Value)exp), scope );
 		}
 		
-		throw new RuntimeException("Invalid expression: " + exp);
+		return error(exp, "Invalid expression: " + exp);
 	}
 	
 	protected static Object intrFunction(Function f, Scope parentScope)
@@ -128,7 +126,7 @@ public class Interpreter
 				// function arguments should match callsite size
 				//
 				// TODO this should be configurable by binding
-				throw new RuntimeException(
+				error(f, 
 						"Expected " + f.args.size() 
 							+ " arguments, found " + (c.contents.size() - 1) );
 			}
@@ -156,7 +154,8 @@ public class Interpreter
 				}
 				else
 				{
-					throw new RuntimeException("Invalid receiver: " + argReceiver);
+					//throw new RuntimeException("Invalid receiver: " + argReceiver);
+					error(argReceiver, "Invalid receiver");
 				}
 			}
 			
@@ -183,7 +182,7 @@ public class Interpreter
 //				}
 //			}
 		}
-		throw new RuntimeException("Unknown expression: " + first);
+		return error(first, "Unknown expression: " + first);
 	}
 	
 	protected static Object intrBind(Bind bind, Scope scope)
@@ -222,7 +221,7 @@ public class Interpreter
 				return Double.parseDouble(token.value);
 				
 			default:
-				throw new RuntimeException("Invalid number: " + token.value);
+				return error(value, "Invalid number: " + token.value);
 			}
 		}
 		else if( value instanceof Str )
@@ -231,7 +230,27 @@ public class Interpreter
 		}
 		else
 		{
-			throw new RuntimeException("Invalid value: " + value);
+			return error(value, "Invalid value: " + value);
+		}
+	}
+	
+	protected static Object error(ASTNode node, String message)
+	{
+		throw new InterpretException(node, message);
+	}
+	
+	
+	public static class InterpretException extends RuntimeException
+	{
+		private static final long serialVersionUID = 1L;
+		
+		public final ASTNode astNode;
+		
+		public InterpretException(ASTNode astNode, String message)
+		{
+			super( message );
+			
+			this.astNode = astNode;
 		}
 	}
 	

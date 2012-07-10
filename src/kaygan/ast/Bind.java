@@ -12,6 +12,22 @@ public class Bind extends Exp
 		this.exp = exp;
 	}
 	
+	
+	
+	@Override
+	public int getOffset()
+	{
+		return symbol.getOffset();
+	}
+
+	@Override
+	public int getLength()
+	{
+		return exp.getOffset() - symbol.getOffset() + exp.getLength();
+	}
+
+
+
 	@Override
 	public String toString()
 	{

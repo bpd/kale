@@ -41,13 +41,13 @@ public class CodePane extends JTextPane
 		    InputStream is = CodePane.class.getResourceAsStream("/kaygan/example.lang");
 		    if( is != null )
 		    {
-		    	Reader reader = new BufferedReader(new InputStreamReader(is));
+		    	BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		    	try
 		    	{
-			    	int c = -1;
-			    	while( (c = reader.read()) != -1 )
+			    	String line = null;
+			    	while( (line = reader.readLine()) != null )
 			    	{
-			    		code.appendCodePoint(c);
+			    		code.append( line ).append('\n');
 			    	}
 		    	}
 		    	finally

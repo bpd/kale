@@ -29,6 +29,22 @@ public class Symbol extends Exp
 		return sb.toString();
 	}
 	
+	
+	
+	@Override
+	public int getOffset()
+	{
+		return parts.get(0).beginOffset;
+	}
+
+	@Override
+	public int getLength()
+	{
+		Token first = parts.get(0);
+		Token last = parts.get(parts.size()-1);
+		return last.endOffset - first.beginOffset;
+	}
+
 	@Override
 	public String toString()
 	{

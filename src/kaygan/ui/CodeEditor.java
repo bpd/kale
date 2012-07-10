@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
+import kaygan.Interpreter;
 import kaygan.Parser;
 
 public class CodeEditor extends JPanel
@@ -91,6 +92,14 @@ public class CodeEditor extends JPanel
 			}
 			repl.addError( "Error: " + pe.getMessage() );
 			
+		}
+		catch(Interpreter.InterpretException ie)
+		{
+			text.error(	ie.getMessage(), 
+						ie.astNode.getOffset(), 
+						ie.astNode.getLength() );
+
+			repl.addError( "Error: " + ie.getMessage() );
 		}
 		catch(RuntimeException re)
 		{

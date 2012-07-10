@@ -28,5 +28,19 @@ public class Range extends Exp
 		this.between = between;
 		this.to = to;
 	}
+
+	@Override
+	public int getOffset()
+	{
+		return from.getOffset();
+	}
+
+	@Override
+	public int getLength()
+	{
+		return to.getOffset() - from.getOffset() + to.getLength();
+	}
+	
+	
 	
 }

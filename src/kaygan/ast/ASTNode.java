@@ -1,5 +1,8 @@
 package kaygan.ast;
 
-public class ASTNode {
-
+public abstract class ASTNode
+{
+	public abstract int getOffset();
+	
+	public abstract int getLength();
 }

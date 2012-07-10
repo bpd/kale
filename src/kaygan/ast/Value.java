@@ -1,6 +1,6 @@
 package kaygan.ast;
 
-public class Value extends Exp
+public abstract class Value extends Exp
 {
 
 }

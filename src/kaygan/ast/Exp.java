@@ -1,6 +1,6 @@
 package kaygan.ast;
 
-public class Exp extends ASTNode
+public abstract class Exp extends ASTNode
 {
 
 }

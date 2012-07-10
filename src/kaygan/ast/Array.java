@@ -18,6 +18,19 @@ public class Array extends Exp
 		this.contents = contents;
 	}
 	
+	@Override
+	public int getOffset()
+	{
+		return open.beginOffset;
+	}
+
+	@Override
+	public int getLength()
+	{
+		return close.endOffset - open.beginOffset;
+	}
+
+
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
