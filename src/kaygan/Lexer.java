@@ -181,7 +181,7 @@ public class Lexer
 					// TODO escaping
 					consume();
 				}
-				while( peekChar() != '"' );
+				while( peekChar() != '"' && !isEOF( peekChar() ) );
 				
 				consume();
 				return end(TokenType.String);
