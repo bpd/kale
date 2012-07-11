@@ -33,6 +33,7 @@ public class ReadEvalPrintPane extends JPanel
 		// text output
 		output.setEditable(false);
 		output.setPreferredSize( new Dimension(-1, 150) );
+		output.setFont( CodePane.FONT );
 		
 		JScrollPane scrollOutput = new JScrollPane(output);
 		scrollOutput.setPreferredSize( new Dimension(-1, 150) );
@@ -40,6 +41,7 @@ public class ReadEvalPrintPane extends JPanel
 		add( scrollOutput, BorderLayout.CENTER );
 		
 		// REPL input
+		input.setFont( CodePane.FONT );
 		add( input, BorderLayout.SOUTH );
 		
 		input.addKeyListener( new KeyAdapter()

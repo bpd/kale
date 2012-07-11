@@ -61,13 +61,24 @@ public class CodeEditor extends JPanel
 				{
 					go();
 				}
+				else
+				{
+					text.dirty();
+				}
 			}	
 		});
+		
+		text.requestFocusInWindow();
+		text.setCaretPosition( text.getStyledDocument().getLength() - 1 );
+		
+		
 	}
 	
 	protected void go()
 	{
 		eval( text.getText() );
+		
+		text.highlight();
 		
 		repl.validate();
 		repl.repaint();
@@ -79,7 +90,6 @@ public class CodeEditor extends JPanel
 		{
 			repl.addInfo("Load");
 			repl.reset();
-			text.reset();
 			repl.eval(input);
 		}
 		catch(Parser.ParseException pe)
@@ -132,9 +142,14 @@ public class CodeEditor extends JPanel
 				JFrame frame = new JFrame("Kaygan Editor");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				
-				frame.add( new CodeEditor() );
+				CodeEditor editor = new CodeEditor();
+				
+				frame.add( editor );
 				
 				frame.pack();
+				
+				editor.text.requestFocusInWindow();
+				
 				frame.setVisible(true);
 				
 			}
