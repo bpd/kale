@@ -61,6 +61,15 @@ public class Parser
 				// can still assume we're in the arguments block
 				args.add( symbol() );
 			}
+			else if( peek2.type == TokenType.CLOSE_BRACE )
+			{
+				// single expression function, fall through to content
+				break;
+			}
+			else
+			{
+				error("Expected (':' '|' Symbol), found " + peek2 );
+			}
 		}
 		
 		// check args?
