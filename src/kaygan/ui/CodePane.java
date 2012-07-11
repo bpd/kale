@@ -26,6 +26,7 @@ import kaygan.ast.Bind;
 import kaygan.ast.Callsite;
 import kaygan.ast.Exp;
 import kaygan.ast.Function;
+import kaygan.ast.Num;
 import kaygan.ast.Program;
 import kaygan.ast.Range;
 import kaygan.ast.Str;
@@ -43,6 +44,8 @@ public class CodePane extends JTextPane
 	
 	public static final Color ARG_COLOR = new Color(255, 128, 70);
 	
+	public static final Color NUM_COLOR = new Color(35, 175, 75);
+	
 	
 	SimpleAttributeSet errorStyle = new SimpleAttributeSet();
 	
@@ -53,6 +56,8 @@ public class CodePane extends JTextPane
 	SimpleAttributeSet symbolStyle = new SimpleAttributeSet();
 	
 	SimpleAttributeSet argStyle = new SimpleAttributeSet();
+	
+	SimpleAttributeSet numStyle = new SimpleAttributeSet();
 	
 	volatile boolean dirty = true;
 	
@@ -70,6 +75,8 @@ public class CodePane extends JTextPane
 	    StyleConstants.setForeground(symbolStyle, SYMBOL_COLOR);
 
 	    StyleConstants.setForeground(argStyle, ARG_COLOR);
+	    
+	    StyleConstants.setForeground(numStyle, NUM_COLOR);
 
 		
 //		DefaultHighlighter.DefaultHighlightPainter highlightPainter = 
@@ -270,6 +277,10 @@ public class CodePane extends JTextPane
 			{
 				highlight( doc, exp );
 			}
+		}
+		else if( node instanceof Num )
+		{
+			highlight( doc, node, numStyle );
 		}
 		else
 		{
