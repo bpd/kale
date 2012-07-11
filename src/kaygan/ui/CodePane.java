@@ -28,7 +28,6 @@ import kaygan.ast.Exp;
 import kaygan.ast.Function;
 import kaygan.ast.Num;
 import kaygan.ast.Program;
-import kaygan.ast.Range;
 import kaygan.ast.Str;
 import kaygan.ast.Symbol;
 
@@ -264,12 +263,6 @@ public class CodePane extends JTextPane
 			{
 				highlight(doc, e);
 			}
-		}
-		else if( node instanceof Range )
-		{
-			Range range = (Range)node;
-			highlight( doc, range.from );
-			highlight( doc, range.to );
 		}
 		else if( node instanceof Program )
 		{

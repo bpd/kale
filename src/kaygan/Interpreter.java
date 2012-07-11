@@ -56,10 +56,6 @@ public class Interpreter
 		{
 			return intrBind((Bind)exp, scope);
 		}
-		else if( exp instanceof Range )
-		{
-			return intrRange((Range)exp, scope);
-		}
 		else if( exp instanceof Symbol )
 		{
 			Symbol symbol = ((Symbol)exp);
@@ -189,15 +185,6 @@ public class Interpreter
 	{
 		scope.set(bind.symbol.symbol(), interpret(bind.exp, scope));
 		return null;
-	}
-	
-	protected static Object intrRange(Range range, Scope scope)
-	{
-		Object from = interpret(range.from, scope);
-		Object to = interpret(range.to, scope);
-		
-		return new StringBuilder()
-			.append("<Range ").append(from).append("..").append(to).append(">");
 	}
 	
 	protected static Object intrValue(Value value, Scope scope)

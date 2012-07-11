@@ -206,17 +206,6 @@ public class Parser
 		return null;
 	}
 	
-	protected Range range()
-	{
-		Exp left = range_endpoint();
-
-		Token between = next();
-
-		Exp right = range_endpoint();
-		
-		return new Range( left, between, right );
-	}
-	
 	protected Bind bind()
 	{
 		Symbol symbol = symbol();
@@ -245,23 +234,16 @@ public class Parser
 			return callsite();
 		}
 		
-		
-		Token peek2 = peek(2);
-		
-		if( peek2.type == TokenType.COLON )
+		if( peek(2).type == TokenType.COLON )
 		{
 			return bind();
-		}
-		else if( peek2.type == TokenType.BETWEEN )
-		{
-			return range();
 		}
 		
 		if( peek.type == TokenType.SymbolPart )
 		{
-			// bind | symbol | range
+			// bind | symbol
 			
-			// rule out bind and range to infer symbol
+			// rule out bind to infer symbol
 			return symbol();
 		}
 		

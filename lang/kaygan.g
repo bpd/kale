@@ -23,8 +23,6 @@ string	:	'"' ( ~('"') )* '"' ;
 
 value	:	num | string ;
 
-range	:	(value | symbol) WS* '..' WS* (value | symbol) ;
-
 symbol 	:	SymbolPart ('.' SymbolPart)* ;
 
 arg	:	symbol (WS* ':' WS* symbol)? ;
@@ -33,13 +31,13 @@ args	:	(arg WS*)+ '|' WS* ;
 
 bind	:	symbol WS* ':' WS* exp ;
 	
-function:	'{' WS* args? (exp WS*)+ '}' ;
+function:	'{' WS^* args? (exp WS*)+ '}' ;
 	
 array	:	'[' WS* (exp WS*)* ']' ;
 
 callsite:	'(' WS* (exp WS*)+ ')' ;
 	
-exp 	:	function | array | callsite | bind | range | symbol | value ;
+exp 	:	function | array | callsite | bind | symbol | value ;
 	
 program	:	WS* (exp WS*)* ;
 

@@ -15,17 +15,11 @@ a: { a:Int | a + 2 }
 
 b: (a 2)  /* call 'a' with two as the first argument */
 
-/* define a parameter, call by name
- * (defining types for 'to' and 'from' isn't really necessary)
- */
-make_range: { from:Int to:Int | from..to }
-
-b: (make_range from :2 to: 2)
 
 /* stress tests */
-a: [ ( b b:2 2 ) (c 3 4 a:5 0..2  b..c 2.2 3.14159 ) d ]
+a: [ ( b b:2 2 ) (c 3 4 a:5 2.2 3.14159 ) d ]
 
-a: [ 0..2 [ a:Int b { a:Int | [ a 2 3 4 ] } ] ]
+a: [ 2 [ a:Int b { a:Int | [ a 2 3 4 ] } ] ]
 
 b: 2
 
