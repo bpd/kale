@@ -37,6 +37,26 @@ public class Function extends Exp
 	{
 		return close.endOffset - open.beginOffset;
 	}
+	
+	@Override
+	public ASTNode findNode(int offset)
+	{
+		for( Exp exp : args )
+		{
+			if( exp.overlaps(offset) )
+			{
+				return exp.findNode(offset);
+			}
+		}
+		for( Exp exp : contents )
+		{
+			if( exp.overlaps(offset) )
+			{
+				return exp.findNode(offset);
+			}
+		}
+		return overlaps(offset) ? this : null;
+	}
 
 
 	public String toString()

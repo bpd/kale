@@ -26,6 +26,21 @@ public class Bind extends Exp
 		return exp.getOffset() - symbol.getOffset() + exp.getLength();
 	}
 
+	@Override
+	public ASTNode findNode(int offset)
+	{
+		if( symbol.overlaps(offset) )
+		{
+			return symbol;
+		}
+		
+		if( exp.overlaps(offset) )
+		{
+			return exp.findNode(offset);
+		}
+		
+		return overlaps(offset) ? this : null;
+	}
 
 
 	@Override

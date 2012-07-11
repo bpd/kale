@@ -22,6 +22,12 @@ public class Num extends Value
 	{
 		return token.endOffset - token.beginOffset;
 	}
+	
+	@Override
+	public ASTNode findNode(int offset)
+	{
+		return overlaps(offset) ? this : null;
+	}
 
 
 	@Override

@@ -44,6 +44,12 @@ public class Symbol extends Exp
 		Token last = parts.get(parts.size()-1);
 		return last.endOffset - first.beginOffset;
 	}
+	
+	@Override
+	public ASTNode findNode(int offset)
+	{
+		return overlaps(offset) ? this : null;
+	}
 
 	@Override
 	public String toString()

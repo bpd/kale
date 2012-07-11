@@ -2,6 +2,7 @@ package kaygan.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JTextPane;
+import javax.swing.ToolTipManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -24,6 +26,7 @@ import kaygan.ast.Bind;
 import kaygan.ast.Callsite;
 import kaygan.ast.Exp;
 import kaygan.ast.Function;
+import kaygan.ast.Program;
 import kaygan.ast.Range;
 import kaygan.ast.Str;
 import kaygan.ast.Symbol;
@@ -52,6 +55,8 @@ public class CodePane extends JTextPane
 	SimpleAttributeSet argStyle = new SimpleAttributeSet();
 	
 	volatile boolean dirty = true;
+	
+	volatile Program lastParsed = null;
 
 	public CodePane()
 	{	
@@ -98,13 +103,13 @@ public class CodePane extends JTextPane
 	    	// eat it
 	    }
 	    
-	    // schedule the highlighter
+	    // schedule the parser
 	    new Timer().scheduleAtFixedRate(new TimerTask()
 	    {
 			@Override
 			public void run()
 			{
-				highlight();
+				parse();
 			}
 	    	
 	    }, 0, 500);
@@ -119,59 +124,85 @@ public class CodePane extends JTextPane
 		{
 			throw new RuntimeException(e);
 		}
+		
+		ToolTipManager.sharedInstance().registerComponent(this);
 	}
 	
+	
+	
+	@Override
+	public String getToolTipText(MouseEvent event)
+	{
+		int position = viewToModel(event.getPoint());
+		
+		if( lastParsed != null )
+		{
+			ASTNode node = lastParsed.findNode(position);
+			if( node != null )
+			{
+				return node.toString();
+			}
+		}
+		
+		return "";
+	}
+
+
+
 	public void dirty()
 	{
 		this.dirty = true;
 	}
 	
-	private long lastHighlight = 0;
+	private long lastParseTime = 0;
 	
 	/** in milliseconds */
-	private static final long HIGHLIGHT_INTERVAL = 500;
+	private static final long PARSE_INTERVAL = 500;
 	
-	public void highlight()
+	public void parse()
 	{
 		if( dirty 
-			&& System.currentTimeMillis() > lastHighlight + HIGHLIGHT_INTERVAL )
+			&& System.currentTimeMillis() > lastParseTime + PARSE_INTERVAL )
 		{
 			dirty = false;
-			highlight( getStyledDocument() );
-			lastHighlight = System.currentTimeMillis();
-		}
-		
-	}
-	
-	protected void highlight(StyledDocument doc)
-	{
-		try
-		{
-			Parser parser = new Parser( new StringReader( getText() ) );
 			
-			// first reset all style
-			for( Exp exp : parser.program() )
+			StyledDocument doc = getStyledDocument();
+			
+			try
 			{
-				highlight(doc, exp);
+				Parser parser = new Parser( new StringReader( getText() ) );
+				
+				// first reset all style
+				Program program = parser.program();
+				
+				if( program != null )
+				{
+					lastParsed = program;
+					highlight( doc, program );
+				}
+				
 			}
-		}
-		catch(Parser.ParseException pe)
-		{
-			// parsing probably failed because the person was
-			// in the middle of typing
+			catch(Parser.ParseException pe)
+			{
+				// parsing probably failed because the person was
+				// in the middle of typing
 
-			if( pe.token != null)
-			{
-				doc.setCharacterAttributes(
-						pe.token.beginOffset, 
-						pe.token.endOffset - pe.token.beginOffset,
-						errorStyle,
-						false);
+				if( pe.token != null)
+				{
+					doc.setCharacterAttributes(
+							pe.token.beginOffset, 
+							pe.token.endOffset - pe.token.beginOffset,
+							errorStyle,
+							false);
+				}
 			}
-		}
-		catch(RuntimeException e)
-		{
-			System.out.println("Exception occured parsing");
+			catch(RuntimeException e)
+			{
+				System.out.println("Exception occured parsing");
+			}
+			
+			
+			lastParseTime = System.currentTimeMillis();
 		}
 	}
 	
@@ -232,6 +263,13 @@ public class CodePane extends JTextPane
 			Range range = (Range)node;
 			highlight( doc, range.from );
 			highlight( doc, range.to );
+		}
+		else if( node instanceof Program )
+		{
+			for( Exp exp : ((Program)node) )
+			{
+				highlight( doc, exp );
+			}
 		}
 		else
 		{

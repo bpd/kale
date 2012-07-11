@@ -41,6 +41,20 @@ public class Range extends Exp
 		return to.getOffset() - from.getOffset() + to.getLength();
 	}
 	
-	
+	@Override
+	public ASTNode findNode(int offset)
+	{
+		if( from.overlaps(offset) )
+		{
+			return from.findNode(offset);
+		}
+		
+		if( to.overlaps(offset) )
+		{
+			return to.findNode(offset);
+		}
+		
+		return overlaps(offset) ? this : null;
+	}
 	
 }

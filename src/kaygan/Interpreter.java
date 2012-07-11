@@ -22,11 +22,11 @@ public class Interpreter
 		return interpret(parser.program(), scope);
 	}
 	
-	public static List<Object> interpret(List<Exp> exps, Scope scope)
+	public static List<Object> interpret(Program program, Scope scope)
 	{
 		List<Object> results = new ArrayList<Object>();
 		
-		for( Exp exp : exps )
+		for( Exp exp : program )
 		{
 			Object result = interpret(exp, scope);
 			if( result != null )

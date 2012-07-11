@@ -269,7 +269,7 @@ public class Parser
 		return value();
 	}
 	
-	public List<Exp> program()
+	public Program program()
 	{
 		List<Exp> expressions = new ArrayList<Exp>();
 
@@ -277,7 +277,7 @@ public class Parser
 		{
 			expressions.add( exp() );
 		}
-		return expressions;
+		return new Program(expressions);
 	}
 	
 	public static class ParseException extends RuntimeException

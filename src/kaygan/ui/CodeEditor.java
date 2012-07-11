@@ -78,7 +78,7 @@ public class CodeEditor extends JPanel
 	{
 		eval( text.getText() );
 		
-		text.highlight();
+		text.parse();
 		
 		repl.validate();
 		repl.repaint();
