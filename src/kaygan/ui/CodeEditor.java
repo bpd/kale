@@ -57,11 +57,19 @@ public class CodeEditor extends JPanel
 			@Override
 			public void keyPressed(KeyEvent e)
 			{
-				if( e.getKeyCode() == KeyEvent.VK_F5 )
+				int c = e.getKeyCode();
+				if( c == KeyEvent.VK_F5 )
 				{
 					go();
 				}
-				else
+				else if( c != KeyEvent.VK_LEFT
+						&& c != KeyEvent.VK_RIGHT
+						&& c != KeyEvent.VK_UP
+						&& c != KeyEvent.VK_DOWN
+						&& c != KeyEvent.VK_HOME
+						&& c != KeyEvent.VK_END
+						&& c != KeyEvent.VK_PAGE_UP
+						&& c != KeyEvent.VK_PAGE_DOWN )
 				{
 					text.dirty();
 				}
