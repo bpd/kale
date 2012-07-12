@@ -32,6 +32,11 @@ public class Scope
 		return binding;
 	}
 	
+	public Object getLocal(String symbol)
+	{
+		return bindings.get(symbol);
+	}
+	
 	public void set(String symbol, Object value)
 	{
 		System.out.println(symbol + " => " + value);

@@ -122,7 +122,7 @@ public class Interpreter
 				// function arguments should match callsite size
 				//
 				// TODO this should be configurable by binding
-				error(c, 
+				return error(c, 
 						"Expected " + f.args.size() 
 							+ " arguments, found " + (c.contents.size() - 1) );
 			}
@@ -151,7 +151,7 @@ public class Interpreter
 				else
 				{
 					//throw new RuntimeException("Invalid receiver: " + argReceiver);
-					error(argReceiver, "Invalid receiver");
+					return error(argReceiver, "Invalid receiver");
 				}
 			}
 			
@@ -183,7 +183,19 @@ public class Interpreter
 	
 	protected static Object intrBind(Bind bind, Scope scope)
 	{
-		scope.set(bind.symbol.symbol(), interpret(bind.exp, scope));
+		// verify the symbol is not already bound in the *local* scope
+		String key = bind.symbol.symbol();
+		Object o = scope.getLocal(key);
+		
+		if( o == null )
+		{
+			scope.set(key, interpret(bind.exp, scope));
+		}
+		else
+		{
+			return error(bind, "Symbol " + key + " is already bound to " + o);
+		}
+		
 		return null;
 	}
 	
