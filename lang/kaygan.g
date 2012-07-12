@@ -13,7 +13,7 @@ Int	:	'0'..'9'+ ;
 
 Real	:	Int '.' Int ;
 
-SymbolPart:	( '0' | ~('{' | '}' | '(' | ')' | '[' | ']' | ':' | '.' | '|' | WS ) )+ ;
+Symbol	:	( '0' | ~('{' | '}' | '(' | ')' | '[' | ']' | ':' | '|' | WS ) )+ ;
 
 
 
@@ -23,7 +23,7 @@ string	:	'"' ( ~('"') )* '"' ;
 
 value	:	num | string ;
 
-symbol 	:	SymbolPart ('.' SymbolPart)* ;
+symbol 	:	Symbol ;
 
 arg	:	symbol (WS* ':' WS* symbol)? ;
 

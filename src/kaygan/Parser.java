@@ -44,33 +44,35 @@ public class Parser
 		// though it may turn out (if we don't find '|')
 		// that what we thought were args were actually exps
 		// in an argless function
-		while( peek().type == TokenType.SymbolPart )
+		gather_args:
+		while( peek().type == TokenType.Symbol )
 		{
 			// symbol (':' symbol)? 
-			Token peek2 = peek(2);
-			if( peek2.type == TokenType.COLON )
+			switch( peek(2).type )
 			{
-				if( peek(3).type == TokenType.SymbolPart )
+			case COLON:
+				// symbol ':' symbol
+				Bind bind = bind();
+				if( !(bind.exp instanceof Symbol) )
 				{
-					// symbol ':' symbol
-					args.add( bind() );
+					error("Arguments can only be bound to symbols");
 				}
-			}
-			else if( peek2.type == TokenType.SymbolPart
-					|| peek2.type == TokenType.PIPE )
-			{
+				args.add( bind );
+				break;
+
+			case Symbol:
+			case PIPE:
 				// this is the next argument, but we
 				// can still assume we're in the arguments block
 				args.add( symbol() );
-			}
-			else if( peek2.type == TokenType.CLOSE_BRACE )
-			{
-				// single expression function, fall through to content
 				break;
-			}
-			else
-			{
-				error("Expected (':' '|' Symbol), found " + peek2 );
+
+			case CLOSE_BRACE:
+				// single expression function, fall through to content
+				break gather_args;
+
+			default:
+				error("Expected (':' '|' Symbol), found ");
 			}
 		}
 		
@@ -112,7 +114,7 @@ public class Parser
 				
 				if( argNames.containsKey(key) )
 				{
-					error( symbol.parts.get(0),  "Symbol already bound" );
+					error( symbol.symbol,  "Symbol already bound" );
 				}
 				argNames.put( key, symbol );
 			}
@@ -193,26 +195,13 @@ public class Parser
 	
 	protected Symbol symbol()
 	{
-		List<Token> parts = new ArrayList<Token>();
-		while( peek().type == TokenType.SymbolPart )
+		Token symbol = next();
+		if( symbol.type != TokenType.Symbol )
 		{
-			parts.add( next() );
-			if( peek().type == TokenType.FULL_STOP )
-			{
-				// consume
-				next();
-			}
-			else
-			{
-				break;
-			}
+			error(symbol, "Expected Symbol");
 		}
 		
-		if( parts.size() == 0 )
-		{
-			error("Expected Symbol");
-		}
-		return new Symbol(parts);
+		return new Symbol( symbol );
 	}
 	
 	protected void error(String message)
@@ -232,7 +221,7 @@ public class Parser
 		{
 			return value();
 		}
-		else if( peek.type == TokenType.SymbolPart )
+		else if( peek.type == TokenType.Symbol )
 		{
 			return symbol();
 		}
@@ -274,7 +263,7 @@ public class Parser
 			return bind();
 		}
 		
-		if( peek.type == TokenType.SymbolPart )
+		if( peek.type == TokenType.Symbol )
 		{
 			// bind | symbol
 			

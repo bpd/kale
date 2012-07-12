@@ -9,13 +9,11 @@ public enum TokenType
 	Int,
 	Real,
 	String,
-	SymbolPart,
+	Symbol,
 	EOF,
 	
 	
 	COLON,        // ':'
-	FULL_STOP,    // '.'
-	BETWEEN,      // '..'
 	
 	OPEN_BRACE,   // '{'
 	CLOSE_BRACE,  // '}'

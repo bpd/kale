@@ -105,8 +105,7 @@ public class Lexer
 		return c == '{' || c == '}'
 			|| c == '(' || c == ')'
 			|| c == '[' || c == ']'
-			|| c == ':' || c == '.'
-			|| c == '|';
+			|| c == ':' || c == '|';
 	}
 	
 	protected boolean isSymbol(int c)
@@ -164,14 +163,6 @@ public class Lexer
 			case '|': consume(); return end(TokenType.PIPE);
 			
 			case ':': consume(); return end(TokenType.COLON);
-			case '.':
-				consume();
-				if( peekChar() == '.' )
-				{
-					consume();
-					return end(TokenType.BETWEEN);
-				}
-				return end(TokenType.FULL_STOP);
 			}
 			
 			if( c == '"' )
@@ -259,7 +250,7 @@ public class Lexer
 				// we've read up to a non-digit,
 				// if we find a decimal point here read a real
 				
-				if( peekChar() == '.' && reader.peek2() != '.' )
+				if( peekChar() == '.' )
 				{
 					do
 					{
@@ -277,19 +268,13 @@ public class Lexer
 			if( isSymbol(c) )
 			{
 				// symbol part
-				int peek = peekChar();
-				while( isSymbol(peek) )
+				do
 				{
 					consume();
-					peek = peekChar();
-					if( peek == '.' && isSymbol(reader.peek2()) )
-					{
-						// symbolpart1.symbolpart2
-						consume(); // consume the '.'
-						peek = peekChar();
-					}
 				}
-				return end(TokenType.SymbolPart);
+				while( isSymbol( peekChar() ) );
+				
+				return end(TokenType.Symbol);
 			}
 			
 			return end(TokenType.EOF);

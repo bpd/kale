@@ -46,18 +46,18 @@ public class LexTest extends TestCase
 		String input = " asdf fds @#%*fdsa ";
 		Lexer lexer = new Lexer(new StringReader(input));
 		
-		assertToken( lexer.next(), TokenType.SymbolPart, "asdf" );
+		assertToken( lexer.next(), TokenType.Symbol, "asdf" );
 		
-		assertToken( lexer.next(), TokenType.SymbolPart, "fds" );
+		assertToken( lexer.next(), TokenType.Symbol, "fds" );
 		
-		assertToken( lexer.next(), TokenType.SymbolPart, "@#%*fdsa" );
+		assertToken( lexer.next(), TokenType.Symbol, "@#%*fdsa" );
 		
 		assertEquals( lexer.next().type, TokenType.EOF );
 	}
 	
 	public void testControl() throws IOException
 	{
-		String input = " { } ( ) [ ] : . .. ";
+		String input = " { } ( ) [ ] : ";
 		Lexer lexer = new Lexer(new StringReader(input));
 		
 		assertEquals( lexer.next().type, TokenType.OPEN_BRACE );
@@ -70,10 +70,6 @@ public class LexTest extends TestCase
 		assertEquals( lexer.next().type, TokenType.CLOSE_BRACKET );
 		
 		assertEquals( lexer.next().type, TokenType.COLON );
-
-		assertEquals( lexer.next().type, TokenType.FULL_STOP );
-		
-		assertEquals( lexer.next().type, TokenType.BETWEEN );
 		
 		assertEquals( lexer.next().type, TokenType.EOF );
 	}
@@ -85,24 +81,6 @@ public class LexTest extends TestCase
 		
 		assertToken( lexer.next(), TokenType.String, "\"asdf\"" );
 		assertToken( lexer.next(), TokenType.String, "\"1234\"" );		
-		assertEquals( lexer.next().type, TokenType.EOF );
-	}
-	
-	public void testRangeVsSymbol() throws IOException
-	{
-		String input = " 2..4 a..b ref1.ref2 ";
-		Lexer lexer = new Lexer(new StringReader(input));
-		
-		assertToken( lexer.next(), TokenType.Int, "2" );
-		assertToken( lexer.next(), TokenType.BETWEEN, ".." );
-		assertToken( lexer.next(), TokenType.Int, "4" );
-		
-		assertToken( lexer.next(), TokenType.SymbolPart, "a" );
-		assertToken( lexer.next(), TokenType.BETWEEN, ".." );
-		assertToken( lexer.next(), TokenType.SymbolPart, "b" );
-		
-		assertToken( lexer.next(), TokenType.SymbolPart, "ref1.ref2" );
-		
 		assertEquals( lexer.next().type, TokenType.EOF );
 	}
 	

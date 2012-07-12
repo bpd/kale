@@ -1,48 +1,32 @@
 package kaygan.ast;
 
-import java.util.List;
-
 import kaygan.Token;
 
 public class Symbol extends Exp
 {
-	public final List<Token> parts;
+	public final Token symbol;
 	
-	public Symbol(List<Token> parts)
+	public Symbol(Token symbol)
 	{
-		if( parts.size() == 0 )
-		{
-			throw new IllegalArgumentException("Symbol parts must exceed 0");
-		}
-		this.parts = parts;
+		this.symbol = symbol;
 	}
 	
 	public String symbol()
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(parts.get(0).value);
-		for(int i=1; i<parts.size(); i++)
-		{
-			sb.append('.');
-			sb.append(parts.get(i).value);
-		}
-		return sb.toString();
+		return symbol.value;
 	}
-	
 	
 	
 	@Override
 	public int getOffset()
 	{
-		return parts.get(0).beginOffset;
+		return symbol.beginOffset;
 	}
 
 	@Override
 	public int getLength()
 	{
-		Token first = parts.get(0);
-		Token last = parts.get(parts.size()-1);
-		return last.endOffset - first.beginOffset;
+		return symbol.endOffset - symbol.beginOffset;
 	}
 	
 	@Override
@@ -57,12 +41,7 @@ public class Symbol extends Exp
 		StringBuilder sb = new StringBuilder();
 		sb.append('{');
 		sb.append("Symbol: ");
-		sb.append(parts.get(0));
-		for(int i=1; i<parts.size(); i++)
-		{
-			sb.append('.');
-			sb.append(parts.get(i));
-		}
+		sb.append(symbol);
 		sb.append('}');
 		return sb.toString();
 	}
