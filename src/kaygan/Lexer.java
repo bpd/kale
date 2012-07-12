@@ -258,11 +258,17 @@ public class Lexer
 					}
 					while( isDigit( peekChar() ) );
 					
-					return end(TokenType.Real);
+					if( !isSymbol(peekChar()) )
+					{
+						return end(TokenType.Real);
+					}
 				}
 	
 				// no decimal point, just an int
-				return end(TokenType.Int);
+				if( !isSymbol(peekChar()) )
+				{
+					return end(TokenType.Int);
+				}
 			}
 			
 			if( isSymbol(c) )
