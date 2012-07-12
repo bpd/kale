@@ -2,7 +2,9 @@ package kaygan;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kaygan.ast.*;
 
@@ -85,6 +87,35 @@ public class Parser
 			// were just exps in the function body
 			contents.addAll( args );
 			args.clear();
+		}
+
+		final Map<String, Symbol> argNames = new HashMap<String, Symbol>();
+		
+		for( Exp arg : args )
+		{
+			Symbol symbol = null;
+			if( arg instanceof Bind )
+			{
+				Bind bind = (Bind)arg;
+				symbol = bind.symbol;
+			}
+			else if( arg instanceof Symbol )
+			{
+				symbol = (Symbol)arg;
+			}
+			
+			// verify the symbol hasn't already been used for an
+			// argument in this function
+			if( symbol != null )
+			{
+				String key = symbol.symbol();
+				
+				if( argNames.containsKey(key) )
+				{
+					error( symbol.parts.get(0),  "Symbol already bound" );
+				}
+				argNames.put( key, symbol );
+			}
 		}
 		
 		while( peek().type != TokenType.CLOSE_BRACE )
@@ -186,7 +217,11 @@ public class Parser
 	
 	protected void error(String message)
 	{
-		Token token = peek();
+		error( peek(), message );
+	}
+	
+	protected void error(Token token, String message)
+	{
 		throw new ParseException( token, message );
 	}
 	
