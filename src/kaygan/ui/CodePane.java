@@ -184,6 +184,11 @@ public class CodePane extends JTextPane
 				if( program != null )
 				{
 					lastParsed = program;
+					
+					// first reset style
+					highlight( doc, program, normalStyle );
+					
+					// then recursively highlight nodes
 					highlight( doc, program );
 				}
 				
@@ -232,9 +237,6 @@ public class CodePane extends JTextPane
 		{
 			Function f = (Function)node;
 			
-			highlight( doc, f.open, normalStyle );
-			highlight( doc, f.close, normalStyle );
-			
 			for( Exp e : f.args )
 			{
 				highlight( doc, e, argStyle );
@@ -256,9 +258,6 @@ public class CodePane extends JTextPane
 		{
 			Callsite c = (Callsite)node;
 			
-			highlight( doc, c.open, normalStyle );
-			highlight( doc, c.close, normalStyle );
-			
 			for( Exp e : c.contents )
 			{
 				highlight(doc, e);
@@ -274,10 +273,6 @@ public class CodePane extends JTextPane
 		else if( node instanceof Num )
 		{
 			highlight( doc, node, numStyle );
-		}
-		else
-		{
-			highlight( doc, node, normalStyle );
 		}
 	}
 	
