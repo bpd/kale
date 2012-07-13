@@ -237,6 +237,11 @@ public class Parser
 		next();
 
 		Exp exp = exp();
+		
+		if( exp instanceof Bind )
+		{
+			error("Cannot bind to a bind");
+		}
 
 		return new Bind( symbol, exp );
 	}
