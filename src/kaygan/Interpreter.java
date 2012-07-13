@@ -242,6 +242,7 @@ public class Interpreter
 	
 	protected static Object error(ASTNode node, String message)
 	{
+		node.error(message);
 		throw new InterpretException(node, message);
 	}
 	
