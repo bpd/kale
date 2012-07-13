@@ -1,6 +1,8 @@
 package kaygan.ast;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kaygan.Scope;
 import kaygan.Token;
@@ -56,6 +58,47 @@ public class Function extends Exp
 			}
 		}
 		return overlaps(offset) ? this : null;
+	}
+	
+	@Override
+	public void verify()
+	{
+		final Map<String, Symbol> argNames = new HashMap<String, Symbol>();
+		
+		for( Exp arg : args )
+		{
+			Symbol symbol = null;
+			if( arg instanceof Bind )
+			{
+				Bind bind = (Bind)arg;
+				symbol = bind.symbol;
+			}
+			else if( arg instanceof Symbol )
+			{
+				symbol = (Symbol)arg;
+			}
+			
+			// verify the symbol hasn't already been used for an
+			// argument in this function
+			if( symbol != null )
+			{
+				String key = symbol.symbol();
+				
+				if( argNames.containsKey(key) )
+				{
+					symbol.error( "Duplicate argument name" );
+				}
+				else
+				{
+					argNames.put( key, symbol );
+				}
+			}
+		}
+		
+		for( Exp e : contents )
+		{
+			e.verify();
+		}
 	}
 
 

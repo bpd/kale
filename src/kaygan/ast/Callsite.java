@@ -39,6 +39,13 @@ public class Callsite extends Exp
 	@Override
 	public ASTNode findNode(int offset)
 	{
+		// if this node has errors, we want
+		// it to 'cover' its contents
+		if( hasErrors() && overlaps(offset) )
+		{
+			return this;
+		}
+		
 		for( Exp exp : contents )
 		{
 			if( exp.overlaps(offset) )

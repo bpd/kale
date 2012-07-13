@@ -28,10 +28,30 @@ public class Bind extends Exp
 	{
 		return exp.getOffset() - symbol.getOffset() + exp.getLength();
 	}
+	
+	@Override
+	public void verify()
+	{
+		if( exp instanceof Bind )
+		{
+			exp.error("Cannot bind to a bind");
+		}
+		else
+		{
+			exp.verify();
+		}
+	}
 
 	@Override
 	public ASTNode findNode(int offset)
 	{
+		// if this node has errors, we want
+		// it to 'cover' its contents
+		if( hasErrors() && overlaps(offset) )
+		{
+			return this;
+		}
+		
 		if( symbol.overlaps(offset) )
 		{
 			return symbol;
@@ -48,7 +68,11 @@ public class Bind extends Exp
 	@Override
 	public Type inferType(Scope scope)
 	{
-		return exp.inferType(scope);
+		if( !exp.hasErrors() )
+		{
+			return exp.inferType(scope);
+		}
+		return Type.ERROR;
 	}
 	
 	@Override

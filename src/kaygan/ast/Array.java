@@ -46,6 +46,15 @@ public class Array extends Exp
 		return overlaps(offset) ? this : null;
 	}
 	
+	@Override
+	public void verify()
+	{
+		for( Exp e : contents )
+		{
+			e.verify();
+		}
+	}
+	
 	private Type type = Type.ANY;
 	
 	@Override

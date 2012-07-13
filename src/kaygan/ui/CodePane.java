@@ -7,9 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JTextPane;
 import javax.swing.ToolTipManager;
@@ -18,8 +15,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import kaygan.Parser;
-import kaygan.Scope;
 import kaygan.Token;
 import kaygan.ast.ASTNode;
 import kaygan.ast.Array;
@@ -59,9 +54,9 @@ public class CodePane extends JTextPane
 	
 	SimpleAttributeSet numStyle = new SimpleAttributeSet();
 	
-	volatile boolean dirty = true;
+	private transient Program ast;
 	
-	volatile Program lastParsed = null;
+	
 
 	public CodePane()
 	{	
@@ -110,18 +105,8 @@ public class CodePane extends JTextPane
 	    	// eat it
 	    }
 	    
-	    // schedule the parser
-	    new Timer().scheduleAtFixedRate(new TimerTask()
-	    {
-			@Override
-			public void run()
-			{
-				parse();
-			}
-	    	
-	    }, 0, 500);
-	    
 		
+	    // populate initial document content
 	    StyledDocument doc = getStyledDocument();
 		try
 		{
@@ -135,6 +120,18 @@ public class CodePane extends JTextPane
 		ToolTipManager.sharedInstance().registerComponent(this);
 	}
 	
+	public void setAST(Program ast)
+	{
+		this.ast = ast;
+		
+		StyledDocument doc = getStyledDocument();
+		
+		// first reset style
+		highlight( doc, ast, normalStyle );
+		
+		// then recursively highlight nodes
+		highlight( doc, ast );
+	}
 	
 	
 	@Override
@@ -142,12 +139,29 @@ public class CodePane extends JTextPane
 	{
 		int position = viewToModel(event.getPoint());
 		
-		if( lastParsed != null )
+		if( ast != null )
 		{
-			ASTNode node = lastParsed.findNode(position);
+			ASTNode node = ast.findNode(position);
 			if( node != null )
 			{
-				return node.getType().toString();
+				// if this node has errors, display those.
+				// otherwise return the inferred type string
+				//
+				if( node.hasErrors() )
+				{
+					StringBuilder sb = new StringBuilder();
+					for( String error : node.getErrors() )
+					{
+						sb.append("- ");
+						sb.append(error);
+						sb.append('\n');
+					}
+					return sb.toString();
+				}
+				else
+				{
+					return node.getType().toString();
+				}
 				//return node.toString();
 			}
 		}
@@ -157,73 +171,18 @@ public class CodePane extends JTextPane
 
 
 
-	public void dirty()
-	{
-		this.dirty = true;
-	}
 	
-	private long lastParseTime = 0;
 	
-	/** in milliseconds */
-	private static final long PARSE_INTERVAL = 500;
 	
-	public void parse()
-	{
-		if( dirty 
-			&& System.currentTimeMillis() > lastParseTime + PARSE_INTERVAL )
-		{
-			dirty = false;
-			
-			StyledDocument doc = getStyledDocument();
-			
-			try
-			{
-				Parser parser = new Parser( new StringReader( getText() ) );
-				
-				// first reset all style
-				Program program = parser.program();
-				
-				if( program != null )
-				{
-					program.inferTypes();
-					
-					lastParsed = program;
-					
-					// first reset style
-					highlight( doc, program, normalStyle );
-					
-					// then recursively highlight nodes
-					highlight( doc, program );
-				}
-				
-			}
-			catch(Parser.ParseException pe)
-			{
-				// parsing probably failed because the person was
-				// in the middle of typing
-
-				if( pe.token != null)
-				{
-					doc.setCharacterAttributes(
-							pe.token.beginOffset, 
-							pe.token.endOffset - pe.token.beginOffset,
-							errorStyle,
-							false);
-				}
-			}
-			catch(RuntimeException e)
-			{
-				System.out.println("Exception occured parsing");
-			}
-			
-			
-			lastParseTime = System.currentTimeMillis();
-		}
-	}
 	
 	protected void highlight(StyledDocument doc, ASTNode node)
 	{
-		if( node instanceof Str )
+		if( node.hasErrors() )
+		{
+			System.out.println("errors in : " + node.toString());
+			highlight( doc, node, errorStyle );
+		}
+		else if( node instanceof Str )
 		{
 			highlight( doc, node, stringStyle );
 		}
@@ -241,9 +200,20 @@ public class CodePane extends JTextPane
 		{
 			Function f = (Function)node;
 			
-			for( Exp e : f.args )
+			for( Exp arg : f.args )
 			{
-				highlight( doc, e, argStyle );
+				// we don't have an Arg type
+				// to recurse with, hence the duplicate
+				// hasErrors() check
+				//
+				if( arg.hasErrors() )
+				{
+					highlight( doc, arg, errorStyle );
+				}
+				else
+				{
+					highlight( doc, arg, argStyle );
+				}
 			}
 			for( Exp e : f.contents )
 			{

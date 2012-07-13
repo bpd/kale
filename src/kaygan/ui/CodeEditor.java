@@ -6,6 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.StringReader;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +19,8 @@ import javax.swing.UIManager;
 
 import kaygan.Interpreter;
 import kaygan.Parser;
+import kaygan.Scope;
+import kaygan.ast.Program;
 
 public class CodeEditor extends JPanel
 {
@@ -22,7 +28,25 @@ public class CodeEditor extends JPanel
 
 	private final CodePane text = new CodePane();
 	
-	private final ReadEvalPrintPane repl = new ReadEvalPrintPane();
+	private final ReadEvalPrintPane repl = new ReadEvalPrintPane()
+	{
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void onRequestEval(String input)
+		{
+			CodeEditor.this.eval(input);
+		}
+	};
+	
+	private transient Scope scope = new Scope();
+	
+	private long lastParseTime = 0;
+	
+	/** in milliseconds */
+	private static final long PARSE_INTERVAL = 500;
+	
+	private volatile boolean dirty = true;
 	
 	public CodeEditor()
 	{
@@ -35,7 +59,7 @@ public class CodeEditor extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				go();
+				execute();
 			}	
 		});
 		add( goButton, BorderLayout.NORTH );
@@ -60,7 +84,7 @@ public class CodeEditor extends JPanel
 				int c = e.getKeyCode();
 				if( c == KeyEvent.VK_F5 )
 				{
-					go();
+					execute();
 				}
 				else if( c != KeyEvent.VK_LEFT
 						&& c != KeyEvent.VK_RIGHT
@@ -71,7 +95,7 @@ public class CodeEditor extends JPanel
 						&& c != KeyEvent.VK_PAGE_UP
 						&& c != KeyEvent.VK_PAGE_DOWN )
 				{
-					text.dirty();
+					dirty = true;
 				}
 			}	
 		});
@@ -79,14 +103,42 @@ public class CodeEditor extends JPanel
 		text.requestFocusInWindow();
 		text.setCaretPosition( text.getStyledDocument().getLength() - 1 );
 		
-		
+		// schedule the parser
+	    new Timer().scheduleAtFixedRate(new TimerTask()
+	    {
+			@Override
+			public void run()
+			{
+				long nextParseTime = lastParseTime + PARSE_INTERVAL;
+				
+				if( dirty 
+					&& System.currentTimeMillis() > nextParseTime )
+				{
+					dirty = false;			
+
+					parse( text.getText() );
+				}
+			}
+	    	
+	    }, 0, 500);
 	}
 	
-	protected void go()
+	protected void execute()
 	{
-		eval( text.getText() );
+		Program program = parse( text.getText() );
 		
-		text.parse();
+		if( program != null )
+		{
+			scope = new Scope();
+			
+			repl.reset();
+			
+			eval( program );
+			
+			text.setAST(program);
+			
+			lastParseTime = System.currentTimeMillis();
+		}
 		
 		repl.validate();
 		repl.repaint();
@@ -94,22 +146,25 @@ public class CodeEditor extends JPanel
 	
 	protected void eval( String input )
 	{
+		Program program = parse(input);
+		
+		if( program != null )
+		{
+			eval(program);
+		}
+	}
+	
+	protected void eval( Program program )
+	{
 		try
 		{
-			repl.addInfo("Load");
-			repl.reset();
-			repl.eval(input);
-		}
-		catch(Parser.ParseException pe)
-		{
-			if( pe.token != null )
-			{
-				text.error(	pe.getMessage(), 
-							pe.token.beginOffset, 
-							pe.token.endOffset - pe.token.beginOffset );
-			}
-			repl.addError( "Error: " + pe.getMessage() );
+			// interpret the program AST within the scope
+			List<Object> results = Interpreter.interpret( program, scope );
 			
+			for( Object result : results )
+			{
+				repl.addResult( result );
+			}
 		}
 		catch(Interpreter.InterpretException ie)
 		{
@@ -123,6 +178,51 @@ public class CodeEditor extends JPanel
 		{
 			repl.addError( "Error: " + re.getMessage() );
 		}
+	}
+	
+	public synchronized Program parse( String text )
+	{
+		try
+		{
+			Parser parser = new Parser( new StringReader( text ) );
+			
+			// first reset all style
+			Program program = parser.program();
+			
+			if( program != null )
+			{
+				program.verify();
+				program.inferTypes();
+				
+				// hand the AST over to the code pane to highlight
+				this.text.setAST(program);
+			}
+			
+			return program;
+		}
+		catch(Parser.ParseException pe)
+		{
+			// parsing probably failed because the person was
+			// in the middle of typing
+			
+			System.out.println("Exception occured parsing: " + pe);
+
+//			if( pe.token != null)
+//			{
+//				doc.setCharacterAttributes(
+//						pe.token.beginOffset, 
+//						pe.token.endOffset - pe.token.beginOffset,
+//						errorStyle,
+//						false);
+//			}
+		}
+		catch(RuntimeException e)
+		{
+			System.out.println("Exception occured parsing");
+		}
+		
+		
+		return null;
 	}
 	
 	

@@ -62,6 +62,15 @@ public class Program extends ASTNode implements Iterable<Exp>
 		return overlaps(offset) ? this : null;
 	}
 	
+	@Override
+	public void verify()
+	{
+		for( Exp e : exps )
+		{
+			e.verify();
+		}
+	}
+	
 	public void inferTypes()
 	{
 		// use a root scope to infer types down

@@ -40,7 +40,11 @@ public class Interpreter
 	
 	protected static Object interpret(Exp exp, Scope scope)
 	{
-		if( exp instanceof Function )
+		if( exp.hasErrors() )
+		{
+			return null;
+		}
+		else if( exp instanceof Function )
 		{
 			return intrFunction( (Function)exp, scope );
 		}
@@ -122,9 +126,12 @@ public class Interpreter
 				// function arguments should match callsite size
 				//
 				// TODO this should be configurable by binding
-				return error(c, 
-						"Expected " + f.args.size() 
-							+ " arguments, found " + (c.contents.size() - 1) );
+				String message = "Expected " + f.args.size() 
+								+ " arguments, found " + (c.contents.size() - 1);
+				
+				c.error(message);
+				
+				return error( c, message );
 			}
 			
 			System.out.println("building arguments for " + f);

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,18 +12,13 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
-import kaygan.Interpreter;
-import kaygan.Scope;
-
-public class ReadEvalPrintPane extends JPanel
+public abstract class ReadEvalPrintPane extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	
 	final JTextPane output = new JTextPane();
 	
 	final JTextField input = new JTextField();
-	
-	transient Scope scope = new Scope();
 	
 	public ReadEvalPrintPane()
 	{
@@ -51,17 +45,17 @@ public class ReadEvalPrintPane extends JPanel
 			{
 				if( e.getKeyCode() == KeyEvent.VK_ENTER )
 				{
-					eval( input.getText() );
+					onRequestEval( input.getText() );
 					input.setText("");
 				}
 			}
 		});
 	}
 	
+	public abstract void onRequestEval(String input);
+	
 	public void reset()
 	{
-		scope = new Scope();
-		
 		output.setText("");
 		input.setText("");
 	}
@@ -69,16 +63,6 @@ public class ReadEvalPrintPane extends JPanel
 	public void focus()
 	{
 		input.requestFocusInWindow();
-	}
-	
-	public void eval( String input )
-	{
-		List<Object> results = Interpreter.interpret( input, scope );
-		
-		for( Object result : results )
-		{
-			addResult( result );
-		}
 	}
 	
 	public void addInfo( String message)
