@@ -32,7 +32,7 @@ public class Str extends Value
 		return overlaps(offset) ? this : null;
 	}
 	
-	private static final Type TYPE = new NamedType("String");
+	public static final Type TYPE = new NamedType("String");
 	
 	@Override
 	public Type inferType(Scope scope)

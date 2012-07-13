@@ -185,10 +185,7 @@ public class CodePane extends JTextPane
 				
 				if( program != null )
 				{
-					// use a root scope to infer types down
-					// the AST
-					Scope scope = new Scope();
-					program.inferType( scope );
+					program.inferTypes();
 					
 					lastParsed = program;
 					

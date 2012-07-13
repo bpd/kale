@@ -32,7 +32,7 @@ public class Num extends Value
 		return overlaps(offset) ? this : null;
 	}
 	
-	private static final Type TYPE = new NamedType("Num");
+	public static final Type TYPE = new NamedType("Num");
 	
 	@Override
 	public Type inferType(Scope scope)
