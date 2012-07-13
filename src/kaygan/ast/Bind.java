@@ -1,5 +1,8 @@
 package kaygan.ast;
 
+import kaygan.Scope;
+import kaygan.type.Type;
+
 public class Bind extends Exp
 {
 	public final Symbol symbol;
@@ -42,6 +45,17 @@ public class Bind extends Exp
 		return overlaps(offset) ? this : null;
 	}
 
+	@Override
+	public Type inferType(Scope scope)
+	{
+		return exp.inferType(scope);
+	}
+	
+	@Override
+	public Type getType()
+	{
+		return exp.getType();
+	}
 
 	@Override
 	public String toString()

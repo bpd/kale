@@ -1,6 +1,9 @@
 package kaygan.ast;
 
+import kaygan.Scope;
 import kaygan.Token;
+import kaygan.type.NamedType;
+import kaygan.type.Type;
 
 public class Num extends Value
 {
@@ -27,6 +30,20 @@ public class Num extends Value
 	public ASTNode findNode(int offset)
 	{
 		return overlaps(offset) ? this : null;
+	}
+	
+	private static final Type TYPE = new NamedType("Num");
+	
+	@Override
+	public Type inferType(Scope scope)
+	{
+		return TYPE;
+	}
+	
+	@Override
+	public Type getType()
+	{
+		return TYPE;
 	}
 
 

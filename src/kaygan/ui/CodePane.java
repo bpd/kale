@@ -19,6 +19,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import kaygan.Parser;
+import kaygan.Scope;
 import kaygan.Token;
 import kaygan.ast.ASTNode;
 import kaygan.ast.Array;
@@ -146,7 +147,8 @@ public class CodePane extends JTextPane
 			ASTNode node = lastParsed.findNode(position);
 			if( node != null )
 			{
-				return node.toString();
+				return node.getType().toString();
+				//return node.toString();
 			}
 		}
 		
@@ -183,6 +185,11 @@ public class CodePane extends JTextPane
 				
 				if( program != null )
 				{
+					// use a root scope to infer types down
+					// the AST
+					Scope scope = new Scope();
+					program.inferType( scope );
+					
 					lastParsed = program;
 					
 					// first reset style

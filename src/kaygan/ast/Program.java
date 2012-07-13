@@ -3,6 +3,9 @@ package kaygan.ast;
 import java.util.Iterator;
 import java.util.List;
 
+import kaygan.Scope;
+import kaygan.type.Type;
+
 public class Program extends ASTNode implements Iterable<Exp>
 {
 	private final List<Exp> exps;
@@ -57,6 +60,27 @@ public class Program extends ASTNode implements Iterable<Exp>
 			}
 		}
 		return overlaps(offset) ? this : null;
+	}
+	
+	@Override
+	public Type inferType(Scope scope)
+	{
+		// process all binds in the scope first
+		for( Exp exp : exps )
+		{
+			if( exp instanceof Bind )
+			{
+				Bind bind = (Bind)exp;
+				scope.set( bind.symbol.symbol(), bind.exp );
+			}
+		}
+		
+		for( Exp exp : exps )
+		{
+			exp.inferType(scope);
+		}
+		
+		return Type.ANY;
 	}
 	
 	@Override

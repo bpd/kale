@@ -1,6 +1,8 @@
 package kaygan.ast;
 
+import kaygan.Scope;
 import kaygan.Token;
+import kaygan.type.Type;
 
 public class Symbol extends Exp
 {
@@ -33,6 +35,26 @@ public class Symbol extends Exp
 	public ASTNode findNode(int offset)
 	{
 		return overlaps(offset) ? this : null;
+	}
+	
+	private Type type = Type.ANY;
+	
+	@Override
+	public Type inferType(Scope scope)
+	{
+		Object o = scope.get( this.symbol() );
+		if( o != null 
+			&& o instanceof ASTNode )
+		{
+			type = ((ASTNode)o).inferType(scope);
+		}
+		return type;
+	}
+	
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 	@Override

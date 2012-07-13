@@ -2,7 +2,10 @@ package kaygan.ast;
 
 import java.util.List;
 
+import kaygan.Scope;
 import kaygan.Token;
+import kaygan.type.ListType;
+import kaygan.type.Type;
 
 public class Array extends Exp
 {
@@ -41,6 +44,41 @@ public class Array extends Exp
 			}
 		}
 		return overlaps(offset) ? this : null;
+	}
+	
+	private Type type = Type.ANY;
+	
+	@Override
+	public Type inferType(Scope scope)
+	{
+		// process all binds in the scope first
+		for( Exp exp : contents )
+		{
+			if( exp instanceof Bind )
+			{
+				Bind bind = (Bind)exp;
+				scope.set( bind.symbol.symbol(), bind.exp );
+			}
+		}
+		
+		ListType type = new ListType();
+		
+		for( Exp exp : contents )
+		{
+			if( !(exp instanceof Bind) )
+			{
+				type.add( exp.inferType(scope) );
+			}
+		}
+		
+		this.type = type;
+		return type;
+	}
+	
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 

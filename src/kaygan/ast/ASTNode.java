@@ -1,5 +1,8 @@
 package kaygan.ast;
 
+import kaygan.Scope;
+import kaygan.type.Type;
+
 public abstract class ASTNode
 {
 	public abstract int getOffset();
@@ -13,4 +16,18 @@ public abstract class ASTNode
 	}
 	
 	public abstract ASTNode findNode(int offset);
+	
+	
+	//public abstract Type getType();
+	
+	public Type inferType(Scope scope)
+	{
+		return Type.ANY;
+	}
+	
+	public Type getType()
+	{
+		return Type.ANY;
+	}
+	
 }
