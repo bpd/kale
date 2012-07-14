@@ -2,10 +2,10 @@ package kaygan.type;
 
 import java.util.Arrays;
 
-import kaygan.Scope;
-
 public class FunctionType extends Type
 {
+	private static final Type TYPE = new NamedType("Type<Function>");
+	
 	private final Type[] argTypes;
 	
 	private final Type retType;
@@ -14,20 +14,17 @@ public class FunctionType extends Type
 	{
 		this.argTypes = argsTypes;
 		this.retType = retType;
+		this.type = TYPE;
 	}
 	
-	private static final Type TYPE = new NamedType("Type<Function>");
-	
-	@Override
-	public Type inferType(Scope scope)
+	public Type[] getArgTypes()
 	{
-		return TYPE;
+		return argTypes;
 	}
-
-	@Override
-	public Type getType()
+	
+	public Type getRetType()
 	{
-		return TYPE;
+		return retType;
 	}
 
 

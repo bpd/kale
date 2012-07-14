@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import kaygan.Scope;
 import kaygan.type.Type;
 
 public abstract class ASTNode
 {
 	private List<String> errors = null;
+	
+	public Type type;
 	
 	public boolean hasErrors()
 	{
@@ -42,23 +43,5 @@ public abstract class ASTNode
 	}
 	
 	public abstract ASTNode findNode(int offset);
-	
-	public void verify()
-	{
-		
-	}
-	
-	
-	//public abstract Type getType();
-	
-	public Type inferType(Scope scope)
-	{
-		return Type.ANY;
-	}
-	
-	public Type getType()
-	{
-		return Type.ANY;
-	}
 	
 }

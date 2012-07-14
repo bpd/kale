@@ -18,8 +18,10 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import kaygan.Interpreter;
+import kaygan.Linker;
 import kaygan.Parser;
 import kaygan.Scope;
+import kaygan.TypeInference;
 import kaygan.ast.Program;
 
 public class CodeEditor extends JPanel
@@ -191,8 +193,11 @@ public class CodeEditor extends JPanel
 			
 			if( program != null )
 			{
-				program.verify();
-				program.inferTypes();
+				System.out.println("linking...");
+				Linker.link( program );
+				
+				System.out.println("inferring...");
+				TypeInference.infer( program );
 				
 				// hand the AST over to the code pane to highlight
 				this.text.setAST(program);

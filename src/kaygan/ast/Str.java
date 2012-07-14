@@ -1,17 +1,19 @@
 package kaygan.ast;
 
-import kaygan.Scope;
 import kaygan.Token;
 import kaygan.type.NamedType;
 import kaygan.type.Type;
 
 public class Str extends Value
 {
+	public static final Type TYPE = new NamedType("String");
+	
 	public final Token token;
 	
 	public Str(Token token)
 	{
 		this.token = token;
+		this.type = TYPE;
 	}
 	
 	@Override
@@ -31,21 +33,6 @@ public class Str extends Value
 	{
 		return overlaps(offset) ? this : null;
 	}
-	
-	public static final Type TYPE = new NamedType("String");
-	
-	@Override
-	public Type inferType(Scope scope)
-	{
-		return TYPE;
-	}
-	
-	@Override
-	public Type getType()
-	{
-		return TYPE;
-	}
-
 
 	@Override
 	public String toString()

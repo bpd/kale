@@ -26,6 +26,7 @@ import kaygan.ast.Num;
 import kaygan.ast.Program;
 import kaygan.ast.Str;
 import kaygan.ast.Symbol;
+import kaygan.type.Type;
 
 public class CodePane extends JTextPane
 {
@@ -160,7 +161,14 @@ public class CodePane extends JTextPane
 				}
 				else
 				{
-					return node.getType().toString();
+					if( node.type != null )
+					{
+						return node.type.toString();
+					}
+					else
+					{
+						return "Null type: " + node.toString();
+					}
 				}
 				//return node.toString();
 			}
@@ -180,6 +188,11 @@ public class CodePane extends JTextPane
 		if( node.hasErrors() )
 		{
 			System.out.println("errors in : " + node.toString());
+			highlight( doc, node, errorStyle );
+		}
+		else if( node.type == Type.ERROR )
+		{
+			System.out.println("type error in : " + node.toString());
 			highlight( doc, node, errorStyle );
 		}
 		else if( node instanceof Str )

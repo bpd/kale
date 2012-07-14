@@ -1,12 +1,13 @@
 package kaygan.ast;
 
-import kaygan.Scope;
 import kaygan.Token;
-import kaygan.type.Type;
 
 public class Symbol extends Exp
 {
 	public final Token symbol;
+	
+	/** the ASTNode this symbol references */
+	public ASTNode ref;
 	
 	public Symbol(Token symbol)
 	{
@@ -35,36 +36,6 @@ public class Symbol extends Exp
 	public ASTNode findNode(int offset)
 	{
 		return overlaps(offset) ? this : null;
-	}
-	
-	private Type type = Type.ANY;
-	
-	@Override
-	public Type inferType(Scope scope)
-	{
-		Object o = scope.get( this.symbol() );
-		if( o != null 
-			&& o instanceof ASTNode )
-		{
-			ASTNode node = (ASTNode)o;
-			if( node instanceof Type )
-			{
-				// don't need to infer a type if we already
-				// have a type
-				type = (Type)node;
-			}
-			else
-			{
-				type = node.inferType(scope);
-			}
-		}
-		return type;
-	}
-	
-	@Override
-	public Type getType()
-	{
-		return type;
 	}
 
 	@Override

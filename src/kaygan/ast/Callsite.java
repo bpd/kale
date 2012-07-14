@@ -56,7 +56,6 @@ public class Callsite extends Exp
 		return overlaps(offset) ? this : null;
 	}
 
-
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();

@@ -1,8 +1,5 @@
 package kaygan.ast;
 
-import kaygan.Scope;
-import kaygan.type.Type;
-
 public class Bind extends Exp
 {
 	public final Symbol symbol;
@@ -28,19 +25,6 @@ public class Bind extends Exp
 	{
 		return exp.getOffset() - symbol.getOffset() + exp.getLength();
 	}
-	
-	@Override
-	public void verify()
-	{
-		if( exp instanceof Bind )
-		{
-			exp.error("Cannot bind to a bind");
-		}
-		else
-		{
-			exp.verify();
-		}
-	}
 
 	@Override
 	public ASTNode findNode(int offset)
@@ -63,25 +47,6 @@ public class Bind extends Exp
 		}
 		
 		return overlaps(offset) ? this : null;
-	}
-
-	@Override
-	public Type inferType(Scope scope)
-	{
-		if( !exp.hasErrors() )
-		{
-			Type type = exp.inferType(scope);
-			
-			scope.set( symbol.symbol(), type );
-			return type;
-		}
-		return Type.ERROR;
-	}
-	
-	@Override
-	public Type getType()
-	{
-		return exp.getType();
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package kaygan.type;
 
-import kaygan.Scope;
 import kaygan.ast.ASTNode;
 
 public abstract class Type extends ASTNode
@@ -28,19 +27,5 @@ public abstract class Type extends ASTNode
 	{
 		return null;
 	}
-
-	@Override
-	public Type inferType(Scope scope)
-	{
-		return this;
-	}
-
-	@Override
-	public Type getType()
-	{
-		return this;
-	}
-	
-	
 	
 }

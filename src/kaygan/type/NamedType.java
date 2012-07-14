@@ -1,12 +1,8 @@
 package kaygan.type;
 
-import kaygan.Scope;
-
 public class NamedType extends Type
 {
 	private final String name;
-	
-	private final Type type;
 	
 	public NamedType(String name)
 	{
@@ -18,20 +14,6 @@ public class NamedType extends Type
 		this.name = name;
 		this.type = type;
 	}
-	
-	@Override
-	public Type inferType(Scope scope)
-	{
-		return type;
-	}
-
-	@Override
-	public Type getType()
-	{
-		return type;
-	}
-
-
 
 	@Override
 	public String toString()
