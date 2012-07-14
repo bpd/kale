@@ -6,6 +6,8 @@ import java.util.Map;
 
 import kaygan.Scope;
 import kaygan.Token;
+import kaygan.type.FunctionType;
+import kaygan.type.Type;
 
 public class Function extends Exp
 {
@@ -20,12 +22,30 @@ public class Function extends Exp
 	//      the interpreter is more fleshed out
 	public Scope scope;
 	
+	private Type type;
+	
 	public Function(Token open, Token close, List<Exp> args, List<Exp> contents)
 	{
 		this.open = open;
 		this.close = close;
 		this.args = args;
 		this.contents = contents;
+		
+		// build the initial type information based
+		// on what we know from the arguments
+		Type[] argTypes = new Type[args.size()];
+		for( int i=0; i<argTypes.length; i++ )
+		{
+			argTypes[i] = args.get(i).getType();
+		}
+		
+		Type retType = Type.ANY;
+		if( contents.size() > 0 )
+		{
+			retType = contents.get( contents.size() - 1 ).getType();
+		}
+		
+		this.type = new FunctionType(argTypes, retType);
 	}
 	
 	@Override
@@ -99,6 +119,37 @@ public class Function extends Exp
 		{
 			e.verify();
 		}
+	}
+	
+	@Override
+	public Type inferType(Scope scope)
+	{
+		// create a scope for this function
+		scope = scope.newSubScope();
+		
+		// infer argument types
+		Type[] argTypes = new Type[args.size()];
+		for( int i=0; i<argTypes.length; i++ )
+		{
+			argTypes[i] = args.get(i).inferType(scope);
+		}
+		
+		// infer return type
+		Type retType = Type.ANY;
+		if( contents.size() > 0 )
+		{
+			retType = contents.get( contents.size() -1 ).inferType(scope);
+		}
+		
+		this.type = new FunctionType( argTypes, retType );
+		
+		return this.type;
+	}
+	
+	@Override
+	public Type getType()
+	{
+		return type;
 	}
 
 

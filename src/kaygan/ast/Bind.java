@@ -70,7 +70,10 @@ public class Bind extends Exp
 	{
 		if( !exp.hasErrors() )
 		{
-			return exp.inferType(scope);
+			Type type = exp.inferType(scope);
+			
+			scope.set( symbol.symbol(), type );
+			return type;
 		}
 		return Type.ERROR;
 	}

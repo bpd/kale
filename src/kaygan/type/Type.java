@@ -3,7 +3,7 @@ package kaygan.type;
 import kaygan.Scope;
 import kaygan.ast.ASTNode;
 
-public class Type extends ASTNode
+public abstract class Type extends ASTNode
 {
 	public static final Type TYPE = new NamedType("Type");
 	

@@ -46,7 +46,17 @@ public class Symbol extends Exp
 		if( o != null 
 			&& o instanceof ASTNode )
 		{
-			type = ((ASTNode)o).inferType(scope);
+			ASTNode node = (ASTNode)o;
+			if( node instanceof Type )
+			{
+				// don't need to infer a type if we already
+				// have a type
+				type = (Type)node;
+			}
+			else
+			{
+				type = node.inferType(scope);
+			}
 		}
 		return type;
 	}
