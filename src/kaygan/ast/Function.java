@@ -131,7 +131,26 @@ public class Function extends Exp
 		Type[] argTypes = new Type[args.size()];
 		for( int i=0; i<argTypes.length; i++ )
 		{
-			argTypes[i] = args.get(i).inferType(scope);
+			Exp arg = args.get(i);
+			if( arg instanceof Symbol )
+			{
+				argTypes[i] = Type.ANY;
+				scope.set( ((Symbol)arg).symbol(), Type.ANY );
+			}
+			else if( arg instanceof Bind )
+			{
+				argTypes[i] = arg.inferType(scope);
+			}
+		}
+		
+		// process any binds in this function, since
+		// the return type could depend on intermediary types
+		for( Exp exp : contents )
+		{
+			if( exp instanceof Bind )
+			{
+				((Bind)exp).inferType(scope);
+			}
 		}
 		
 		// infer return type
