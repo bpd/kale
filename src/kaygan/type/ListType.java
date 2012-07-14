@@ -18,6 +18,24 @@ public class ListType extends Type
 	{
 		types.add( type.toString() );
 	}
+	
+	@Override
+	public boolean accept(Type type)
+	{
+		if( type instanceof ListType )
+		{
+			ListType listType = (ListType)type;
+			for( String innerType : listType.types )
+			{
+				if( !this.types.contains(innerType) )
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		return types.contains( type.toString() );
+	}
 
 	@Override
 	public String toString()

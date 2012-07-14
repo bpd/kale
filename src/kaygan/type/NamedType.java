@@ -14,6 +14,16 @@ public class NamedType extends Type
 		this.name = name;
 		this.type = type;
 	}
+	
+	@Override
+	public boolean accept(Type type)
+	{
+		if( type instanceof NamedType )
+		{
+			return ((NamedType)type).name.equals(this.name);
+		}
+		return false;
+	}
 
 	@Override
 	public String toString()

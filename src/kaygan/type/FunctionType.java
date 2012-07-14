@@ -26,6 +26,13 @@ public class FunctionType extends Type
 	{
 		return retType;
 	}
+	
+	@Override
+	public boolean accept(Type type)
+	{
+		
+		return true;
+	}
 
 
 	@Override

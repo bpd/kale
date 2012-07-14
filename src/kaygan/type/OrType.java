@@ -13,6 +13,12 @@ public class OrType extends Type
 	}
 	
 	@Override
+	public boolean accept(Type type)
+	{
+		return left.accept(type) || right.accept(type);
+	}
+	
+	@Override
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
