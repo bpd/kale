@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import kaygan.Scope;
+import kaygan.type.ListType;
 import kaygan.type.Type;
 
 public class Program extends ASTNode implements Iterable<Exp>
@@ -85,12 +86,21 @@ public class Program extends ASTNode implements Iterable<Exp>
 			return this.type;
 		}
 		
-		for( Exp e : this )
+		if( this.exps.size() == 1 )
 		{
-			e.inferType();
+			this.type = this.exps.get(0).inferType();
+		}
+		else
+		{
+			// TODO structural vs list type?
+			ListType type = new ListType();
+			for( Exp e : this )
+			{
+				type.add( e.inferType() );
+			}
+			this.type = type;
 		}
 		
-		this.type = Type.ANY; // FIXME structural type
 		return this.type;
 	}
 
