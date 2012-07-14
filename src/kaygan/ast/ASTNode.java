@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import kaygan.Scope;
 import kaygan.type.Type;
 
 public abstract class ASTNode
@@ -43,5 +44,20 @@ public abstract class ASTNode
 	}
 	
 	public abstract ASTNode findNode(int offset);
+	
+	public void link(Scope scope)
+	{
+		
+	}
+	
+	public Type inferType()
+	{
+		if( hasErrors() )
+		{
+			this.type = Type.ERROR;
+			return this.type;
+		}
+		return Type.ANY;
+	}
 	
 }

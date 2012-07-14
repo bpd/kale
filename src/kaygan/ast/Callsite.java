@@ -2,7 +2,10 @@ package kaygan.ast;
 
 import java.util.List;
 
+import kaygan.Scope;
 import kaygan.Token;
+import kaygan.type.FunctionType;
+import kaygan.type.Type;
 
 public class Callsite extends Exp
 {
@@ -54,6 +57,74 @@ public class Callsite extends Exp
 			}
 		}
 		return overlaps(offset) ? this : null;
+	}
+	
+	@Override
+	public void link(Scope scope)
+	{
+		for( Exp e : contents )
+		{
+			e.link(scope);
+		}
+	}
+	
+	@Override
+	public Type inferType()
+	{
+		super.inferType();
+		
+		if( this.type != null )
+		{
+			return this.type;
+		}
+		
+		for( Exp exp : this.contents )
+		{
+			exp.inferType();
+		}
+		
+		Exp first = this.contents.get(0);
+		
+		if( first.type instanceof FunctionType )
+		{
+			FunctionType funcType = (FunctionType)first.type;
+			
+			System.out.println("function type: " + funcType);
+			
+			// substitute the arguments
+			try
+			{
+				Type[] argTypes = funcType.getArgTypes();
+				
+				for( int i=1; i<this.contents.size(); i++ )
+				{
+					Type senderArgType = this.contents.get(i).type;
+					
+					Type receiverArgType = argTypes[i-1];
+					
+					System.out.println("substitution: " + funcType);
+					System.out.println("substituting " + receiverArgType + " -> " + senderArgType);
+					
+					funcType = funcType.substitute(receiverArgType, senderArgType);
+					
+					System.out.println("substitution result: " + funcType);
+				}
+			}
+			catch(Throwable e)
+			{
+				e.printStackTrace();
+			}
+			
+			this.type = first.type = funcType.getRetType();
+			
+		}
+		else
+		{
+			System.out.println("not a function type: " + first.type);
+			this.type = first.type;
+		}
+		
+		return this.type;
 	}
 
 	public String toString()

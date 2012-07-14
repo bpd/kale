@@ -3,6 +3,9 @@ package kaygan.ast;
 import java.util.Iterator;
 import java.util.List;
 
+import kaygan.Scope;
+import kaygan.type.Type;
+
 public class Program extends ASTNode implements Iterable<Exp>
 {
 	private final List<Exp> exps;
@@ -57,6 +60,38 @@ public class Program extends ASTNode implements Iterable<Exp>
 			}
 		}
 		return overlaps(offset) ? this : null;
+	}
+	
+	public void link()
+	{
+		Scope scope = new Scope();
+		
+		scope.set("Num", Num.TYPE);
+		scope.set("String", Str.TYPE);
+		
+		for( Exp exp : this )
+		{
+			exp.link( scope );
+		}
+	}
+	
+	@Override
+	public Type inferType()
+	{
+		super.inferType();
+		
+		if( this.type != null )
+		{
+			return this.type;
+		}
+		
+		for( Exp e : this )
+		{
+			e.inferType();
+		}
+		
+		this.type = Type.ANY; // FIXME structural type
+		return this.type;
 	}
 
 	

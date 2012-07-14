@@ -1,5 +1,8 @@
 package kaygan.ast;
 
+import kaygan.Scope;
+import kaygan.type.Type;
+
 public class Bind extends Exp
 {
 	public final Symbol symbol;
@@ -47,6 +50,52 @@ public class Bind extends Exp
 		}
 		
 		return overlaps(offset) ? this : null;
+	}
+	
+	@Override
+	public void link(Scope scope)
+	{
+		if( this.exp instanceof Bind )
+		{
+			this.exp.error("Cannot bind to a bind");
+		}
+		else
+		{
+			// link the expression before we set the scope
+			// that way it is not seeing its own value
+			this.exp.link( scope );
+			
+			String key = this.symbol.symbol();
+			
+			Object bound = scope.getLocal(key);
+			
+			if( bound != null )
+			{
+				this.error("Symbol " + key + " already bound to " + bound);
+			}
+			else
+			{
+				scope.set( key, this.exp );
+			}
+			
+			this.symbol.ref = this.exp;
+		}
+	}
+	
+	@Override
+	public Type inferType()
+	{
+		super.inferType();
+		
+		if( this.type != null )
+		{
+			return this.type;
+		}
+		
+		exp.inferType();
+		
+		this.type = this.symbol.type = this.exp.type;
+		return this.type;
 	}
 
 	@Override
