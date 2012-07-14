@@ -3,6 +3,7 @@ package kaygan;
 import kaygan.ast.*;
 import kaygan.type.FunctionType;
 import kaygan.type.ListType;
+import kaygan.type.NamedType;
 import kaygan.type.Type;
 
 public class TypeInference
@@ -89,7 +90,31 @@ public class TypeInference
 			{
 				Exp arg = f.args.get(i);
 				
-				infer( arg );
+				if( arg instanceof Symbol )
+				{
+					Symbol symbolArg = (Symbol)arg;
+					
+					symbolArg.type = new NamedType(
+										"Type<"+symbolArg.symbol()+">")
+					{
+						// generated type for argument
+						@Override
+						public boolean accept(Type type)
+						{
+							return false;
+						}
+					};
+				}
+				else if( arg instanceof Bind )
+				{
+					infer( arg );
+				}
+				else
+				{
+					arg.error("Expected Symbol | Bind");
+					arg.type = Type.ERROR;
+				}
+				
 				argTypes[i] = arg.type;
 			}
 			
