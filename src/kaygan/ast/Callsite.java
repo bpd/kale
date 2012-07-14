@@ -114,7 +114,8 @@ public class Callsite extends Block
 				e.printStackTrace();
 			}
 			
-			this.type = first.type = funcType.getRetType();
+			first.type = funcType;
+			this.type = funcType.getRetType();
 			
 		}
 		else
