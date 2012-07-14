@@ -50,11 +50,34 @@ public class TypeInference
 		}
 		else if( node instanceof Callsite )
 		{
-			node.type = Type.ANY;
-			
 			for( Exp exp : ((Callsite)node).contents )
 			{
 				infer( exp );
+			}
+			
+			Exp first = ((Callsite) node).contents.get(0);
+			
+			if( first instanceof Symbol )
+			{
+				Symbol symbol = (Symbol)first;
+				
+				node.type = symbol.type;
+			}
+			else if( first instanceof Callsite )
+			{
+				if( first.type instanceof FunctionType )
+				{
+					node.type = ((FunctionType)first.type).getRetType();
+				}
+				else
+				{
+					node.type = first.type;
+				}
+			}
+			else
+			{
+				node.error("Expected symbol");
+				node.type = Type.ERROR;
 			}
 		}
 		else if( node instanceof Function )
@@ -87,10 +110,27 @@ public class TypeInference
 
 			infer( symbol.ref );
 			
-			
-			symbol.type = symbol.ref instanceof Type 
-							? (Type)symbol.ref
-							: symbol.ref.type;
+			if( symbol.ref instanceof Type )
+			{
+				symbol.type = (Type)symbol.ref;
+			}
+			else if( symbol.ref instanceof Function )
+			{
+				if( symbol.ref.type instanceof FunctionType )
+				{
+					FunctionType refType = (FunctionType)symbol.ref.type;
+					node.type = refType.getRetType();
+				}
+				else
+				{
+					node.error("Expected function to have function type");
+					node.type = Type.ERROR;
+				}
+			}
+			else
+			{
+				symbol.type = symbol.ref.type;
+			}
 		}
 		else if( node instanceof Value )
 		{
