@@ -19,6 +19,13 @@ public class OrType extends Type
 	}
 	
 	@Override
+	public Type substitute(Type from, Type to)
+	{
+		return new OrType(	left.substitute(from, to),
+							to.substitute(from, to) );
+	}
+	
+	@Override
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();

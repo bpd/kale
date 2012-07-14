@@ -7,7 +7,7 @@ public class ListType extends Type
 {
 	private static final Type TYPE = new NamedType("Type<List>");
 	
-	private final Set<String> types = new LinkedHashSet<String>();
+	private final Set<Type> types = new LinkedHashSet<Type>();
 	
 	public ListType()
 	{
@@ -16,7 +16,7 @@ public class ListType extends Type
 	
 	public void add(Type type)
 	{
-		types.add( type.toString() );
+		types.add( type );
 	}
 	
 	@Override
@@ -25,7 +25,7 @@ public class ListType extends Type
 		if( type instanceof ListType )
 		{
 			ListType listType = (ListType)type;
-			for( String innerType : listType.types )
+			for( Type innerType : listType.types )
 			{
 				if( !this.types.contains(innerType) )
 				{
@@ -35,6 +35,19 @@ public class ListType extends Type
 			return true;
 		}
 		return types.contains( type.toString() );
+	}
+	
+	@Override
+	public Type substitute(Type from, Type to)
+	{
+		ListType newTypes = new ListType();
+		
+		for( Type type : this.types )
+		{
+			newTypes.add( type.substitute(from, to) );
+		}
+		
+		return newTypes;
 	}
 
 	@Override

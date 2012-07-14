@@ -24,6 +24,22 @@ public class NamedType extends Type
 		}
 		return false;
 	}
+	
+	@Override
+	public Type substitute(Type from, Type to)
+	{
+		if( from instanceof NamedType && to instanceof NamedType )
+		{
+			NamedType fromType = (NamedType)from;
+			
+			if( fromType.name.equals(this.name) )
+			{
+				// we are being substituted
+				return to;
+			}
+		}
+		return this;
+	}
 
 	@Override
 	public String toString()

@@ -51,35 +51,89 @@ public class TypeInference
 		}
 		else if( node instanceof Callsite )
 		{
-			for( Exp exp : ((Callsite)node).contents )
+			Callsite c = (Callsite)node;
+			
+			for( Exp exp : c.contents )
 			{
 				infer( exp );
 			}
 			
-			Exp first = ((Callsite) node).contents.get(0);
+			Exp first = c.contents.get(0);
 			
-			if( first instanceof Symbol )
+			if( first.type instanceof FunctionType )
 			{
-				Symbol symbol = (Symbol)first;
+				FunctionType funcType = (FunctionType)first.type;
 				
-				node.type = symbol.type;
-			}
-			else if( first instanceof Callsite )
-			{
-				if( first.type instanceof FunctionType )
+				System.out.println("function type: " + funcType);
+				
+//				Function f = resolveFunction( first );
+//
+//				if( f == null )
+//				{
+//					first.error("Expected Symbol | Function");
+//					first.type = Type.ERROR;
+//					return;
+//				}
+				
+//				System.out.println("refers to function: " + f);
+				
+				// substitute the arguments
+				try
 				{
-					node.type = ((FunctionType)first.type).getRetType();
+					Type[] argTypes = funcType.getArgTypes();
+					
+					for( int i=1; i<c.contents.size(); i++ )
+					{
+						Type senderArgType = c.contents.get(i).type;
+						
+						Type receiverArgType = argTypes[i-1];
+						
+						System.out.println("substitution: " + funcType);
+						System.out.println("substituting " + receiverArgType + " -> " + senderArgType);
+						
+						funcType = funcType.substitute(receiverArgType, senderArgType);
+						
+						System.out.println("substitution result: " + funcType);
+					}
 				}
-				else
+				catch(Throwable e)
 				{
-					node.type = first.type;
+					e.printStackTrace();
 				}
+				
+				node.type = funcType;
+				first.type = funcType;
+				
 			}
 			else
 			{
-				node.error("Expected symbol");
-				node.type = Type.ERROR;
+				node.type = first.type;
 			}
+
+			
+//			if( first instanceof Symbol )
+//			{
+//				Symbol symbol = (Symbol)first;
+//				
+//				node.type = symbol.type;
+//			}
+//			else if( first instanceof Callsite )
+//			{
+//				Callsite c = (Callsite)first;
+//				if( c.type instanceof FunctionType )
+//				{
+//					node.type = ((FunctionType)c.type).getRetType();
+//				}
+//				else
+//				{
+//					node.type = first.type;
+//				}
+//			}
+//			else
+//			{
+//				node.error("Expected symbol");
+//				node.type = Type.ERROR;
+//			}
 		}
 		else if( node instanceof Function )
 		{
@@ -101,9 +155,10 @@ public class TypeInference
 						@Override
 						public boolean accept(Type type)
 						{
-							return false;
+							return true;
 						}
 					};
+					symbolArg.ref = symbolArg.type;
 				}
 				else if( arg instanceof Bind )
 				{
@@ -118,12 +173,16 @@ public class TypeInference
 				argTypes[i] = arg.type;
 			}
 			
+			for( Exp e : f.contents )
+			{
+				infer(e);
+			}
+			
 			Type retType = Type.ANY;
 			if( f.contents.size() > 0 )
 			{
 				Exp last = f.contents.get( f.contents.size() -1 );
 				
-				infer( last );
 				retType = last.type;
 			}
 			
@@ -162,4 +221,26 @@ public class TypeInference
 			// values should have set their own type
 		}
 	}
+	
+//	protected static Function resolveFunction( ASTNode e )
+//	{
+//		if( e instanceof Function )
+//		{
+//			return (Function)e;
+//		}
+//		else if( e instanceof Callsite )
+//		{
+//			ASTNode first = ((Callsite)e).contents.get(0);
+//			Function f = resolveFunction(first);
+//			
+//			ASTNode fReturn = f.contents.get( f.contents.size() - 1 );
+//			
+//			return resolveFunction( fReturn );
+//		}
+//		else if( e instanceof Symbol )
+//		{
+//			return resolveFunction( ((Symbol)e).ref );
+//		}
+//		return null;
+//	}
 }

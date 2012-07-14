@@ -33,6 +33,20 @@ public class FunctionType extends Type
 		
 		return true;
 	}
+	
+	@Override
+	public FunctionType substitute(Type from, Type to)
+	{
+		Type[] newArgTypes = new Type[argTypes.length];
+		for(int i=0; i<newArgTypes.length; i++)
+		{
+			newArgTypes[i] = argTypes[i].substitute(from, to);
+		}
+		
+		Type newRetType = retType.substitute(from, to);
+		
+		return new FunctionType(newArgTypes, newRetType);
+	}
 
 
 	@Override

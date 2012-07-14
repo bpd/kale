@@ -22,6 +22,16 @@ public abstract class Type extends ASTNode
 //		return false;
 //	}
 	
+	public abstract Type substitute(Type from, Type to);
+//	{
+//		
+//	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		return o == this;
+	}
 
 	@Override
 	public int getOffset()
