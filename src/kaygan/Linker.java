@@ -89,7 +89,7 @@ public class Linker
 					}
 					else
 					{
-						functionScope.set( key, Type.ANY);
+						functionScope.set( key, symbol );
 						symbol.ref = Type.ANY;
 					}
 				}
