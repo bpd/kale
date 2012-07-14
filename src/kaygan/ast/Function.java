@@ -1,6 +1,6 @@
 package kaygan.ast;
 
-import java.util.List;
+import java.util.Arrays;
 
 import kaygan.Scope;
 import kaygan.Token;
@@ -8,25 +8,24 @@ import kaygan.type.FunctionType;
 import kaygan.type.NamedType;
 import kaygan.type.Type;
 
-public class Function extends Exp
+public class Function extends Block
 {
 	public final Token open;
 	public final Token close;
 	
-	public final List<Exp> args;
-	
-	public final List<Exp> contents;
+	public final Exp[] args;
 	
 	// TODO this really needs to be moved somewhere else, after
 	//      the interpreter is more fleshed out
 	public Scope scope;
 	
-	public Function(Token open, Token close, List<Exp> args, List<Exp> contents)
+	public Function(Token open, Token close, Exp[] args, Exp[] exps)
 	{
+		super( exps );
+		
 		this.open = open;
 		this.close = close;
 		this.args = args;
-		this.contents = contents;
 	}
 	
 	@Override
@@ -51,7 +50,7 @@ public class Function extends Exp
 				return exp.findNode(offset);
 			}
 		}
-		for( Exp exp : contents )
+		for( Exp exp : exps )
 		{
 			if( exp.overlaps(offset) )
 			{
@@ -96,7 +95,7 @@ public class Function extends Exp
 		}
 		
 		// link contents
-		for( Exp exp : this.contents )
+		for( Exp exp : this )
 		{
 			exp.link( functionScope );
 		}
@@ -112,10 +111,10 @@ public class Function extends Exp
 			return this.type;
 		}
 		
-		Type[] argTypes = new Type[this.args.size()];
+		Type[] argTypes = new Type[this.args.length];
 		for( int i=0; i<argTypes.length; i++ )
 		{
-			Exp arg = this.args.get(i);
+			Exp arg = this.args[i];
 			
 			if( arg instanceof Symbol )
 			{
@@ -146,15 +145,15 @@ public class Function extends Exp
 			argTypes[i] = arg.type;
 		}
 		
-		for( Exp e : this.contents )
+		for( Exp e : this )
 		{
 			e.inferType();
 		}
 		
 		Type retType = Type.ANY;
-		if( this.contents.size() > 0 )
+		if( this.size() > 0 )
 		{
-			Exp last = this.contents.get( this.contents.size() -1 );
+			Exp last = this.exps[ this.exps.length -1 ];
 			
 			retType = last.type;
 		}
@@ -170,7 +169,7 @@ public class Function extends Exp
 		StringBuilder sb = new StringBuilder();
 		sb.append("{Function: ");
 		sb.append("args:").append(args);
-		sb.append(' ').append(" contents:").append(contents);
+		sb.append(' ').append(" exps:").append(Arrays.toString(exps));
 		sb.append('}');
 		return sb.toString();
 	}

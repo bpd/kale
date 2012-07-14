@@ -1,24 +1,21 @@
 package kaygan.ast;
 
-import java.util.List;
-
 import kaygan.Scope;
 import kaygan.Token;
 import kaygan.type.ListType;
 import kaygan.type.Type;
 
-public class Array extends Exp
+public class Array extends Block
 {
 	public final Token open;
 	public final Token close;
 	
-	public final List<Exp> contents;
-	
-	public Array(Token open, Token close, List<Exp> contents)
+	public Array(Token open, Token close, Exp[] exps)
 	{
+		super(exps);
+		
 		this.open = open;
 		this.close = close;
-		this.contents = contents;
 	}
 	
 	@Override
@@ -34,22 +31,9 @@ public class Array extends Exp
 	}
 	
 	@Override
-	public ASTNode findNode(int offset)
-	{
-		for( Exp exp : contents )
-		{
-			if( exp.overlaps(offset) )
-			{
-				return exp.findNode(offset);
-			}
-		}
-		return overlaps(offset) ? this : null;
-	}
-	
-	@Override
 	public void link(Scope scope)
 	{
-		for( Exp e : contents )
+		for( Exp e : exps )
 		{
 			e.link(scope);
 		}
@@ -67,7 +51,7 @@ public class Array extends Exp
 		
 		ListType type = new ListType();
 		
-		for( Exp exp : this.contents )
+		for( Exp exp : this.exps )
 		{
 			if( !(exp instanceof Bind) )
 			{
@@ -84,7 +68,7 @@ public class Array extends Exp
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{Array: ");
-		sb.append(" contents:").append(contents);
+		sb.append(" contents:").append(exps);
 		sb.append('}');
 		return sb.toString();
 	}

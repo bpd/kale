@@ -1,29 +1,28 @@
 package kaygan.ast;
 
-import java.util.List;
+import java.util.Arrays;
 
 import kaygan.Scope;
 import kaygan.Token;
 import kaygan.type.FunctionType;
 import kaygan.type.Type;
 
-public class Callsite extends Exp
+public class Callsite extends Block
 {
 	public final Token open;
 	public final Token close;
 	
-	public final List<Exp> contents;
-	
-	public Callsite(Token open, Token close, List<Exp> contents)
+	public Callsite(Token open, Token close, Exp[] contents)
 	{
-		if( contents.size() < 1 )
+		super( contents );
+		
+		if( contents.length < 1 )
 		{
 			throw new IllegalArgumentException(
 					"Callsite must have at least one expression");
 		}
 		this.open = open;
 		this.close = close;
-		this.contents = contents;
 	}
 	
 	
@@ -49,7 +48,7 @@ public class Callsite extends Exp
 			return this;
 		}
 		
-		for( Exp exp : contents )
+		for( Exp exp : this )
 		{
 			if( exp.overlaps(offset) )
 			{
@@ -62,7 +61,7 @@ public class Callsite extends Exp
 	@Override
 	public void link(Scope scope)
 	{
-		for( Exp e : contents )
+		for( Exp e : this )
 		{
 			e.link(scope);
 		}
@@ -78,12 +77,12 @@ public class Callsite extends Exp
 			return this.type;
 		}
 		
-		for( Exp exp : this.contents )
+		for( Exp exp : this )
 		{
 			exp.inferType();
 		}
 		
-		Exp first = this.contents.get(0);
+		Exp first = this.exps[0];
 		
 		if( first.type instanceof FunctionType )
 		{
@@ -96,9 +95,9 @@ public class Callsite extends Exp
 			{
 				Type[] argTypes = funcType.getArgTypes();
 				
-				for( int i=1; i<this.contents.size(); i++ )
+				for( int i=1; i<this.exps.length; i++ )
 				{
-					Type senderArgType = this.contents.get(i).type;
+					Type senderArgType = this.exps[i].type;
 					
 					Type receiverArgType = argTypes[i-1];
 					
@@ -131,7 +130,7 @@ public class Callsite extends Exp
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{Callsite: ");
-		sb.append(" contents:").append(contents);
+		sb.append( Arrays.toString(this.exps) );
 		sb.append('}');
 		return sb.toString();
 	}

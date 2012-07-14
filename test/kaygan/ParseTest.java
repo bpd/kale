@@ -47,8 +47,8 @@ public class ParseTest extends TestCase
 		
 		Function f = (Function)program.get(0);
 		
-		assertEquals( 2, f.args.size() );
-		assertEquals( 3, f.contents.size() );
+		assertEquals( 2, f.args.length );
+		assertEquals( 3, f.size() );
 	}
 	
 	public void testParseFunction2()
@@ -63,11 +63,11 @@ public class ParseTest extends TestCase
 		
 		Function f = (Function)program.get(0);
 		
-		assertEquals( 2, f.args.size() );
-		assertTrue( f.args.get(0) instanceof Bind );
-		assertTrue( f.args.get(1) instanceof Bind );
+		assertEquals( 2, f.args.length );
+		assertTrue( f.args[0] instanceof Bind );
+		assertTrue( f.args[1] instanceof Bind );
 		
-		assertEquals( 3, f.contents.size() );
+		assertEquals( 3, f.size() );
 	}
 	
 	public void testParseCallsite()
@@ -82,10 +82,10 @@ public class ParseTest extends TestCase
 		
 		Callsite c = (Callsite)program.get(0);
 		
-		assertEquals( 3, c.contents.size() );
-		assertTrue( c.contents.get(0) instanceof Symbol );
-		assertTrue( c.contents.get(1) instanceof Symbol );
-		assertTrue( c.contents.get(2) instanceof Num );
+		assertEquals( 3, c.size() );
+		assertTrue( c.get(0) instanceof Symbol );
+		assertTrue( c.get(1) instanceof Symbol );
+		assertTrue( c.get(2) instanceof Num );
 	}
 	
 	public void testParseArray()
@@ -100,9 +100,9 @@ public class ParseTest extends TestCase
 		
 		Array a = (Array)program.get(0);
 		
-		assertEquals( 3, a.contents.size() );
-		assertTrue( a.contents.get(0) instanceof Num );
-		assertTrue( a.contents.get(1) instanceof Num );
-		assertTrue( a.contents.get(2) instanceof Symbol );
+		assertEquals( 3, a.size() );
+		assertTrue( a.get(0) instanceof Num );
+		assertTrue( a.get(1) instanceof Num );
+		assertTrue( a.get(2) instanceof Symbol );
 	}
 }

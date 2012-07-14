@@ -96,7 +96,9 @@ public class Parser
 		
 		Token close = next();
 		
-		return new Function(open, close, args, contents);
+		return new Function(open, close,
+							args.toArray(new Exp[args.size()]),
+							contents.toArray(new Exp[contents.size()]) );
 	}
 	
 	protected Callsite callsite()
@@ -115,7 +117,7 @@ public class Parser
 		
 		Token close = next();
 		
-		return new Callsite(open, close, exps );
+		return new Callsite(open, close, exps.toArray(new Exp[exps.size()]) );
 	}
 	
 	protected Array array()
@@ -130,7 +132,7 @@ public class Parser
 		
 		Token close = next();
 		
-		return new Array( open, close, exps );
+		return new Array( open, close, exps.toArray(new Exp[exps.size()]) );
 	}
 	
 	protected boolean isNum(TokenType type)
@@ -252,7 +254,7 @@ public class Parser
 		{
 			expressions.add( exp() );
 		}
-		return new Program(expressions);
+		return new Program(expressions.toArray(new Exp[expressions.size()]));
 	}
 	
 	public static class ParseException extends RuntimeException

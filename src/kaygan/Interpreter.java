@@ -87,7 +87,7 @@ public class Interpreter
 	protected static Object intrArray(Array a, Scope parentScope)
 	{
 		List<Object> result = new ArrayList<Object>();
-		for( Exp exp : a.contents )
+		for( Exp exp : a )
 		{
 			result.add( interpret(exp, parentScope) );
 		}
@@ -96,7 +96,7 @@ public class Interpreter
 	
 	protected static Object intrCallsite(Callsite c, Scope parentScope)
 	{
-		Exp first = c.contents.get(0);
+		Exp first = c.get(0);
 		Object o = interpret( first, parentScope );
 		
 		// TODO how a call site is interpreted by its receiver
@@ -121,13 +121,13 @@ public class Interpreter
 		{
 			Function f = (Function)o;
 			
-			if( f.args.size() != c.contents.size() - 1 )
+			if( f.args.length != c.size() - 1 )
 			{
 				// function arguments should match callsite size
 				//
 				// TODO this should be configurable by binding
-				String message = "Expected " + f.args.size() 
-								+ " arguments, found " + (c.contents.size() - 1);
+				String message = "Expected " + f.args.length 
+								+ " arguments, found " + (c.size() - 1);
 				
 				c.error(message);
 				
@@ -139,11 +139,11 @@ public class Interpreter
 			// bind the parameters to a new function scope
 			Scope functionScope = f.scope.newSubScope(); //parentScope.newSubScope();
 			
-			for( int i=1; i<c.contents.size(); i++ )
+			for( int i=1; i<c.size(); i++ )
 			{
-				Exp argSender = c.contents.get(i);
+				Exp argSender = c.get(i);
 				
-				Exp argReceiver = f.args.get(i-1);
+				Exp argReceiver = f.args[ i - 1 ];
 				
 				if( argReceiver instanceof Symbol )
 				{
@@ -165,7 +165,7 @@ public class Interpreter
 			System.out.println("executing function with scope: " + functionScope);
 			
 			Object last = null;
-			for( Exp fExp : f.contents )
+			for( Exp fExp : f )
 			{
 				last = interpret(fExp, functionScope);
 				System.out.println("function intermediate result: " + last);

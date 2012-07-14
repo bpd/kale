@@ -228,7 +228,7 @@ public class CodePane extends JTextPane
 					highlight( doc, arg, argStyle );
 				}
 			}
-			for( Exp e : f.contents )
+			for( Exp e : f )
 			{
 				highlight(doc, e);
 			}
@@ -236,7 +236,7 @@ public class CodePane extends JTextPane
 		else if( node instanceof Array )
 		{
 			Array a = (Array)node;
-			for( Exp e : a.contents )
+			for( Exp e : a )
 			{
 				highlight(doc, e);
 			}
@@ -245,7 +245,7 @@ public class CodePane extends JTextPane
 		{
 			Callsite c = (Callsite)node;
 			
-			for( Exp e : c.contents )
+			for( Exp e : c )
 			{
 				highlight(doc, e);
 			}

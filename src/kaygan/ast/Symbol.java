@@ -92,6 +92,23 @@ public class Symbol extends Exp
 		
 		return this.type;
 	}
+	
+	
+	@Override
+	public int hashCode()
+	{
+		return symbol.value.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o )
+	{
+		if( o instanceof Symbol )
+		{
+			return ((Symbol)o).symbol.value.equals(this.symbol.value);
+		}
+		return false;
+	}
 
 	@Override
 	public String toString()
