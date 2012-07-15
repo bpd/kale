@@ -83,7 +83,19 @@ public abstract class Block extends Exp implements Iterable<Exp>
 			if( e instanceof Bind )
 			{
 				Bind bind = (Bind)e;
-				scope.set( bind.symbol.symbol(), bind.exp );
+				
+				String key = bind.symbol.symbol();
+				
+				Object bound = scope.getLocal(key);
+				
+				if( bound != null )
+				{
+					e.error("Symbol " + key + " already bound to " + bound);
+				}
+				else
+				{
+					scope.set( key, bind.exp );
+				}
 			}
 		}
 		
