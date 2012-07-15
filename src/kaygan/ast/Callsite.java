@@ -2,11 +2,11 @@ package kaygan.ast;
 
 import java.util.Arrays;
 
-import kaygan.Scope;
 import kaygan.Token;
 import kaygan.type.DependentType;
 import kaygan.type.FunctionType;
 import kaygan.type.Type;
+import kaygan.type.TypeException;
 
 public class Callsite extends Block
 {
@@ -60,15 +60,6 @@ public class Callsite extends Block
 	}
 	
 	@Override
-	public void link(Scope scope)
-	{
-		for( Exp e : this )
-		{
-			e.link(scope);
-		}
-	}
-	
-	@Override
 	public Type inferType()
 	{
 		super.inferType();
@@ -105,9 +96,9 @@ public class Callsite extends Block
 				
 				//funcType = funcType.substitute( funcType.getRetType(), first.type );
 			}
-			catch(Throwable e)
+			catch(TypeException e)
 			{
-				e.printStackTrace();
+				this.error( e.getMessage() );
 			}
 			
 			first.type = funcType;

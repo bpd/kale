@@ -75,16 +75,16 @@ public class Bind extends Exp
 			
 			String key = this.symbol.symbol();
 			
-			Object bound = scope.getLocal(key);
+//			Object bound = scope.getLocal(key);
 			
-			if( bound != null )
-			{
-				this.error("Symbol " + key + " already bound to " + bound);
-			}
-			else
-			{
+//			if( bound != null )
+//			{
+//				this.error("Symbol " + key + " already bound to " + bound);
+//			}
+//			else
+//			{
 				scope.set( key, this.exp );
-			}
+//			}
 			
 			this.symbol.ref = this.exp;
 		}

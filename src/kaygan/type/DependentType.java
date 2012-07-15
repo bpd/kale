@@ -40,18 +40,19 @@ public class DependentType extends Type
 			Type[] oldArgs = targetArgTypes;
 			Type[] newArgs = newFuncType.getArgTypes();
 			
-			if( oldArgs.length == newArgs.length )
+			if( oldArgs.length != newArgs.length )
 			{
-				for(int i=0; i<oldArgs.length; i++)
-				{
-					newFuncType = newFuncType.substitute(newArgs[i], oldArgs[i]);
-				}
+				throw new TypeException(
+						"Expected " + oldArgs.length 
+							+ " arguments, found " + newArgs.length
+								+ " at " + newFuncType.toString());
 			}
-			else
+
+			for(int i=0; i<oldArgs.length; i++)
 			{
-				System.err.println("Arg mismatch");
-				new RuntimeException().fillInStackTrace().printStackTrace();
+				newFuncType = newFuncType.substitute(newArgs[i], oldArgs[i]);
 			}
+			
 			return newFuncType.getRetType();
 		}
 		else

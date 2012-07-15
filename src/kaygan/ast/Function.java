@@ -122,11 +122,7 @@ public class Function extends Block
 			}
 		}
 		
-		// link contents
-		for( Exp exp : this )
-		{
-			exp.link( functionScope );
-		}
+		super.link(functionScope);
 	}
 	
 	@Override

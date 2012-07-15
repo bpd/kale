@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import kaygan.Scope;
+
 public abstract class Block extends Exp implements Iterable<Exp>
 {
 	protected final Map<Symbol, ASTNode> bindings 
@@ -71,6 +73,24 @@ public abstract class Block extends Exp implements Iterable<Exp>
 			}
 		}
 		return overlaps(offset) ? this : null;
+	}
+	
+	@Override
+	public void link(Scope scope)
+	{
+		for( Exp e : this )
+		{
+			if( e instanceof Bind )
+			{
+				Bind bind = (Bind)e;
+				scope.set( bind.symbol.symbol(), bind.exp );
+			}
+		}
+		
+		for( Exp e : this )
+		{
+			e.link(scope);
+		}
 	}
 	
 }

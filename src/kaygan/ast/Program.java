@@ -19,10 +19,7 @@ public class Program extends Block implements Iterable<Exp>
 		scope.set("Num", Num.TYPE);
 		scope.set("String", Str.TYPE);
 		
-		for( Exp exp : this )
-		{
-			exp.link( scope );
-		}
+		super.link(scope);
 	}
 	
 	@Override
