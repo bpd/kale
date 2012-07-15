@@ -1,6 +1,8 @@
 package kaygan.ast;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import kaygan.Token;
 import kaygan.type.DependentType;
@@ -85,14 +87,33 @@ public class Callsite extends Block
 			{
 				Type[] argTypes = funcType.getArgTypes();
 				
+				if( argTypes.length != this.exps.length - 1 )
+				{
+					error("Expected " + argTypes.length 
+							+ " arguments, found " + (this.exps.length - 1));
+					this.type = Type.ERROR;
+					
+					return this.type;
+				}
+				
+				Map<Type, Type> substitutions = new HashMap<Type, Type>();
+				
 				for( int i=1; i<this.exps.length; i++ )
 				{
 					Type senderArgType = this.exps[i].type;
 					
 					Type receiverArgType = argTypes[i-1];
 					
-					funcType = funcType.substitute(receiverArgType, senderArgType);
+					substitutions.put(receiverArgType, senderArgType);
 				}
+				
+				//System.out.println("sub " + funcType);
+				//System.out.println("   :: " + substitutions.toString());
+				
+				funcType = funcType.substitute(substitutions);
+				
+				//System.out.println("       => " + funcType);
+				//System.out.println("         :: " + substitutions.toString());
 				
 				//funcType = funcType.substitute( funcType.getRetType(), first.type );
 			}

@@ -1,5 +1,7 @@
 package kaygan.type;
 
+import java.util.Map;
+
 public class DependentType extends Type
 {
 	final Type returnType;
@@ -19,9 +21,9 @@ public class DependentType extends Type
 	}
 
 	@Override
-	public Type substitute(Type from, Type to)
+	public Type substitute(Map<Type, Type> substitutions)
 	{
-		Type newType = returnType.substitute(from, to);
+		Type newType = returnType.substitute(substitutions);
 		
 		if( returnType.equals(newType) )
 		{
@@ -50,8 +52,12 @@ public class DependentType extends Type
 
 			for(int i=0; i<oldArgs.length; i++)
 			{
-				newFuncType = newFuncType.substitute(newArgs[i], oldArgs[i]);
+				substitutions.put(newArgs[i], oldArgs[i]);
 			}
+			
+			newFuncType = newFuncType.substitute(substitutions);
+			
+			substitutions.put(this, newFuncType);
 			
 			return newFuncType.getRetType();
 		}
@@ -59,18 +65,6 @@ public class DependentType extends Type
 		{
 			return newType;
 		}
-	}
-	
-	@Override
-	public int hashCode()
-	{
-		return returnType.hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object o)
-	{
-		return o instanceof Type && ((Type)o).equals(this.returnType);
 	}
 	
 	@Override

@@ -1,11 +1,12 @@
 package kaygan.type;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ListType extends Type
 {
-	private static final Type TYPE = new NamedType("Type<List>");
+	private static final Type TYPE = new Type("Type<List>");
 	
 	private final Set<Type> types = new LinkedHashSet<Type>();
 	
@@ -38,13 +39,13 @@ public class ListType extends Type
 	}
 	
 	@Override
-	public Type substitute(Type from, Type to)
+	public Type substitute(Map<Type, Type> substitutions)
 	{
 		ListType newTypes = new ListType();
 		
 		for( Type type : this.types )
 		{
-			newTypes.add( type.substitute(from, to) );
+			newTypes.add( type.substitute(substitutions) );
 		}
 		
 		return newTypes;

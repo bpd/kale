@@ -1,5 +1,7 @@
 package kaygan.type;
 
+import java.util.Map;
+
 public class OrType extends Type
 {
 	private final Type left;
@@ -19,10 +21,10 @@ public class OrType extends Type
 	}
 	
 	@Override
-	public Type substitute(Type from, Type to)
+	public Type substitute(Map<Type, Type> substitutions)
 	{
-		return new OrType(	left.substitute(from, to),
-							to.substitute(from, to) );
+		return new OrType(	left.substitute(substitutions),
+							right.substitute(substitutions) );
 	}
 	
 	@Override

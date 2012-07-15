@@ -1,17 +1,76 @@
 package kaygan.type;
 
+import java.util.Map;
+
 import kaygan.ast.ASTNode;
 
-public abstract class Type extends ASTNode
+public class Type extends ASTNode
 {
-	public static final Type TYPE = new NamedType("Type");
+	//-- A few default static values
+	public static final Type TYPE = new Type("Type");
 	
-	public static final Type ANY = new NamedType("Any");
+	public static final Type ANY = new Type("Any");
 	
-	public static final Type ERROR = new NamedType("Error");
+	public static final Type ERROR = new Type("Error");
 	
 	
-	public abstract boolean accept(Type type);
+	private static int ID_POOL = 0;
+	
+	private final int id;
+	
+	private final String name;
+	
+	public Type()
+	{
+		this("?");
+	}
+	
+	public Type(String name)
+	{
+		this.id = ID_POOL++;
+		this.name = name;
+	}
+	
+//	@Override
+//	public Type substitute(Type from, Type to)
+//	{
+//		if( this.equals(from) )
+//		{
+//			return to;
+//		}
+//		return this;
+//	}
+	
+	@Override
+	public int hashCode()
+	{
+		return id;
+	}
+	
+	@Override
+	public boolean equals(Object o )
+	{
+		if( o instanceof Type )
+		{
+			return ((Type)o).id == this.id;
+		}
+		return false;
+	}
+
+	public boolean accept(Type type)
+	{
+		// TODO generated types always accept?
+		return true;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return name;
+	}
+	
+	
+	//public abstract boolean accept(Type type);
 //	{
 //		// TODO - Any type accepts all types
 //		//      - NamedType only accepts types named the same
@@ -22,16 +81,18 @@ public abstract class Type extends ASTNode
 //		return false;
 //	}
 	
-	public abstract Type substitute(Type from, Type to);
+	public Type substitute(Map<Type, Type> substitutions)
+	{
+		Type newType = substitutions.get(this);
+		if( newType != null )
+		{
+			return newType.substitute(substitutions);
+		}
+		return this;
+	}
 //	{
 //		
 //	}
-	
-	@Override
-	public boolean equals(Object o)
-	{
-		return o == this;
-	}
 
 	@Override
 	public int getOffset()

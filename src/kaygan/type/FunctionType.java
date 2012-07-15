@@ -1,10 +1,11 @@
 package kaygan.type;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class FunctionType extends Type
 {
-	private static final Type TYPE = new NamedType("Type<Function>");
+	private static final Type TYPE = new Type("Type<Function>");
 	
 	private final Type[] argTypes;
 	
@@ -35,17 +36,23 @@ public class FunctionType extends Type
 	}
 	
 	@Override
-	public FunctionType substitute(Type from, Type to)
+	public FunctionType substitute(Map<Type, Type> substitutions)
 	{
 		Type[] newArgTypes = new Type[argTypes.length];
+		
+		// and then go through the rest of the arguments and 
 		for(int i=0; i<newArgTypes.length; i++)
 		{
-			newArgTypes[i] = argTypes[i].substitute(from, to);
+			newArgTypes[i] = argTypes[i].substitute(substitutions);
 		}
 		
-		Type newRetType = retType.substitute(from, to);
+		Type newRetType = retType.substitute(substitutions);
 		
-		return new FunctionType(newArgTypes, newRetType);
+		FunctionType newFuncType = new FunctionType(newArgTypes, newRetType);
+		
+		//substitutions.put( this, newFuncType );
+		
+		return newFuncType;
 	}
 
 

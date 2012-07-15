@@ -5,7 +5,6 @@ import java.util.Arrays;
 import kaygan.Scope;
 import kaygan.Token;
 import kaygan.type.FunctionType;
-import kaygan.type.GeneratedType;
 import kaygan.type.Type;
 
 public class Function extends Block
@@ -41,7 +40,7 @@ public class Function extends Block
 			{
 				Symbol symbolArg = (Symbol)arg;
 				
-				Type type = new GeneratedType(((Symbol) arg).symbol());
+				Type type = new Type(((Symbol) arg).symbol());
 				
 				//symbolArg.ref = type;
 				

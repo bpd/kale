@@ -1,12 +1,11 @@
 package kaygan.ast;
 
 import kaygan.Token;
-import kaygan.type.NamedType;
 import kaygan.type.Type;
 
 public class Num extends Value
 {
-	public static final Type TYPE = new NamedType("Num");
+	public static final Type TYPE = new Type("Num");
 	
 	public final Token token;
 	
