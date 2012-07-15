@@ -7,9 +7,9 @@ public class Bind extends Exp
 {
 	public final Symbol symbol;
 	
-	public final Exp exp;
+	public final ASTNode exp;
 	
-	public Bind(Symbol symbol, Exp exp)
+	public Bind(Symbol symbol, ASTNode exp)
 	{
 		this.symbol = symbol;
 		this.exp = exp;
@@ -26,7 +26,15 @@ public class Bind extends Exp
 	@Override
 	public int getLength()
 	{
-		return exp.getOffset() - symbol.getOffset() + exp.getLength();
+		// exp.offset will be zero if the bound node is synthetic
+		if( exp.getOffset() > 0 )
+		{
+			return exp.getOffset() - symbol.getOffset() + exp.getLength();
+		}
+		else
+		{
+			return symbol.getLength();
+		}
 	}
 
 	@Override
@@ -94,7 +102,10 @@ public class Bind extends Exp
 		
 		exp.inferType();
 		
-		this.type = this.symbol.type = this.exp.type;
+		this.type = this.symbol.type = (this.exp instanceof Type) 
+										? (Type)this.exp 
+										: this.exp.type;
+		
 		return this.type;
 	}
 

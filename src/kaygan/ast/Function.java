@@ -5,7 +5,7 @@ import java.util.Arrays;
 import kaygan.Scope;
 import kaygan.Token;
 import kaygan.type.FunctionType;
-import kaygan.type.NamedType;
+import kaygan.type.GeneratedType;
 import kaygan.type.Type;
 
 public class Function extends Block
@@ -13,7 +13,7 @@ public class Function extends Block
 	public final Token open;
 	public final Token close;
 	
-	public final Exp[] args;
+	public final Bind[] args;
 	
 	// TODO this really needs to be moved somewhere else, after
 	//      the interpreter is more fleshed out
@@ -25,7 +25,35 @@ public class Function extends Block
 		
 		this.open = open;
 		this.close = close;
-		this.args = args;
+		
+		// replace any Symbols with Binds to generated types
+		Bind[] binds = new Bind[ args.length ];
+		
+		for( int i=0; i<args.length; i++ )
+		{
+			Exp arg = args[i];
+			if( arg instanceof Bind )
+			{
+				// pass through
+				binds[i] = (Bind)arg;
+			}
+			else if( arg instanceof Symbol )
+			{
+				Symbol symbolArg = (Symbol)arg;
+				
+				Type type = new GeneratedType(((Symbol) arg).symbol());
+				
+				//symbolArg.ref = type;
+				
+				binds[i] = new Bind(symbolArg, type);
+			}
+			else
+			{
+				arg.type = Type.ERROR;
+				arg.error("Expected Bind | Symbol");
+			}
+		}
+		this.args = binds;
 	}
 	
 	@Override
@@ -120,16 +148,6 @@ public class Function extends Block
 			{
 				Symbol symbolArg = (Symbol)arg;
 				
-				symbolArg.type = new NamedType(
-									"Type<"+symbolArg.symbol()+">")
-				{
-					// generated type for argument
-					@Override
-					public boolean accept(Type type)
-					{
-						return true;
-					}
-				};
 				symbolArg.ref = symbolArg.type;
 			}
 			else if( arg instanceof Bind )
@@ -168,7 +186,7 @@ public class Function extends Block
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{Function: ");
-		sb.append("args:").append(args);
+		sb.append("args:").append(Arrays.toString(args));
 		sb.append(' ').append(" exps:").append(Arrays.toString(exps));
 		sb.append('}');
 		return sb.toString();

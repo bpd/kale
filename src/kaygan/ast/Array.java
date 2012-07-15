@@ -1,5 +1,7 @@
 package kaygan.ast;
 
+import java.util.Arrays;
+
 import kaygan.Scope;
 import kaygan.Token;
 import kaygan.type.ListType;
@@ -68,7 +70,7 @@ public class Array extends Block
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{Array: ");
-		sb.append(" contents:").append(exps);
+		sb.append(" contents:").append( Arrays.toString(exps) );
 		sb.append('}');
 		return sb.toString();
 	}

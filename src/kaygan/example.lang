@@ -12,3 +12,8 @@ e: "World"
 
 (d e)
 (d "World")
+
+z: { a b | (a b) }
+y: { b | [ b ] }
+
+(z y 2)

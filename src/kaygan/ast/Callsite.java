@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import kaygan.Scope;
 import kaygan.Token;
+import kaygan.type.DependentType;
 import kaygan.type.FunctionType;
 import kaygan.type.Type;
 
@@ -88,8 +89,6 @@ public class Callsite extends Block
 		{
 			FunctionType funcType = (FunctionType)first.type;
 			
-			System.out.println("function type: " + funcType);
-			
 			// substitute the arguments
 			try
 			{
@@ -101,13 +100,10 @@ public class Callsite extends Block
 					
 					Type receiverArgType = argTypes[i-1];
 					
-					System.out.println("substitution: " + funcType);
-					System.out.println("substituting " + receiverArgType + " -> " + senderArgType);
-					
 					funcType = funcType.substitute(receiverArgType, senderArgType);
-					
-					System.out.println("substitution result: " + funcType);
 				}
+				
+				//funcType = funcType.substitute( funcType.getRetType(), first.type );
 			}
 			catch(Throwable e)
 			{
@@ -118,10 +114,28 @@ public class Callsite extends Block
 			this.type = funcType.getRetType();
 			
 		}
+		else if( first instanceof Symbol )
+		{
+			// if first.type is not a function we must generate
+			// a dependent type for when the receiver is known
+			//
+			Symbol receiver = (Symbol)first;
+			
+			Type[] argTypes = new Type[ this.exps.length - 1 ];
+			
+			for( int i=0; i<argTypes.length; i++ )
+			{
+				Type senderArgType = this.exps[i+1].type;
+				
+				argTypes[i] = senderArgType;
+			}
+			
+			this.type = new DependentType(receiver.type, argTypes);
+		}
 		else
 		{
-			System.out.println("not a function type: " + first.type);
-			this.type = first.type;
+			first.error("Unknown dispatch type");
+			first.type = Type.ERROR;
 		}
 		
 		return this.type;

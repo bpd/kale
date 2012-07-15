@@ -196,7 +196,7 @@ public class Interpreter
 		
 		if( o == null )
 		{
-			scope.set(key, interpret(bind.exp, scope));
+			scope.set(key, interpret((Exp)bind.exp, scope));
 		}
 		else
 		{
