@@ -191,10 +191,8 @@ public class CodeEditor extends JPanel
 			
 			if( program != null )
 			{
-				System.out.println("linking...");
 				program.link();
 				
-				System.out.println("inferring...");
 				program.inferType();
 				
 				// hand the AST over to the code pane to highlight

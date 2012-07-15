@@ -187,12 +187,10 @@ public class CodePane extends JTextPane
 	{
 		if( node.hasErrors() )
 		{
-			System.out.println("errors in : " + node.toString());
 			highlight( doc, node, errorStyle );
 		}
 		else if( node.type == Type.ERROR )
 		{
-			System.out.println("type error in : " + node.toString());
 			highlight( doc, node, errorStyle );
 		}
 		else if( node instanceof Str )

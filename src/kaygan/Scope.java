@@ -28,7 +28,7 @@ public class Scope
 		{
 			binding = parent.get(symbol);
 		}
-		System.out.println(symbol + " resolved to " + binding);
+		//System.out.println(symbol + " resolved to " + binding);
 		return binding;
 	}
 	
@@ -39,7 +39,7 @@ public class Scope
 	
 	public void set(String symbol, Object value)
 	{
-		System.out.println(symbol + " => " + value);
+		//System.out.println(symbol + " => " + value);
 		
 		bindings.put(symbol, value);
 	}

@@ -134,7 +134,7 @@ public class Interpreter
 				return error( c, message );
 			}
 			
-			System.out.println("building arguments for " + f);
+			//System.out.println("building arguments for " + f);
 			
 			// bind the parameters to a new function scope
 			Scope functionScope = f.scope.newSubScope(); //parentScope.newSubScope();
@@ -162,13 +162,13 @@ public class Interpreter
 				}
 			}
 			
-			System.out.println("executing function with scope: " + functionScope);
+			//System.out.println("executing function with scope: " + functionScope);
 			
 			Object last = null;
 			for( Exp fExp : f )
 			{
 				last = interpret(fExp, functionScope);
-				System.out.println("function intermediate result: " + last);
+				//System.out.println("function intermediate result: " + last);
 			}
 			return last;
 		}
