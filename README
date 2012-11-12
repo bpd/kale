@@ -1,0 +1,6 @@
+Kale Programming Language
+=========================
+
+Kale is the implementation of my undergraduate thesis, Structural Typing on the JVM with invokedynamic.
+
+It uses the invokedynamic bytecode instruction and to build polymorphic inline caches with method handles that enable efficient invocation of structural types.
