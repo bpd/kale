@@ -25,6 +25,7 @@ value	:	num | string ;
 
 symbol 	:	Symbol ;
 
+
 arg	:	symbol (WS* ':' WS* symbol)? ;
 
 args	:	(arg WS*)+ '|' WS* ;

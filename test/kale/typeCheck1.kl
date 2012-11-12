@@ -1,0 +1,25 @@
+package some.test
+
+type Person
+{
+  sayHello() string
+  {
+    return "Hello";
+  }
+}
+
+interface Greetable
+{
+  sayHello2() string;
+}
+
+
+greet( g Greetable ) string
+{
+  return g.sayHello();
+}
+
+main() string
+{
+  return greet( Person() );
+}

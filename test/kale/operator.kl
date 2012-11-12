@@ -1,0 +1,53 @@
+package some.test
+
+testStringNotEqual() boolean
+{
+	x = "asdf";
+	y = "1234";
+
+	return x != y;
+}
+
+testStringEquals() boolean
+{
+	x = "asdf";
+	y = "asdf";
+
+	return x == y;
+}
+
+testBooleanOps() boolean
+{
+	x = true;
+	y = false;
+
+	return ( x && y ) == false;
+}
+
+testIntAdd() boolean
+{
+	x = 1 + 2;
+
+	return x == 3;
+}
+
+testIntSub() boolean
+{
+	x = 3 - 1;
+
+	return x == 2;
+}
+
+testIntMul() boolean
+{
+	x = 3 * 2;
+
+	return x == 6;
+}
+
+testIntDiv() boolean
+{
+	x = 4 / 2;
+
+	return x == 2;
+}

@@ -1,0 +1,76 @@
+package some.test
+
+interface Greetable
+{
+  sayHello() string;
+}
+
+interface Aged
+{
+  age(i int) int;
+}
+
+plusOne( i int ) int
+{
+  return i + 1;
+}
+
+type Person
+{
+  sayHello() string
+  {
+    return "Hello";
+  }
+  
+  age( i int ) int
+  {
+    if i < 20
+    {
+      println(i);
+      return age( i + 1 );
+    }
+    else if i < 25
+    {
+      println(i);
+      return age( plusOne( i ) );
+    }
+    else if i < 30
+    {
+      return age( plusOne( i ) + 2 );
+    }
+    return i;
+  }
+}
+
+
+getGreeting( greetable Greetable ) string
+{
+  return greetable.sayHello();
+}
+
+getAge( aged Aged ) int
+{
+  // these are the only callsites that are performing
+  // an structural invocation... once it is inside
+  // the destination class, internal (or recursive)
+  // method calls within that class will be invokevirtual,
+  // so the bootstrap and slow paths will now be invoked
+  // until another structural invocation
+  aged.age( 3 );
+  aged.age( 3 );
+  return aged.age( 3 );
+}
+
+testInterface1() boolean
+{
+  person = Person();
+  
+  return getGreeting( person ) == "Hello";
+}
+
+testInterface2() boolean
+{
+  person = Person();
+
+  return getAge( person ) == 31;
+}

@@ -1,0 +1,77 @@
+package some.test
+
+// Note: Person and Person2 are mutually recursive types
+
+type Person
+{
+  name string;
+  age int;
+  p2 Person2;
+  
+  Name() string
+  {
+    return this.name;
+  }
+}
+
+type Person2
+{
+  person Person;
+  age int;
+  
+  GetPerson() Person
+  {
+    return this.person;
+  }
+  
+  Age() int
+  {
+    return this.age;
+  }
+  
+  SetAge(age int)
+  {
+    this.age = age;
+  }
+  
+  //+ operator ( p1 Person, p2 Person ) Person
+  //{
+  //  
+  //}
+}
+
+testSetNested() boolean
+{
+  p = Person();
+  p.age = 3;
+  
+  p2 = Person2();
+  
+  p2.person = p;
+  
+  return p2.person.age == 3;
+}
+
+testGetSet() boolean
+{
+  p = Person2();
+  
+  p.SetAge(3);
+  
+  return p.Age() == 3;
+}
+
+testChainedCall() boolean
+{
+  p = Person();
+  p.name = "Brian";
+  
+  p2 = Person2();
+  p2.person = p;
+  
+  p.p2 = p2;
+  
+  p2.SetAge(3);
+  
+  return p2.GetPerson().Name() == "Brian";
+}

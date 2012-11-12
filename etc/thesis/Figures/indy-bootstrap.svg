@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="indy-bootstrap.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="191.3706"
+     inkscape:cy="920.82474"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1158"
+     inkscape:window-height="932"
+     inkscape:window-x="16"
+     inkscape:window-y="6"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="53.823441"
+       y="10.637486"
+       id="text2985"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2987"
+         x="53.823441"
+         y="10.637486">...</tspan><tspan
+         sodipodi:role="line"
+         x="53.823441"
+         y="25.637486"
+         id="tspan2989"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3071">void</tspan> someMethod(OtherClass o) {</tspan><tspan
+         sodipodi:role="line"
+         x="53.823441"
+         y="40.637486"
+         id="tspan2991">  o.otherMethod(2);</tspan><tspan
+         sodipodi:role="line"
+         x="53.823441"
+         y="55.637486"
+         id="tspan2993">}</tspan><tspan
+         sodipodi:role="line"
+         x="53.823441"
+         y="70.637489"
+         id="tspan2995">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="340.90982"
+       y="58.02544"
+       id="text2997"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2999"
+         x="340.90982"
+         y="58.02544"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3053">class</tspan> OtherClass {</tspan><tspan
+         sodipodi:role="line"
+         x="340.90982"
+         y="73.025444"
+         id="tspan3001"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3055">  static void</tspan> otherMethod(int i) {</tspan><tspan
+         sodipodi:role="line"
+         x="340.90982"
+         y="88.025444"
+         id="tspan3005">    </tspan><tspan
+         sodipodi:role="line"
+         x="340.90982"
+         y="103.02544"
+         id="tspan3007">  }</tspan><tspan
+         sodipodi:role="line"
+         x="340.90982"
+         y="118.02544"
+         id="tspan3003">}</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="340.71429"
+       y="165.21933"
+       id="text3009"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3011"
+         x="340.71429"
+         y="165.21933"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3049">class</tspan> LanguageRuntime {</tspan><tspan
+         sodipodi:role="line"
+         x="340.71429"
+         y="180.21933"
+         id="tspan3013"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3051">  static</tspan> CallSite bootstrap( Lookup lookup,</tspan><tspan
+         sodipodi:role="line"
+         x="340.71429"
+         y="195.21933"
+         id="tspan3017">                                           String methodName,</tspan><tspan
+         sodipodi:role="line"
+         x="340.71429"
+         y="210.21933"
+         id="tspan3021">                                           MethodType type ) {</tspan><tspan
+         sodipodi:role="line"
+         x="340.71429"
+         y="225.2554"
+         id="tspan3057">    MethodHandle mh = <tspan
+   style="font-style:oblique;-inkscape-font-specification:Sans Oblique"
+   id="tspan3031">... resolve a MethodHandle ...</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="340.71429"
+         y="240.26283"
+         id="tspan3029">    return new MutableCallSite(mh);</tspan><tspan
+         sodipodi:role="line"
+         x="340.71429"
+         y="255.26283"
+         id="tspan3025">  }</tspan><tspan
+         sodipodi:role="line"
+         x="340.71429"
+         y="270.26285"
+         id="tspan3015">}</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="53.92857"
+       y="145.93359"
+       id="text3037"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3039"
+         x="53.92857"
+         y="145.93359"
+         style="font-weight:bold;-inkscape-font-specification:Sans Bold">.invokedynamic</tspan><tspan
+         sodipodi:role="line"
+         x="53.92857"
+         y="160.93359"
+         style="font-weight:normal;-inkscape-font-specification:Sans Bold"
+         id="tspan3081">  otherMethod(OtherClass,I)V</tspan><tspan
+         sodipodi:role="line"
+         x="53.92857"
+         y="175.93359"
+         id="tspan3063">  LanguageRuntime.class,</tspan><tspan
+         sodipodi:role="line"
+         x="53.92857"
+         y="190.93359"
+         id="tspan3065">  bootstrap,</tspan><tspan
+         sodipodi:role="line"
+         x="53.92857"
+         y="205.93359"
+         id="tspan3045">  (Lookup, String, MethodType) CallSite</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="53.214287"
+       y="103.43362"
+       id="text3073"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3075"
+         x="53.214287"
+         y="103.43362"><tspan
+   style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+   id="tspan3077">.invokevirtual</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="53.214287"
+         y="118.43362"
+         id="tspan3079">  path/to/OtherClass.otherMethod (I)V</tspan></text>
+  </g>
+</svg>

@@ -1,38 +1,44 @@
+// no operators and only functions might mean 
+
+1 + 3 * a
+
+add( add(1, 3), a )
+
 
 /*  a data structure */
-a: [ b:2 c:Int ]
+a = {  b = 2; c = Int; }
 
 /* arrays */
-a : [ 1 2 3 ]
+a = [ 1, 2, 3 ]
 
-a:[]
+a = []
 
 /*  */
-a : [ a b b:Int ]
+a = [ a + 2, b, b:Int ]
 
 /* define a function, call a function */
-a: { a:Int | a + 2 }
+a = { a=Int | a + 2 }
 
-b: (a 2)  /* call 'a' with two as the first argument */
+b = a(2)  /* call 'a' with two as the first argument */
 
 
 /* stress tests */
-a: [ ( b b:2 2 ) (c 3 4 a:5 2.2 3.14159 ) d ]
+a = [ b(2, 100) c(3 4 5 2) d ]
 
-a: [ 2 [ a:Int b { a:Int | [ a 2 3 4 ] } ] ]
+a = [ 2 [ a:Int, b, { a:Int | [ a, 2, 3, 4 ] } ] ]
 
-b: 2
+b = 2
 
-(a)
+a()
 
 c: "asdf"
 
-d: (b + 0b01010 + 0xffea09ff) e: [ a 1 c 3 ] f: { a + 2 }
+d = b() e: [ a 1 c 3 ] f: { a + 2 }
 
-g: { a:Int | a:2 0 "Hello" (a + 2) }
+g: { a:Int | a=2. a + 2. }
 
-h: f      i: (g 2)    j        : [ (g 2) ]
+h= f.      i= g(2).    j        = [ g(2) ].
 
-a.b.c:f.d
+a b c = f d.
 
-(c.d.e a:2 b:7)
+c d e(a:2 b:7).

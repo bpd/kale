@@ -1,0 +1,30 @@
+package some.test
+
+someString() string
+{
+  return "asdf";
+}
+
+otherLoop()
+{
+  i = 0;
+  while i < 10
+  {
+    // if not implemented properly, this will misalign the operand stack
+    someString();
+    
+    i = i + 1;
+  }
+}
+
+main() int
+{
+  otherLoop();
+  
+  i = 0;
+  while i < 10
+  {
+    i = i + 1;
+  }
+  return i;
+}

@@ -1,0 +1,26 @@
+\chapter{Conclusion}
+\label{chapter:Conclusion}
+\lhead{ \leftmark }
+
+A structurally typed programming language was developed to target the new JVM \texttt{invokedynamic} bytecode instruction and runtime support libraries.  After the compiler was implemented, the resulting compiled programs using \texttt{invokedynamic} were benchmarked against existing solutions, including the \texttt{invokeinterface} instruction and inline caches constructed using the Core Reflection API.  The \texttt{invokedynamic} solution outperformed the Core Reflection API-based solutions by a factor of two, but could not match the performance of the native \texttt{invokeinterface} instruction.
+
+The \texttt{invokedynamic} standard library API is powerful and the promise of abstraction without penalty of indirection is compelling.  The potential applications of \texttt{invokedynamic} and method handles in general are widespread, including the possibility of pointers on the JVM and specializing data structure execution paths as runtime conditions change.  As the method handle runtime optimizer is improved in future versions of the JVM, \texttt{invokedynamic} could become a viable general purpose replacement for the other invocation instructions.
+
+\begin{comment}
+\section{Next Steps}
+
+\subsection{Meta Object Protocol}
+
+Each Kale class has a \verb|@bind| method, that is called during bootstrap if found by the Kale runtime bootstrap class.  (a \verb|@bind| method for the package/module too?).  The \verb|@bind| method would return, from its perspective, a pointer to either a field or a function, which would be wrapped in a CallSite within the Kale runtime.
+
+This @bind method would allow delegation to fields using the 'Proxy' or 'Adapter' patterns.
+
+
+\subsection{Late Bound Decision Making}
+
+In current JVM, obj.fieldname is problematic because this compiles down to a GETFIELD opcode (or GETSTATIC, depending on the target field).
+
+This means that if, at any point in the future, that field should be guarded behind a getter or setter (that performs additional validation, etc), the getter/setter has to be generated.  It has become common practice in both the C++ and Java worlds to make all fields private and to define getters and setters by default.  This practice has been adopted, in large part, because there was no other option for protection at a later date.
+
+Now, if these accesses are emitted as invokedynamic calls, the callsite can be patched as necessary by the metaobject protocol and optimized by the JVM into equivalent native code.
+\end{comment}

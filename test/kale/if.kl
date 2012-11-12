@@ -1,0 +1,79 @@
+package some.test
+
+type Person
+{
+  age int;
+  
+  v Vector;
+  
+  name() string
+  {
+    return "asdf";
+  }
+}
+
+type Vector
+{
+  x int;
+  y int;
+  z int;
+}
+
+testConditionalPath1() boolean
+{
+  a = Person();
+  
+  d = true;
+  a.age = 3;
+  
+  if d
+  {
+    // b is assigned local index 0 (the same as a)
+    b = Person();
+    
+    // overwrites a.age
+    b.age = 4;
+  }
+  return a.age == 3;
+}
+
+testConditionalPath2() boolean
+{
+  d = true;
+  
+  a = Person();
+  a.age = 3;
+  
+  if d
+  {
+    a.age = 4;
+  }
+  return a.age == 4;
+}
+
+sayHello() string
+{
+  a = "Brian";
+  b = "asdf";
+  
+  if a == b
+  {
+    return "a";
+  }
+  
+  return "b";
+}
+
+testConditionalPath3() boolean
+{
+  vec = Vector();
+  vec.x = 3;
+  
+  if sayHello() == "b"
+  {
+    vec.x = 5;
+  }
+
+  return vec.x == 5;
+}
+

@@ -1,0 +1,24 @@
+package some.test
+
+type Person
+{
+  age int;
+  
+  name() string
+  {
+    return "asdf";
+  }
+}
+
+main() int
+{
+  p = Person();
+  p.age = 29;
+  
+  if p.name() == "asdf"
+  {
+    return p.age;
+  }
+
+  return 42;
+}

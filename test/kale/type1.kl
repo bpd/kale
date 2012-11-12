@@ -1,0 +1,35 @@
+package some.test
+
+type Vector
+{
+  x int;
+  y int;
+  z int;
+  
+  + operator(v1 Vector, v2 Vector) Vector
+  {
+    v = Vector();
+    v.x = v1.x + v2.x;
+    v.y = v1.y + v2.y;
+    v.z = v1.z + v2.z;
+    return v;
+  }
+}
+
+testOperatorOverload() boolean
+{
+  v1 = Vector();
+  v1.x = 2;
+  v1.y = 3;
+  v1.z = 4;
+  
+  v2 = Vector();
+  v2.x = 3;
+  v2.y = 2;
+  v2.z = 1;
+  
+  v = v1 + v2;
+  test = (v.x == 5) && (v.y == 5) && (v.z == 5);
+  
+  return test;
+}

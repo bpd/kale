@@ -1,0 +1,13 @@
+package some.test
+
+sayHello() int
+{
+  //println( "Hello" );
+  return 3;
+}
+
+main() string
+{
+  //println( "Main" );
+  return "Hello";
+}

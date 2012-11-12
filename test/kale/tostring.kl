@@ -1,0 +1,14 @@
+package some.test
+
+type Person
+{
+  name string;
+}
+
+main() Person
+{
+  p = Person();
+  p.name = "Brian";
+  
+  return p;
+}

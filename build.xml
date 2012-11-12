@@ -1,4 +1,4 @@
-<project name="kaygan" default="jar">
+<project name="kale" default="jar">
 	
 	<target name="init">
 		<tstamp/>
@@ -8,9 +8,9 @@
 	
 		<mkdir dir="build" />
 		
-		<javac srcdir="src" destdir="build" />
+		<javac target="1.7" srcdir="src" destdir="build" />
 		
-		<copy file="src/kaygan/example.lang" todir="build/kaygan" />
+		<copy file="src/kale/example.lang" todir="build/kale" />
 	
 	</target>
 	
@@ -18,9 +18,9 @@
 
 		<mkdir dir="dist" />
 
-		<jar jarfile="dist/kaygan-${DSTAMP}-${TSTAMP}.jar" basedir="build">
+		<jar jarfile="dist/kale-${DSTAMP}-${TSTAMP}.jar" basedir="build">
 			<manifest>
-				<attribute name="Main-Class" value="kaygan.ui.CodeEditor" />
+				<attribute name="Main-Class" value="kale.ui.CodeEditor" />
 			</manifest>
 		</jar>
 

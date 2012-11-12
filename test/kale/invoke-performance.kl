@@ -1,0 +1,43 @@
+package test
+
+interface Greetable
+{
+  sayHello() string;
+}
+
+type Person
+{
+  sayHello() string { return "Hello"; }
+}
+
+type Animal
+{
+  sayHello() string { return "Hello"; }
+}
+
+type Computer
+{
+  sayHello() string { return "Hello"; }
+}
+
+greet( g Greetable )
+{
+  s = g.sayHello();
+}
+
+main()
+{
+  p = Person();
+  a = Animal();
+  c = Computer();
+ 
+  i = 0;
+  while i < 100000
+  {
+    greet( p );
+    greet( a );
+    greet( c );
+  
+    i = i + 1;
+  }
+}

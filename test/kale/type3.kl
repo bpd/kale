@@ -1,0 +1,39 @@
+package some.test
+
+type Person
+{
+  age int;
+  
+  name() string
+  {
+    return "asdf";
+  }
+  
+  Age() int
+  {
+    return this.age;
+  }
+}
+
+testInvoke() boolean
+{
+  a = Person();
+
+  return a.name() == "asdf";
+}
+
+recurse(i int) int
+{
+  if i < 5
+  {
+    j = i + 1;
+    k = recurse( j );
+    return k;
+  }
+  return i;
+}
+
+testRecurse() boolean
+{
+  return recurse( 1 ) == 5;
+}

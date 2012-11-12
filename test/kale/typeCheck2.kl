@@ -1,0 +1,44 @@
+package some.test
+
+type Person
+{
+  name string;
+}
+
+type Person2
+{
+  name string;
+}
+
+sayHello() Person
+{
+  p = Person();
+  p.name = "Brian";
+  return p;
+}
+
+// expected error: trying to return a Person2 when
+// the method signature declares a Person is being
+// returned
+sayHello2() Person
+{
+  p = Person2();
+  p.name = "Brian";
+  return p;
+}
+
+// expected error: trying to return a Person
+// when the method signature declares a string
+// is being returned
+testType1() string
+{
+  return sayHello();
+}
+
+// expected error: trying to return a Person2
+// when the method signature declares a string
+// is being returned
+testType2() string
+{
+  return sayHello2();
+}

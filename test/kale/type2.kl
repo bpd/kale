@@ -1,0 +1,48 @@
+package some.test
+
+type Vector
+{
+  x int;
+  y int;
+  z int;
+  
+  + operator(v1 Vector, v2 Vector) Vector
+  {
+    v = Vector();
+    v.x = v1.x + v2.x;
+    v.y = v1.y + v2.y;
+    v.z = v1.z + v2.z;
+    return v;
+  }
+  
+  getInt() int
+  {
+    return 3;
+  }
+}
+
+newVector() Vector
+{
+  v = Vector();
+  v.x = 2;
+  return v;
+}
+
+testMemberAccess() boolean
+{
+  vx = newVector().x + 4;
+  
+  return vx == 6;
+}
+
+testMemberAccess2() boolean
+{
+  i = newVector().getInt();
+  
+  return i == 3;
+}
+
+testMemberAccess3() boolean
+{
+  return newVector().getInt() == 3;
+}

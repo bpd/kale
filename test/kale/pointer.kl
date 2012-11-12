@@ -1,0 +1,57 @@
+package some.test
+
+type Person
+{
+  name string;
+  
+  sayHello() string
+  {
+    return "Hello";
+  }
+}
+
+// read left to right as 's, pointer to string'
+dereference( s ()string ) string
+{
+  return s();
+}
+
+dereference2( s ()()string ) string
+{
+  return dereference( s() );
+}
+
+derefFunc( f (string)int ) int
+{
+  return f("Hello");
+}
+
+// alternative 'extension method' syntax
+(i int) someIntValue ( s string )
+{
+  return string(i) + s;
+}
+
+main() string
+{
+  
+  p = Person();
+  p.name = "Brian";
+  
+  // invokedynamic kl.Bootstrap.getPointer 'some/test/Person.name' '()string'
+  //                                                               ^^^^^^^^^^
+  //                                                     the method type will
+  //                                                    determine whether the
+  //                                                 pointer is getter/setter
+  
+  s = @p.name;
+  // equivalent to:  s = (){ p.name };
+  // ... but not really, since pointers are
+  //     a two-way (get/set) data path
+  
+  // Lookup.findVirtual().bindTo(p)
+  derefFunc( ref(p.sayHello) );
+  
+  return *s;
+  
+}

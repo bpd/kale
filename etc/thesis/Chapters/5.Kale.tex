@@ -1,0 +1,276 @@
+\chapter{Kale Language}
+\label{chapter:Kale}
+\lhead{ \leftmark }
+
+\section{Overview}
+
+Kale is a strongly typed programming language with structural interfaces that has been designed to prototype structural typing on the JVM using \texttt{invokedynamic}.  Many design elements of Kale are inspired by the Google Go \cite{golang-spec} programming language.
+
+\subsection{Types}
+
+Types declarations in Kale are analogous to classes in Java.  Types can be declared with zero or more fields and methods, all of which are annotated with type names.  Listings \ref{javaClass1} and \ref{kaleType1} show how Java syntax maps to Kale syntax.
+
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}[language=Java,caption=A Java code example,label=javaClass1]
+  package test;
+  class Person {
+    int age;
+    String name;
+    String getName() {
+      return this.name;
+    }
+  }
+\end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}[language=Kale,caption=A Kale code example,label=kaleType1]
+  package test
+  type Person {
+    age int;
+    name string;
+    getName() string {
+      return this.name;
+    }
+  }
+\end{lstlisting}
+\end{minipage}
+
+Kale using trailing type annotations instead of the leading type annotations of most C-derived languages.  Google Go's development team found this allows more complex declarations to be read left to right \cite{golang-decl-syntax} instead of the "spiral pattern" of C \cite{c-spiral-decl}.  Regardless of the small syntactical differences, both Listing \ref{javaClass1} and \ref{kaleType1} compile down to the same bytecode.
+
+\begin{wrapfigure}{R}{0.4\textwidth}
+\begin{lstlisting}[language=Kale,caption=A Kale interface,label=kaleInterface1]
+  package test
+  interface A {
+    a();
+  }
+  type T {
+    a() { }
+  }
+\end{lstlisting}
+\end{wrapfigure}
+
+Structurally typed interfaces are declared with the \texttt{interface} keyword and can only contain method declarations  -- no method bodies.  Listing \ref{kaleInterface1} defines an interface \texttt{A} that is implemented by type \texttt{T}.  Note that if the return type of a method is omitted, \texttt{void} is assumed.
+
+\begin{wrapfigure}{R}{0.4\textwidth}
+\begin{lstlisting}[language=Kale,caption=A Kale main function,label=kaleFunctions1]
+  package test
+  main() {
+    
+  }
+\end{lstlisting}
+\end{wrapfigure}
+
+Kale, unlike Java, allows functions to be declared outside the scope of a class.  Listing \ref{kaleFunctions1} shows a legal Kale program with only a main function declared.
+
+\subsection{Operators}
+
+Kale implements a simplified version of operator overloading.  Listing \ref{kaleOperators1} demonstrates a \texttt{Vector} type that has a \texttt{+} operator.
+
+\begin{lstlisting}[language=Kale,caption=Operators in Kale,label=kaleOperators1]
+  package test
+  type Vector {
+    x int;
+    y int;
+    z int;
+    + operator(v1 Vector, v2 Vector) Vector {
+      v = Vector();
+      v.x = v1.x + v2.x;
+      v.y = v1.y + v2.y;
+      v.z = v1.z + v2.z;
+      return v;
+    }
+  }
+\end{lstlisting}
+
+Operators are made possible by Kale's relaxed tokenization rules.  The only special lexeme types are control characters like parentheses, braces, and brackets, or punctuation like semi-colons, commas, and full stops.  All other lexemes, even arithmetic operators, are considered symbols.  Operators are detected in the parser by an occurrence of three consecutive symbols, in which case the first and third symbols are considered the operands and the second symbol is considered the operator.  Usage of the operator defined in Listing \ref{kaleOperators1} is shown in Listing \ref{kaleOperatorsUse}.
+
+\begin{wrapfigure}{R}{0.4\textwidth}
+\begin{lstlisting}[language=Kale,caption=Operator use in Kale,label=kaleOperatorsUse]
+  v1 = Vector();
+  v1.x = 2;
+  v2 = Vector();
+  v2.x = 3;
+  
+  v3 = v1 + v2;
+  // assert v3.x == 5
+\end{lstlisting}
+\end{wrapfigure}
+
+Operator invocation is constructed as a chain of function invocations, so another way of writing \texttt{v1 + v2} would be \texttt{v1.+(v2)} and \texttt{v1 + v2 + v3} would be \texttt{v1.+(v2).+(v3)}.  Parentheses can alter evaluation order, turning \texttt{v1 + (v2 + v3)} into \texttt{v1.+(v2.+(v3))}.
+
+This ignores the usual order of operations for basic arithmetic, but makes reasoning about operator use in complex types like a \texttt{Vector} or \texttt{Point} more straightforward.
+
+\begin{comment}
+\subsection{Pointers}
+
+\begin{lstlisting}[language=Kale,caption=Pointers in Kale,label=kalePointers1]
+  package test
+  type Person {
+    name string;
+    getName() string {
+      return this.name;
+    }
+  }
+  extractName( p Person ) string {
+    return p.name;
+  }
+  main() {
+    person = Person();
+    person.name = "John";
+    extractName( &(person) ); // returns "John"
+    &(person.name);           // pointer to "John"
+    &(person.getName);        // MethodHandle (Person)Ljava/lang/String;
+  }
+\end{lstlisting}
+
+With garbage collection, stack vs heap allocation is not an issue.  A pointer can safely be passed to external code
+
+
+
+\subsection{Control Structures}
+
+if/else
+
+while
+
+\end{comment}
+
+\section{Compilation}
+
+The Kale compiler accepts Kale source and generates JVM bytecode as output.  The compiler is implemented in Java and uses a custom lexer and recursive descent parser to build an abstract syntax tree (AST).  JVM bytecode is emitted directly from the AST through calls to the ASM bytecode generation library \cite{asm-library}, and can be loaded directly into a \texttt{ClassLoader} and executed or packaged into a jar file.
+
+Since Kale programs differ slightly from Java in structure and content, some conversions must be applied in order to map Kale programs to class files.  First, since allows a broader range of characters in symbols compared to Java, symbols used for class and method names must be converted to an equivalent \emph{unqualified name} as defined by the JVM specification \cite[4.2.2]{jvms7}.  Additionally, functions defined outside the scope of a class within a package must be packaged inside of a class.  For this reason, a \texttt{\_\_functions} class is generated within the declared package that contains all package-level functions.
+
+\subsection{Invocations}
+
+Since Kale uses a mix of concrete types and structural interfaces, invocations generate a mix of \texttt{invokevirtual} and \texttt{invokedynamic} instructions.  Listing \ref{kaleInvocations1} defines an interface, \texttt{Gettable}, and a type that implements that interface, \texttt{Stream}.  In the \texttt{main()} function a new instance of \texttt{Stream} is created, and passed as a parameter to \texttt{callGet(Gettable)}.  The invocation \texttt{g.get()} generates an \texttt{invokedynamic} call site, since it is being invoked against an interface.  All other invocations, including the call to \texttt{internal()} within the \texttt{Stream} class, use an \texttt{invokevirtual} instruction.
+
+\begin{lstlisting}[language=Kale,caption=Invocations in Kale,label=kaleInvocations1]
+package some.test
+interface Gettable {
+  get();
+}
+type Stream {
+  get() {
+    internal();
+  }
+  internal() {
+    // no-op
+  }
+}
+callGet( g Gettable ) {
+  g.get();
+}
+main() {
+  s = Stream();
+  callGet(s);
+}
+\end{lstlisting}
+
+It is very tempting to simply replace every invocation with an \texttt{invokedynamic} instruction to simplify the code generation and allow for maximum flexibility.  However, while the \texttt{invokedynamic} operation and bootstrap logic have been implemented efficiently in HotSpot, the MethodHandle lookup and CallSite construction still have a non-zero cost compared to the JVM internal linking which requires no reification or simulation.
+
+Listing \ref{kaleInterfaceBytecode1} shows the \texttt{invokedynamic} instruction that would be generated from \texttt{g.get()} in Listing \ref{kaleInvocations1}.  This invocation specifies the Kale runtime library static method that will provide a call site and takes advantage of the ability to embed parameters directly into the call site.  By specifying the name of the interface as a String parameter the bootstrap method can verify whether a given receiver conforms to that interface at runtime.
+
+\begin{lstlisting}[language=jvm-bytecode,caption=invokedynamic interface call site,label=kaleInterfaceBytecode1]
+invokedynamic get(Ljava/lang/Object;)V [
+  // handle kind 0x6 : invokestatic
+  kale/runtime/Bootstrap.bootstrap(
+      (Ljava/lang/invoke/MethodHandles$Lookup;
+       Ljava/lang/String;
+       Ljava/lang/invoke/MethodType;
+       Ljava/lang/String;
+      )Ljava/lang/invoke/CallSite;
+  )
+  // arguments:
+  "some.test.Gettable"
+]
+\end{lstlisting}
+
+Listing \ref{kaleBootstrapMethod} shows the corresponding bootstrap method declaration that will be called by the JVM runtime in order to provide a call site for the interface call site.
+
+\begin{lstlisting}[language=Java,caption=Interface call site runtime bootstrap method,label=kaleBootstrapMethod]
+public static CallSite bootstrap(	MethodHandles.Lookup caller,
+                                  String name,
+                                  MethodType type,
+                                  String targetType )
+{
+  Class<?> targetClass = Class.forName(	
+                            targetType,
+                            true,
+                            caller.lookupClass().getClassLoader());
+                
+  InterfaceCallSite ics = new InterfaceCallSite(  targetClass,
+                                                  name,
+                                                  type );
+  
+  ics.rootHandle = MethodHandles
+                    .insertArguments( callHandle, 0, ics )
+                    .asVarargsCollector( Object[].class )
+                    .asType(type);
+		
+  ics.setTarget( ics.rootHandle );
+  
+  return ics;
+}
+\end{lstlisting}
+
+The role of the bootstrap method is to populate the initial state of the call site with enough information to upgrade itself in response to new receiver types as they are encountered.  The bootstrap method creates an instance of \texttt{InterfaceCallSite}, which retains metadata about the interface class and method being invoked, and binds it to a generic method handle, \texttt{callHandle}, which is described in Listing \ref{kaleCallMethod}.  Using \texttt{insertArguments} sets the \texttt{InterfaceCallSite} as the first argument to \texttt{call}, then \texttt{asVarArgsCollector} collects any arguments provided by the caller into an array of \texttt{Object}s that can be re-spread using \texttt{asSpreader} once the method is resolved.
+
+\begin{lstlisting}[language=Java,caption=Generalized interface invoker method,label=kaleCallMethod]
+public static Object call(	InterfaceCallSite ics,
+                            Object o,
+                            Object[] args )
+  throws Throwable
+{
+  // upgrade call site cache if necessary,
+  // then lookup the target method on o and invoke
+}
+\end{lstlisting}
+
+A \texttt{MethodHandle} pointing to \texttt{call} is set as the root of a \texttt{MethodHandle} tree similar to the tree depicted in Figure \ref{fig:guard-pic}.  Each subsequent invocation of \texttt{call} indicates that all cached receiver tests (the guard tests higher in the \texttt{MethodHandle} tree) have failed -- a cache miss -- so a new guard testing for the receiver type is set as the new root of the tree with its fallback set to the current root.  Each \texttt{InterfaceCallSite} retains a \texttt{cacheDepth} integer which tracks how many cached types the call site has in its \texttt{MethodHandle} tree.  Once this exceeds a preset threshold -- currently five -- the call site is marked as megamorphic by setting \texttt{InterfaceCallSite.cacheDepth} to -1.  After that, the cache is discarded and all subsequent invocations perform a reflective lookup against the receiver.
+
+\begin{comment}
+\subsection{Pointers}
+
+Function and field pointers have always been technically possible on the JVM, simulated using the Field and Method reflection classes.  However, the overhead was always higher than necessary.  Fields and Methods had a high simulation cost to begin with, and to generalize their interface (as invokedynamic does with a MethodHandle) would require another layer of indirection, like a Pointer class with a call(Object[]) method that was implemented by a FunctionPointer and FieldPointer class.  This would require several object allocations (the reflection instance, the reflection wrapper instance, and the boxing overhead from the argument conversion into an Object array).  This overhead made pointers less practical to implement on the JVM.
+
+Invokedynamic changes all that by providing low-cost pointers by generalizing function pointers and field pointers into the MethodHandle.
+
+\end{comment}
+
+\section{Performance}
+
+Structural invocation through a \texttt{MethodHandle} cache was benchmarked against several other invocation techniques to test its performance.  Three types -- \texttt{A}, \texttt{B}, and \texttt{C} -- are defined within both Kale and Java with a single no-argument method \texttt{m} that returns a string constant.  Within Java, all three types declare that they implement interface \texttt{I} which also defines method \texttt{m}.
+
+The baseline performance metric is an \texttt{invokeinterface} instruction, which is heavily optimized and can take advantage of the limited number of implemented types inherent to explicit interface implementation as discussed in Chapter \ref{chapter:StructuralTyping}.  Next, two Core Reflection API-based implementations, \texttt{invokeReflection} and \texttt{invokeCachedReflection}, were implemented to compare with the findings of Dubochet and Odersky's findings in their Scala-oriented structural typing implementation \cite{structural-types-scala}.  \texttt{invokeReflection} does a full method lookup from the receiver \texttt{Class} object on each invocation, and \texttt{invokeCachedReflection} implements a simple cache of the resolved \texttt{Method} objects.  Additionally, a generative technique, \texttt{invokeStaticInline}, which was also discussed as an option by Dubochet and Odersky, was implemented that defines an inline cache that is statically defined at compile time with a fixed set of types.  The \texttt{invokeStaticInline} approach is completely impractical in the real world, but it is important because it is written in Java, as opposed to the native implementation of \texttt{invokeinterface}.  If the \texttt{MethodHandle} runtime optimizer was "sufficiently smart", it would be able to generate equivalent native code (see Listing \ref{static-inline-cache}).  Finally, \texttt{invokeMethodHandle} is the \texttt{MethodHandle}-based adaptive polymorphic inline cache.
+\vspace{6em}
+\begin{lstlisting}[language=Java,caption=Static inline cache,label=static-inline-cache]
+if( o instanceof A ) {
+  ((A)o).m();
+} else if( o instanceof B ) {
+  ((B)o).m();	
+} else if( o instanceof C ) {
+  ((C)o).m();
+}
+\end{lstlisting}
+
+For each approach, an instance of \texttt{A}, \texttt{B}, and \texttt{C} were created as invocation targets.  Then 100000 iterations of invocations were performed, alternating \texttt{A}, \texttt{B}, and \texttt{C} as parameters to a function that accepted a parameter of type \texttt{I}, where an invocation was performed against method \texttt{m}.  The benchmark was performed on a 3.20 GHz 64-bit AMD Athlon II X3 450 in Windows 7 running JVM 1.7.0\_07 with arguments \texttt{-server -XX:+AggressiveOpts}.  The execution times, averaged over three runs of a cold JVM, are displayed Table \ref{table:invocation-benchmarks}.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{ | l | l | p{5cm} |}
+  \hline
+  \textbf{Technique} & \textbf{Execution Time (ms)} \\ \hline
+  invokeinterface & 4 \\ \hline
+  invokeReflection & 296 \\ \hline
+  invokeCachedReflection & 45 \\ \hline
+  invokeMethodHandle & 22 \\ \hline
+  invokeStaticInline & 5  \\ \hline
+  \end{tabular}
+  \caption[Invocation Benchmarks]{Execution time of interface invocations.}
+  \label{table:invocation-benchmarks}
+\end{table}
+
+Over multiple test executions, \texttt{invokeMethodHandle} consistently outperformed the reflective inline cache by a factor of two.  \texttt{invokeMethodHandle} was still not as fast as \texttt{invokeinterface}, but that is a highly optimized native implementation that has been developed over several years.  \texttt{invokeStaticInline} is the most telling of the results, since it represents a theoretical best case performance.  The runtime optimizer for method handles is new in JDK 7, so it is possible it will gain performance as its maturity catches up to the other JVM runtime code generators.
+
