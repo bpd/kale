@@ -2,14 +2,6 @@
 Language
 ========
 
-- compiler needs to verify type equivalence
-
-- generate __instanceof(Object) static method on every Kale class,
-  that can be called as the fast path in an instanceof guard test,
-  with the slow path being a InstanceOfCheck object that keeps
-  a Class<?> instance field and does an Class.instanceOf(o) check
-  as the slow path
-
 - add golang-equivalent interface{} type as 'any'
   - dispatched as interface callsite
   
@@ -24,12 +16,9 @@ Language
 
 Codegen
 =======
-- interface invocation invokedynamic site
 - package imports
 
 UI
 ==
-- type feedback on hover/click
-- type hierarchy tree per CompilationUnit
 - multi-file inputs once package imports work (tabbed?)
 
