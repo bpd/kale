@@ -1,9 +1,0 @@
-
-# create thesis.aux from thesis.tex
-pdflatex Thesis
-
-# create thesis.bbl from thesis.aux
-bibtex Thesis
-
-# build the thesis (may need to execute multiple times to get cross-refs)
-pdflatex Thesis
