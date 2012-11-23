@@ -1,10 +1,7 @@
 package kale.runtime.test;
 
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,40 +10,9 @@ import kale.Parser;
 import kale.ParserTest;
 import kale.ast.CompilationUnit;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.util.Textifier;
-import org.objectweb.asm.util.TraceClassVisitor;
-
-import sun.invoke.anon.AnonymousClassLoader;
-
 public class InvokeMethodHandle
 {
 	static final MethodHandles.Lookup lookup = MethodHandles.lookup();
-	
-//	static
-//	{
-//		try
-//		{
-//		mh = lookup.findStatic(	InvokeMethodHandle.class,
-//								"doInvoke",
-//								MethodType.methodType(String.class)
-//								);
-//		}
-//		catch(Throwable e)
-//		{
-//			throw new RuntimeException(e);
-//		}
-//	}
-
-//	static MethodHandle mh;
-
-//	public static String doInvoke()
-//	{
-//		return "Hello";
-//	}
 	
 	static interface Greetable
 	{
@@ -78,14 +44,6 @@ public class InvokeMethodHandle
 	}
 	
 	private static final int ITERATIONS = 100000;
-	
-//	public static void invokeMethodHandle() throws Throwable
-//	{
-//		for(int i=0; i<ITERATIONS; i++)
-//		{
-//			String s = (String)mh.invokeExact();
-//		}
-//	}
 	
 	public static void invokeReflection() throws Throwable
 	{
@@ -207,16 +165,6 @@ public class InvokeMethodHandle
 		}
 	}
 	
-//	public static void invokeInvokeStatic() throws Throwable
-//	{
-//		Method m = InvokeMethodHandle.class.getMethod("doInvoke");
-//		
-//		for(int i=0; i<ITERATIONS; i++)
-//		{
-//			String s = doInvoke();
-//		}
-//	}
-	
 	public static void invokeInvokeInterface() throws Throwable
 	{
 		Person p = new Person();
@@ -247,13 +195,6 @@ public class InvokeMethodHandle
 		
 		Class<?> kaleClass = kaleUnit.compile();
 		
-		
-//		start = System.currentTimeMillis();
-//		invokeMethodHandle();
-//		stop = System.currentTimeMillis();
-//		
-//		System.out.println("invoke method handle took " + (stop-start) + "ms");
-		
 		start = System.currentTimeMillis();
 		invokeReflection();
 		stop = System.currentTimeMillis();
@@ -265,12 +206,6 @@ public class InvokeMethodHandle
 		stop = System.currentTimeMillis();
 		
 		System.out.println("invoke cached reflection took " + (stop-start) + "ms");
-		
-//		start = System.currentTimeMillis();
-//		invokeInvokeStatic();
-//		stop = System.currentTimeMillis();
-//		
-//		System.out.println("invokestatic took " + (stop-start) + "ms");
 		
 		start = System.currentTimeMillis();
 		invokeInvokeInterface();
@@ -292,101 +227,8 @@ public class InvokeMethodHandle
 		
 	}
 	
-	
-//	public static void invoke() throws Throwable
-//	{
-//		ClassWriter cw = new ClassWriter( ClassWriter.COMPUTE_FRAMES );
-//		MethodVisitor mv;
-//		
-//		cw.visit(	Opcodes.V1_7,
-//					Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER,
-//					"loader", // classname
-//					null,
-//					"java/lang/Object", // superclass
-//					null );
-//		
-////		{
-////		mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
-////		mv.visitCode();
-////		mv.visitVarInsn(Opcodes.ALOAD, 0);
-////		mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
-////		mv.visitInsn(Opcodes.RETURN);
-////		mv.visitMaxs(1, 1);
-////		mv.visitEnd();
-////		}
-//		
-//		// generate a call{classname} method for each class
-//		//
-//		{
-//			mv = cw.visitMethod(	Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC, 
-//									"invokeHandle", 
-//									"()Ljava/lang/String;", 
-//									null, 
-//									null );
-//			mv.visitCode();
-//			
-//			mv.visitFieldInsn(	Opcodes.GETSTATIC,
-//								"kaygan/runtime/InvokeMethodHandle",
-//								"mh",
-//								"Ljava/lang/invoke/MethodHandle;");
-//			
-//			mv.visitMethodInsn(	Opcodes.INVOKEVIRTUAL,
-//								"java/lang/invoke/MethodHandle",
-//								"invokeExact",
-//								"()Ljava/lang/String;"
-//								);
-//
-//			mv.visitInsn(Opcodes.ARETURN);
-//			mv.visitMaxs(1, 1);
-//			mv.visitEnd();
-//		}
-//		
-//		mv.visitEnd();
-//		
-//		AnonymousClassLoader loader = new AnonymousClassLoader();
-//		
-//		byte[] classBytes = cw.toByteArray();
-//		
-//		// debug class
-//		ClassReader cr = new ClassReader( classBytes );
-//		
-//		int flags = ClassReader.SKIP_DEBUG;
-//
-////		cr.accept(new TraceClassVisitor(null,
-////            new ASMifier(),
-////            new PrintWriter(System.out)), flags);
-//		
-//		cr.accept(new TraceClassVisitor(null,
-//	            new Textifier(),
-//	            new PrintWriter(System.out)), flags);
-//		
-//		// generate our class
-//		Class<?> refc = loader.loadClass( classBytes );
-//		
-//		System.out.println("refc: " + refc);
-//		
-//		System.out.println("invoking invokedynamic main()");
-//		
-//
-//			// invoke callPerson(),
-//			//   which creates a new Person and invokes
-//			//   sayHello() dynamically
-//			//
-//			MethodHandle invokeHandle = lookup.findStatic(	refc,
-//															"invokeHandle",
-//															MethodType.methodType(String.class)
-//														);
-//
-//			// polymorphic signature... takes return type into account
-//			String o = (String)invokeHandle.invokeExact();
-//		
-//			System.out.println("o: " + o);
-//
-//	}
-	
 	public static void main(String[] args) throws Throwable
 	{
-		//invoke();
 		testInvokes();
 	}
 }
