@@ -87,7 +87,11 @@ public class Assignment extends Expression implements LocalVariable
 			//lvalue.inferType(scope);
 			rvalue.inferType(scope);
 			
-			// TODO verify 'target' type is equivalent to rvalue
+			if( !lvalue.getType().isEquivalent(rvalue.getType()) )
+			{
+				error("Types are not equivalent: " 
+						+ lvalue.getType() + " != " + rvalue.getType());
+			}
 		}
 	}
 	
