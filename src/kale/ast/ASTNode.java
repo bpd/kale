@@ -88,7 +88,8 @@ public abstract class ASTNode
 		for( ASTNode node : nodes )
 		{
 			int nodeBeginOffset = node.getBeginOffset();
-			if( nodeBeginOffset < smallestBeginOffset )
+			if( nodeBeginOffset < smallestBeginOffset
+				&& nodeBeginOffset >= 0 )
 			{
 				smallestBeginOffset = nodeBeginOffset;
 			}
@@ -111,7 +112,8 @@ public abstract class ASTNode
 		for( ASTNode node : nodes )
 		{
 			int nodeEndOffset = node.getEndOffset();
-			if( nodeEndOffset > largestEndOffset )
+			if( nodeEndOffset > largestEndOffset
+				&& nodeEndOffset < Integer.MAX_VALUE )
 			{
 				largestEndOffset = nodeEndOffset;
 			}
@@ -131,24 +133,19 @@ public abstract class ASTNode
 	
 	public boolean hasErrors()
 	{
-		boolean hasErrors = hasLocalErrors();
-		if( !hasErrors )
+		boolean hasLocalErrors = hasLocalErrors();
+		if( !hasLocalErrors )
 		{
 			// no local errors, check children
 			for( ASTNode child : this.children )
 			{
-				if( child == null )
-				{
-					System.out.println("child of " + this.getClass().getSimpleName() + " is null");
-					
-				}
-				if( child.hasErrors() )
+				if( child != null && child.hasErrors() )
 				{
 					return true;
 				}
 			}
 		}
-		return hasErrors;
+		return hasLocalErrors;
 	}
 	
 	public List<String> getErrors()

@@ -59,7 +59,7 @@ public class Id extends Expression
 		this.id = id;
 		this.previous = previous;
 		
-		beginOffset = 0;
+		beginOffset = -1;
 		endOffset = Integer.MAX_VALUE;
 		
 		if( previous != null )
