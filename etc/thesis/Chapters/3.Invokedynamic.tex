@@ -2,7 +2,7 @@
 \label{chapter:Invokedynamic}
 \lhead{ \leftmark }
 
-Though non-Java languages had been running on the JVM since its initial public release, no real effort was made by the engineers within Sun (now Oracle) to make the JVM a hospitable host to languages with semantics that differed from Java.  As more production systems used JVM-based language runtimes such as JRuby, it became apparent to Sun that more work needed to be done at the JVM  level to support these languages.  The goal was to make the JVM more flexible and adaptable while still retaining the strong type verification required to enforce Java's type system.  In order to accomplish this, fundamental changes to the JVM were needed.  These modifications to core JVM functionality, a so-called "renaissance" of the JVM, were created as a branch of the OpenJDK project named the \emph{Da Vinci Machine Project} in mid-2006 and formalized under JSR-292 \cite{jsr-292}.  The finalized implementation was included in the release of JDK 7.  The modifications included low cost function pointers in the form of method handles, new method linking options with the \texttt{invokedynamic} instruction, and changes to the runtime optimizer.
+Though non-Java languages have been running on the JVM since its initial public release, no real effort was made by the engineers within Sun (now Oracle) to make the JVM a hospitable host to languages with semantics that differed from Java.  As more production languages (such as JRuby) used JVM-based runtimes, it became apparent to Sun that more work needed to be done at the JVM level to support these languages.  The goal was to make the JVM more flexible and adaptable while still retaining the strong type verification required to enforce Java's type system.  In order to accomplish this, fundamental changes to the JVM were needed.  These modifications to core JVM functionality, a so-called "renaissance" of the JVM, were created as a branch of the OpenJDK project named the \emph{Da Vinci Machine Project} in mid-2006 and formalized under JSR-292 \cite{jsr-292}.  The finalized implementation was included in the release of JDK 7.  The modifications included low cost function pointers in the form of method handles, new method linking options with the \texttt{invokedynamic} instruction, and changes to the runtime optimizer.
 
 \section{Method Handles}
 
@@ -155,7 +155,7 @@ Instead of a hardwired symbolic link to the target method, \texttt{invokedynamic
 invokedynamic
   otherMethod(OtherClass,I)V           // signature being invoked
   path/to/LanguageRuntime.bootstrap    // CallSite provider
-  (Lookup, String, MethodType)CallSite // bootstrap method signature
+  (Lookup, String, MethodType)CallSite // bootstrap signature
 \end{lstlisting}
 
 The bootstrap method uses the reflective \texttt{MethodHandle.Lookup} class to obtain method handles, and can optionally perform any combination of method handle adaptation as discussed in Section \ref{section:filters}.  The bootstrap method is defined in JVM bytecode just like any other class, as opposed to the internal JVM process that links the other invocation instructions.  Listing \ref{indy-bootstrap-example} defines an example bootstrap method.

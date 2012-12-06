@@ -36,7 +36,7 @@ The class file format was originally designed to be a binary storage format for 
   .end class
 \end{lstlisting}
 
-Note that even though no \texttt{extends} declaration was used when declaring the class \texttt{SomeClass}, since every class must extend another class the compiler automatically generates bytecode that extends the base class in the Java object system, \texttt{java.lang.Object}.  All classes, fields, and methods within the JVM are strongly typed with symbolic type descriptors \cite[4.3]{jvms7}.  There are two classifications of types within the JVM: \emph{primitive} and \emph{reference} types.  Primitive types are unboxed numeric types such as \texttt{int} and \texttt{boolean} \cite[2.3]{jvms7}.  Reference types refer to dynamically created instances of a class.  Table \ref{table:type-descriptors} shows the format of the type descriptors that will be used throughout this document.
+Note that even though no \texttt{extends} declaration was used when declaring the class \texttt{SomeClass}, since every class must extend another class, the compiler automatically generates bytecode that extends the base class in the Java object system, \texttt{java.lang.Object}.  All classes, fields, and methods within the JVM are strongly typed with symbolic type descriptors \cite[4.3]{jvms7}.  There are two classifications of types within the JVM: \emph{primitive} and \emph{reference} types.  Primitive types are unboxed numeric types such as \texttt{int} and \texttt{boolean} \cite[2.3]{jvms7}.  Reference types refer to dynamically created instances of a class.  Table \ref{table:type-descriptors} shows the format of the type descriptors that will be used throughout this document.
 
 \begin{table}[htbp]
   \centering
@@ -54,7 +54,7 @@ Note that even though no \texttt{extends} declaration was used when declaring th
 
 \subsection{Field and Method Descriptors}
 
-A field descriptor defines the name and type of a class field.  As shown in line 3 of listing \ref{bc-after-compile}, the \texttt{value} field of the class is defined with the type descriptor \texttt{I}, which table \ref{table:type-descriptors} defines as \texttt{int} (a 32-bit two's-complement integer).
+A field descriptor defines the name and type of a class field.  As shown in line 3 of listing \ref{bc-after-compile}, the \texttt{value} field of the class is defined with the type descriptor \texttt{I}, which Table \ref{table:type-descriptors} defines as \texttt{int} (a 32-bit two's-complement integer).
 
 A method descriptor is composed of the type descriptors of its parameters and return type \cite[4.3.3]{jvms7}.  As shown in line 4 of Listing \ref{bc-after-compile}, the method \texttt{add(I)I} takes an \texttt{int} parameter and returns an \texttt{int}.  Example mappings between Java method declarations and the resulting method descriptors are provided in Table \ref{table:method-descriptors}.
 
@@ -192,7 +192,7 @@ invokevirtual test/A.c (I)I
 The simplest form of invocation is a static method invocation using the \texttt{invokestatic} instruction, which requires just arguments and a symbolic link to the target method as shown on line 1 of Figure \ref{fig:invoke-src-to-bc}.  Virtual methods (methods declared without the \texttt{static} keyword), are called with the \texttt{invokevirtual} instruction, which requires the object reference of the receiver be pushed on the stack along with the arguments.  If the receiver is an interface, the \texttt{invokeinterface} instruction must be used as shown in Listings \ref{java-interface-decl} and \ref{bc-interface-invoke}.
 
 \begin{lstlisting}[language=Java,caption=Java interface declaration,label=java-interface-decl]
-package test;
+package example;
 interface Testable {
   void test(String s);
 }
@@ -202,7 +202,7 @@ class SomeClass implements Testable {
 \end{lstlisting}
 \vspace{2em}
 \begin{lstlisting}[language=jvm-bytecode,caption=Java interface invocation,label=bc-interface-invoke]
-invokeinterface test/Testable test (Ljava/lang/String;)V
+invokeinterface example/Testable test (Ljava/lang/String;)V
 \end{lstlisting}
 
 If \texttt{invokeinterface} is used with an object reference that does not implement the specified interface, a \texttt{ClassVerifyException} is thrown by the JVM at runtime.

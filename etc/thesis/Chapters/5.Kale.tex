@@ -140,7 +140,7 @@ while
 
 The Kale compiler accepts Kale source and generates JVM bytecode as output.  The compiler is implemented in Java and uses a custom lexer and recursive descent parser to build an abstract syntax tree (AST).  JVM bytecode is emitted directly from the AST through calls to the ASM bytecode generation library \cite{asm-library}, and can be loaded directly into a \texttt{ClassLoader} and executed or packaged into a jar file.
 
-Since Kale programs differ slightly from Java in structure and content, some conversions must be applied in order to map Kale programs to class files.  First, since allows a broader range of characters in symbols compared to Java, symbols used for class and method names must be converted to an equivalent \emph{unqualified name} as defined by the JVM specification \cite[4.2.2]{jvms7}.  Additionally, functions defined outside the scope of a class within a package must be packaged inside of a class.  For this reason, a \texttt{\_\_functions} class is generated within the declared package that contains all package-level functions.
+Since Kale programs differ slightly from Java in structure and content, some conversions must be applied in order to map Kale programs to class files.  First, since Kale allows a broader range of characters in symbols compared to Java, symbols used for class and method names must be converted to an equivalent \emph{unqualified name} as defined by the JVM specification \cite[4.2.2]{jvms7}.  Additionally, functions defined outside the scope of a class within a package must be packaged inside of a class.  For this reason, a \texttt{\_\_functions} class is generated within the declared package that contains all package-level functions.
 
 \subsection{Invocations}
 

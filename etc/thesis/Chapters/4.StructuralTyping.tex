@@ -6,7 +6,7 @@ A type system that requires equivalent types to have the same declared name, reg
 
 \section{Nominal Typing}
 
-As described in chapter \ref{chapter:JVM}, the JVM uses nominal types throughout.  Type names are declared in Java source, embedded into bytecode instructions, and enforced at runtime by the JVM.  As shown in Listing \ref{types-nominal}, even though classes \texttt{A} and \texttt{B} are structurally identical, they are not considered equivalent within Java or by the JVM at runtime, and therefore cannot be used interchangeably.
+As described in Chapter \ref{chapter:JVM}, the JVM uses nominal types throughout.  Type names are declared in Java source, embedded into bytecode instructions, and enforced at runtime by the JVM.  As shown in Listing \ref{types-nominal}, even though classes \texttt{A} and \texttt{B} are structurally identical, they are not considered equivalent within Java or by the JVM at runtime, and therefore cannot be used interchangeably.
 
 \begin{lstlisting}[language=Java,caption=Nominal types,label=types-nominal]
   class A {
@@ -28,7 +28,7 @@ As described in chapter \ref{chapter:JVM}, the JVM uses nominal types throughout
 
 \subsection{Case Study: java.io.Closeable}
 
-Prior to the release of J2SE 1.5 in 2004, the Java standard library developers noticed they had several classes in the \texttt{java.io} package that all had \texttt{close()} methods.  They wanted to be able to write generalized code that could operate on all of these classes, but the classes all had different hierarchies -- they extended different base classes -- so they could not be addressed as one common type.  To solve this problem, the \texttt{java.io.Closeable} interface was introduced.  This interface defines only a \texttt{close()} method that throws an \texttt{IOException}, and is meant to enables objects that represented resources such as files and network connections to be closed without the caller knowing anything about the class implementation other than the fact that it implements \texttt{close()}.
+Prior to the release of J2SE 1.5 in 2004, the Java standard library developers noticed they had several classes in the \texttt{java.io} package that all had \texttt{close()} methods.  They wanted to be able to write generalized code that could operate on all of these classes, but the classes all had different hierarchies -- they extended different base classes -- so they could not be addressed as one common type.  To solve this problem, the \texttt{java.io.Closeable} interface was introduced.  This interface defines only a \texttt{close()} method that throws an \texttt{IOException}, and is meant to enable objects that represent resources such as files and network connections to be closed without the caller knowing anything about the class implementation other than the fact that it implements \texttt{close()}.
 
 However, this presented a problem when dealing with the large collections of code already written.  Existing classes that had \texttt{close()} methods but did not explicitly implement the \texttt{Closeable} interface -- because it didn't exist when the code was written -- could not be passed as an argument to code expecting an instance of \texttt{Closeable}.  Due to Java's nominal type system, existing code would have to be modified to add the \texttt{implements Closeable} declaration to every relevant class definition and then be recompiled and released as a new version.
 
@@ -221,4 +221,4 @@ Constructed with the \texttt{guardWithTest()} factory method in the \texttt{Meth
 
 \subsection{Megamorphic}
 
-A call site that handles an inordinate amount of receiver types is referred to as \emph{megamorphic}.  In this state efficient polymorphic dispatch is not possible, since too much time would be consumed walking the cache entries and comparing them to the new receiver.  Megamorphic call sites often revert back to an unoptimized vtable-based dispatch mechanism  \cite{hotspot-compiledcall}.
+A call site that handles an inordinate amount of receiver types is referred to as \emph{megamorphic}.  In this state, efficient polymorphic dispatch is not possible, since too much time would be consumed walking the cache entries and comparing them to the new receiver.  Megamorphic call sites often revert back to an unoptimized vtable-based dispatch mechanism  \cite{hotspot-compiledcall}.
