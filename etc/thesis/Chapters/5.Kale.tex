@@ -8,7 +8,7 @@ Kale is a strongly typed programming language with structural interfaces that ha
 
 \subsection{Types}
 
-Types declarations in Kale are analogous to classes in Java.  Types can be declared with zero or more fields and methods, all of which are annotated with type names.  Listings \ref{javaClass1} and \ref{kaleType1} show how Java syntax maps to Kale syntax.
+Type declarations in Kale are analogous to classes in Java.  Types can be declared with zero or more fields and methods, all of which are annotated with type names.  Listings \ref{javaClass1} and \ref{kaleType1} show how Java syntax maps to Kale syntax.
 
 \begin{minipage}[t]{0.45\textwidth}
 \begin{lstlisting}[language=Java,caption=A Java code example,label=javaClass1]
@@ -36,7 +36,7 @@ Types declarations in Kale are analogous to classes in Java.  Types can be decla
 \end{lstlisting}
 \end{minipage}
 
-Kale using trailing type annotations instead of the leading type annotations of most C-derived languages.  Google Go's development team found this allows more complex declarations to be read left to right \cite{golang-decl-syntax} instead of the "spiral pattern" of C \cite{c-spiral-decl}.  Regardless of the small syntactical differences, both Listing \ref{javaClass1} and \ref{kaleType1} compile down to the same bytecode.
+Kale using trailing type annotations instead of the leading type annotations of most C-derived languages.  Google Go's development team found this allows more complex declarations to be read left to right \cite{golang-decl-syntax} instead of the "spiral pattern" of C \cite{c-spiral-decl}.  Regardless of the small syntactical differences, both Listing \ref{javaClass1} and \ref{kaleType1} compile to the same bytecode.
 
 \begin{wrapfigure}{R}{0.4\textwidth}
 \begin{lstlisting}[language=Kale,caption=A Kale interface,label=kaleInterface1]
@@ -168,7 +168,7 @@ main() {
 }
 \end{lstlisting}
 
-It is very tempting to simply replace every invocation with an \texttt{invokedynamic} instruction to simplify the code generation and allow for maximum flexibility.  However, while the \texttt{invokedynamic} operation and bootstrap logic have been implemented efficiently in HotSpot, the MethodHandle lookup and CallSite construction still have a non-zero cost compared to the JVM internal linking which requires no reification or simulation.
+It is tempting to simply replace every invocation with an \texttt{invokedynamic} instruction to simplify code generation and allow for maximum flexibility.  However, the MethodHandle lookup and CallSite construction still have a non-zero cost compared to the JVM internal linking which requires no reification or simulation.
 
 Listing \ref{kaleInterfaceBytecode1} shows the \texttt{invokedynamic} instruction that would be generated from \texttt{g.get()} in Listing \ref{kaleInvocations1}.  This invocation specifies the Kale runtime library static method that will provide a call site and takes advantage of the ability to embed parameters directly into the call site.  By specifying the name of the interface as a String parameter the bootstrap method can verify whether a given receiver conforms to that interface at runtime.
 
@@ -215,7 +215,7 @@ public static CallSite bootstrap(	MethodHandles.Lookup caller,
 }
 \end{lstlisting}
 
-The role of the bootstrap method is to populate the initial state of the call site with enough information to upgrade itself in response to new receiver types as they are encountered.  The bootstrap method creates an instance of \texttt{InterfaceCallSite}, which retains metadata about the interface class and method being invoked, and binds it to a generic method handle, \texttt{callHandle}, which is described in Listing \ref{kaleCallMethod}.  Using \texttt{insertArguments} sets the \texttt{InterfaceCallSite} as the first argument to \texttt{call}, then \texttt{asVarArgsCollector} collects any arguments provided by the caller into an array of \texttt{Object}s that can be re-spread using \texttt{asSpreader} once the method is resolved.
+The role of the bootstrap method is to populate the initial state of the call site with enough information to upgrade itself in response to new receiver types as they are encountered.  The bootstrap method creates an instance of \texttt{InterfaceCallSite}, which retains metadata about the interface class and method being invoked, and binds it to a generic method handle, \texttt{callHandle}, which is described in Listing \ref{kaleCallMethod}.  Using \texttt{insertArguments} sets the \texttt{InterfaceCallSite} as the first argument to \texttt{call}, then \texttt{asVarArgsCollector} collects any arguments provided by the caller into an array of \texttt{Object}s that can be re-spread using \texttt{asSpreader} once the method is resolved.  The \texttt{InterfaceCallSite} will act as a polymorphic inline cache to subsequent invocations.
 
 \begin{lstlisting}[language=Java,caption=Generalized interface invoker method,label=kaleCallMethod]
 public static Object call(	InterfaceCallSite ics,
@@ -272,5 +272,5 @@ For each approach, an instance of \texttt{A}, \texttt{B}, and \texttt{C} were cr
   \label{table:invocation-benchmarks}
 \end{table}
 
-Over multiple test executions, \texttt{invokeMethodHandle} consistently outperformed the reflective inline cache by a factor of two.  \texttt{invokeMethodHandle} was still not as fast as \texttt{invokeinterface}, but that is a highly optimized native implementation that has been developed over several years.  \texttt{invokeStaticInline} is the most telling of the results, since it represents a theoretical best case performance.  The runtime optimizer for method handles is new in JDK 7, so it is possible it will gain performance as its maturity catches up to the other JVM runtime code generators.
+Over multiple test executions, \texttt{invokeMethodHandle} consistently outperformed the reflective inline cache by a factor of two.  \texttt{invokeMethodHandle} was still not as fast as \texttt{invokeinterface}, but that is a highly optimized native implementation that has been developed over several years.  \texttt{invokeStaticInline} is the most telling of the results, since it represents a theoretical best case performance.  The runtime optimizer for method handles is new in JDK 7, so it is possible that it will gain performance as it matures relative to the other JVM runtime code generators.
 

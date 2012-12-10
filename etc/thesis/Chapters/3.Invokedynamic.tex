@@ -127,7 +127,7 @@ The inflexibility of the JVM prior to JDK 7 stems from the rigidity of the invoc
 
 \subsection{\texttt{invokevirtual} Invocation}
 
-As detailed in Chapter \ref{chapter:JVM}, the JVM uses an internal symbolic linking process to link an invocation instruction, a \emph{callsite}, to the target class method.  During this process the type descriptor embedded in the call site is compared to the type descriptor of the target method and an exception is thrown by the JVM if the type descriptors are not compatible.  A depiction of the linking process for the invocation instruction in Listing \ref{java-normal-invoke-bytecode} is shown in Figure \ref{fig:linking-invokevirtual}.
+As detailed in Chapter \ref{chapter:JVM}, the JVM uses an internal symbolic linking process to link an invocation instruction, a \emph{call site}, to the target class method.  During this process the type descriptor embedded in the call site is compared to the type descriptor of the target method and an exception is thrown by the JVM if the type descriptors are not compatible.  A depiction of the linking process for the invocation instruction in Listing \ref{java-normal-invoke-bytecode} is shown in Figure \ref{fig:linking-invokevirtual}.
 \vspace{2em}
 \begin{lstlisting}[language=jvm-bytecode,caption=virtual method invocation bytecode,label=java-normal-invoke-bytecode]
 invokevirtual path/to/OtherClass.otherMethod (I)V
